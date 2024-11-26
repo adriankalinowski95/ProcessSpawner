@@ -1,0 +1,20 @@
+:host {
+  form {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex-basis: 100%;
+      flex-wrap: wrap;
+      border-left: 1px solid darkgray;
+      padding-left: 25px;
+      margin-bottom: 25px;
+      .form-control-component:last-of-type {
+        padding-bottom: 0px;
+      }
+    }
+    .form-control-component {
+      padding-right: 25px;
+      padding-bottom: 10px;
+    }
+  }
+}

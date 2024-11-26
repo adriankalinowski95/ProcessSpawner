@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package common;
+
+message ProcessInfo {
+  string internal_id = 1;
+}
+
+message Result {
+  string message = 1;
+  bool success = 2;
+}

@@ -1,0 +1,12 @@
+@if (showSvg) {
+<mat-icon
+          [svgIcon]="icon"
+          [class]="'icon-color-' + type"
+          [style.width.px]="size"
+          [style.height.px]="size"></mat-icon>
+} @else {
+    <mat-icon
+          [class]="'icon-color-' + type"
+          [style.width.px]="size"
+          [style.height.px]="size">{{ icon }}</mat-icon>
+}

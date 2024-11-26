@@ -1,0 +1,8 @@
+<div class="content-handler-container">
+  <div class="action-panel">
+    @for (button of contentHandlerConfig.buttons; track button) {
+      <app-action-button [config]="button"
+                         (actionButtonClicked)="onActionButtonClick($event)"></app-action-button>
+    }
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<!--<form [formGroup]="form">-->
+<!--  <div formGroupName="{{templateSchema[0].key}}">-->
+<!--      <ng-container *ngComponentOutlet="-->
+<!--            templateSchema[0].children[0].component;-->
+<!--            inputs: templateSchema[0].children[0].inputs;"/>-->
+
+<!--      <ng-container *ngComponentOutlet="-->
+<!--            templateSchema[0].children[1].component;-->
+<!--            inputs: templateSchema[0].children[1].inputs;"/>-->
+
+
+<!--&lt;!&ndash;        <app-custom-checkbox [data]="templateSchema[0].children[0].inputs.data" formControlName="{{templateSchema[0].children[0].inputs.data.key}}" ></app-custom-checkbox>&ndash;&gt;-->
+<!--&lt;!&ndash;        <app-custom-input [data]="templateSchema[0].children[1].inputs.data" formControlName="{{templateSchema[0].children[1].inputs.data.key}}" ></app-custom-input>&ndash;&gt;-->
+
+<!--  </div>-->
+
+<!--</form>-->
+
+
+<form [formGroup]="form">
+  <ng-container *ngTemplateOutlet="nested; context: {$implicit: templateSchema}"></ng-container>
+</form>
+
+<ng-template #nested let-templateSchema>
+  @for(template of templateSchema; track template) {
+    @if(template.type === templateGroupType.Group) {
+      <div class="form-group">
+        <ng-container *ngTemplateOutlet="nested; context: {$implicit: template.children}"></ng-container>
+      </div>
+    } @else if (template.type === templateGroupType.Control) {
+      <ng-container *ngTemplateOutlet="flat; context: {$implicit: template}"></ng-container>
+    }
+  }
+</ng-template>
+
+<ng-template #flat let-templateSchema>
+  <div class="form-control-component">
+    <ng-container *ngComponentOutlet="templateSchema.component;
+                inputs: templateSchema.inputs;"/>
+  </div>
+</ng-template>

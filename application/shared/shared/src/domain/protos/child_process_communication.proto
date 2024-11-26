@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package child_process_communication;
+
+service ChildInitService {
+    rpc InitChild(ChildInitRequest) returns (ChildInitResponse);
+}
+
+message ChildInitRequest {
+    string internal_id = 1;
+    // other fields...
+}
+
+message ChildInitResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+service ChildPingService {
+    rpc Ping(ChildPingRequest) returns (ChildPingResponse);
+}
+
+message ChildPingRequest {
+    string internal_id = 1;
+}
+
+message ChildPingResponse {
+    bool success = 1;
+    string message = 2;
+}

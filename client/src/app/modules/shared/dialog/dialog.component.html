@@ -1,0 +1,15 @@
+<div class="dialog-container">
+  <div class="header-container">{{data.header}}</div>
+  <div class="content-container">
+    @if(validationErrors.length > 0) {
+      <app-validation-message [validationMessages]="validationErrors"
+                              (closeValidationMessage)="onCloseValidationMessage()"></app-validation-message>
+    }
+    <ng-container #dialogContent></ng-container>
+  </div>
+  <div class="action-panel-container">
+    <app-dialog-action-panel [buttons]="actionPanelButtons"
+                             (actionButtonClicked)="onActionButtonClick($event)">
+    </app-dialog-action-panel>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<ng-container>
+  <app-element-list-filter-container *ngIf="config.useFilters"
+                                     [filterConfig]="config.filterConfig" ></app-element-list-filter-container>
+  <app-element-list-content-container [contentConfig]="config.contentConfig"
+                                      [dataSource]="dataSource"
+                                      [displayedColumns]="displayedColumns"
+                                      (pageChanged)="onPageChange($event)"
+                                      (handelContent)="onHandleContent($event)"></app-element-list-content-container>
+</ng-container>

@@ -1,0 +1,14 @@
+<div class="sidenav-header">
+    <div class="header-text" [class.hide-header-text]="!isExpanded">
+        @if (authService.getAuthFromLocalStorage(); as userAuth) {
+            <h2>Email</h2>
+            <p>{{ userAuth.user.email }}</p>
+        }
+    </div>
+</div>
+
+<mat-nav-list>
+    @for(item of menuItems; track item) {
+        <app-sidenav-menu-item [item]="item" [isExpanded]="isExpanded"></app-sidenav-menu-item>
+    }
+</mat-nav-list>

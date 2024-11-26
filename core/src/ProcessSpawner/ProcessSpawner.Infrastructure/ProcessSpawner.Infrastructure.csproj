@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\Debug\Authorization.Infrastructure</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Api\" />
+    <None Remove="Services\" />
+    <None Remove="Repositories\" />
+    <None Remove="Tools\" />
+    <None Remove="Mapping\" />
+    <None Remove="Commands\" />
+    <None Remove="Services\Example\" />
+    <None Remove="Services\gRPC\" />
+    <None Remove="Services\REST\" />
+    <None Remove="Services\Common\" />
+    <None Remove="Api\Example\" />
+    <None Remove="Api\REST\" />
+    <None Remove="Api\gRPC\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Api\" />
+    <Folder Include="Services\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Tools\" />
+    <Folder Include="Mapping\" />
+    <Folder Include="Commands\" />
+    <Folder Include="Services\Example\" />
+    <Folder Include="Services\gRPC\" />
+    <Folder Include="Services\REST\" />
+    <Folder Include="Services\Common\" />
+    <Folder Include="Api\Example\" />
+    <Folder Include="Api\REST\" />
+    <Folder Include="Api\gRPC\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProcessSpawner.Application\ProcessSpawner.Application.csproj" />
+    <ProjectReference Include="..\..\Authorization\Authorization.Application\Authorization.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Quartz" Version="3.13.1" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.13.1" />
+  </ItemGroup>
+</Project>

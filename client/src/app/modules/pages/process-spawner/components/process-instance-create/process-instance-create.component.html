@@ -1,0 +1,45 @@
+
+<div [formGroup]="dynamicForm">
+    <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Typ</mat-label>
+            <mat-select formControlName="process_type">
+            <mat-option
+                *ngFor="let type of processTypes"
+                [value]="type.value">
+                {{ type.key }}
+            </mat-option>
+            </mat-select>
+    </mat-form-field>
+    <div formArrayName="parameters">
+      <h4>Params:</h4>
+      <div
+        *ngFor="let param of getParams().controls; let j = index"
+        [formGroupName]="j"
+        class="option-group">
+      <div class="option-grid">
+        <mat-form-field appearance="fill" class="option-form-field">
+          <mat-label>Key</mat-label>
+          <input matInput formControlName="key" />
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="option-form-field">
+          <mat-label>Value</mat-label>
+          <input matInput formControlName="value" />
+        </mat-form-field>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="removeParam(j)"
+          class="delete-option-button">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      </div>
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="addParam()"
+        class="add-option-button">
+        Add param
+      </button>
+    </div>
+  </div>

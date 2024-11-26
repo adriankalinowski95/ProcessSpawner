@@ -1,0 +1,51 @@
+/* Używanie nazw klas zamiast typów elementów */
+
+/* Styl dla grupy elementów */
+.item-group {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 15px 0;
+    position: relative;
+  }
+  
+  /* Styl dla nagłówka w grupie elementów */
+  .item-group-heading {
+    margin-top: 0;
+  }
+  
+  /* Styl dla przycisku usuwania elementu */
+  .delete-item-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  /* Styl dla pola formularza */
+  .form-field {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  /* Styl dla grupy opcji */
+  .option-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Styl dla pól formularza w grupie opcji */
+  .option-form-field {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  /* Styl dla przycisku usuwania opcji */
+  .delete-option-button {
+    margin-top: 10px;
+  }
+  
+  /* Styl dla przycisków */
+  .add-item-button,
+  .add-option-button,
+  .submit-button {
+    margin-top: 10px;
+  }

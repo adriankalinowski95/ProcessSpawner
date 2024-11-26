@@ -1,0 +1,6 @@
+<button mat-button
+        [disabled]="config.disabled"
+        [class]="'action-button-' + config.type"
+        (click)="click(config.actionType)">
+  {{config.text}}
+</button>

@@ -1,0 +1,180 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "clean_build",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "create_builder_folder",
+            "type": "shell",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "${workspaceFolder}/build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "conan_install",
+            "command": "conan",
+            "args": [
+                "install",
+                "${workspaceFolder}",
+                "--output=${workspaceFolder}",
+                "--build=missing"
+            ],
+        },
+        {
+            "label": "cmake_build",
+            "command": "cmake",
+            "args": [
+                "-B",
+                "${workspaceFolder}/build",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/Debug/generators/conan_toolchain.cmake"
+            ],
+            "type": "shell",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "make_compile",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "-C",
+                "${workspaceFolder}/build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "cmake_build_xcode_generator",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-B",
+                "${workspaceFolder}/build",
+                "-G",
+                "\"Xcode\"",
+                "-DPROJECT_ARCH=\"arm64\"",
+                "-DCMAKE_IS_MACOS=\"true\"",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "xcode_compiler_debug",
+            "type": "shell",
+            "command": "xcodebuild",
+            "args": [
+                "-project",
+                "${workspaceFolder}/build/FirstProject.xcodeproj",
+                "-configuration",
+                "Debug",
+                "build",
+                "CONFIGURATION_BUILD_DIR=${workspaceFolder}/build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "xcode_compiler_release",
+            "type": "shell",
+            "command": "xcodebuild",
+            "args": [
+                "-project",
+                "${workspaceFolder}/build/FirstProject.xcodeproj",
+                "-configuration",
+                "Release",
+                "build",
+                "CONFIGURATION_BUILD_DIR=${workspaceFolder}/build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "preLaunchAllMacosDebug",
+            "dependsOn": [
+                "clean_build",
+                "create_builder_folder",
+                "cmake_build_xcode_generator",
+                "xcode_compiler_debug"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "preLaunchAllMacosRelease",
+            "dependsOn": [
+                "clean_build",
+                "create_builder_folder",
+                "cmake_build_xcode_generator",
+                "xcode_compiler_release"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "preLaunchAll",
+            "dependsOn": [
+                "clean_build",
+                "create_builder_folder",
+                "conan_install",
+                "cmake_build",
+                "make_compile"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "justLanuch",
+            "dependsOn": [
+                //"clean_build",
+                //"create_builder_folder",
+                // "conan_install",
+                "cmake_build",
+                "make_compile"
+            ],
+            "dependsOrder": "sequence"
+        }    
+    ]
+}

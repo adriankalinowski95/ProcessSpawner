@@ -1,0 +1,5 @@
+<app-dynamic-form-validation-message *ngIf="data.errorHandlerType === errorHandlerType.Inner"></app-dynamic-form-validation-message>
+<app-dynamic-form-content [data]="data"></app-dynamic-form-content>
+<app-dynamic-form-action-panel *ngIf="data.actionPanelConfig.actionHandlerType !== actionHandlerType.Outer"
+                               [config]="data.actionPanelConfig"
+                               (buttonClick)="onButtonClick($event)"></app-dynamic-form-action-panel>

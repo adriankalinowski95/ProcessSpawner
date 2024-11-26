@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<OutputPath>..\..\bin\Debug\Authorization.Application</OutputPath>
+		<WarningLevel>4</WarningLevel>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Services\" />
+		<None Remove="Repositories\" />
+		<None Remove="DTOs\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Services\" />
+		<Folder Include="Repositories\" />
+		<Folder Include="DTOs\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Authorization.Domain\Authorization.Domain.csproj" />
+		<ProjectReference Include="..\..\Shared\Shared.Types\Shared.Types.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="JWT" Version="10.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+	</ItemGroup>
+</Project>

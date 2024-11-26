@@ -1,0 +1,4 @@
+<mat-drawer-container autosize class="custom-container">
+    <app-toolbar (isExpandedEvent)="isExpandedHandler($event)"></app-toolbar>
+    <app-sidenav-container [isExpanded]="isExpanded"></app-sidenav-container> 
+</mat-drawer-container>

@@ -1,0 +1,112 @@
+<div [formGroup]="dynamicForm">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addItem()"
+      class="add-item-button">
+      Add element
+    </button>
+    <div formArrayName="items">
+      <div
+        *ngFor="let item of items.controls; let i = index"
+        [formGroupName]="i"
+        class="item-group">
+            <div class="item-header">
+                <h3 class="item-title">Element {{ i + 1 }}</h3>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="removeItem(i)"
+                  class="delete-item-button">
+                  <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Key</mat-label>
+              <input matInput formControlName="key" />
+            </mat-form-field>
+  
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Typ</mat-label>
+              <mat-select formControlName="type" (selectionChange)="onTypeChange(i)">
+                <mat-option
+                  *ngFor="let type of BaseFieldUIType | keyvalue"
+                  [value]="type.value">
+                  {{ type.key }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <div *ngIf="item.get('type')?.value === BaseFieldUIType.String">
+              <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Default value (String)</mat-label>
+                <input matInput formControlName="defaultValue" />
+              </mat-form-field>
+            </div>
+        
+            <div *ngIf="item.get('type')?.value === BaseFieldUIType.Boolean">
+              <mat-checkbox formControlName="defaultValue" class="form-field">
+                Default value (Boolean)
+              </mat-checkbox>
+            </div>
+        
+            <div *ngIf="item.get('type')?.value === BaseFieldUIType.DropDown">
+              <div formArrayName="options">
+                <h4>Options:</h4>
+                <div
+                  *ngFor="let option of getOptions(i).controls; let j = index"
+                  [formGroupName]="j"
+                  class="option-group"
+                >
+                <div class="option-grid">
+                  <mat-form-field appearance="fill" class="option-form-field">
+                    <mat-label>Key</mat-label>
+                    <input matInput formControlName="key" />
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="option-form-field">
+                    <mat-label>Value</mat-label>
+                    <input matInput formControlName="value" />
+                  </mat-form-field>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="removeOption(i, j)"
+                    class="delete-option-button"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+                </div>
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  (click)="addOption(i)"
+                  class="add-option-button"
+                >
+                  Add option
+                </button>
+              </div>
+          
+              <mat-form-field appearance="fill" class="form-field">
+                <mat-label>Defult value (DropDown)</mat-label>
+                <mat-select formControlName="defaultValue">
+                  <mat-option
+                    *ngFor="let option of getOptions(i).value"
+                    [value]="option.value"
+                  >
+                    {{ option.key }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+      </div>
+    </div>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="submit()"
+      class="submit-button">
+      Form submit
+    </button>
+  </div>

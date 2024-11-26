@@ -1,0 +1,3 @@
+@for(button of buttons; track button) {
+  <app-action-button [config]="button" (actionButtonClicked)="onActionButtonClick($event)"></app-action-button>
+}

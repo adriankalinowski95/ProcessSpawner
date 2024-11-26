@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package core_communication;
+
+import "shared/src/domain/protos/common.proto";
+
+service CoreQueryCommunicationService {
+  rpc Handle(CoreQueryRequest) returns (CoreQueryResponse);
+}
+
+service CoreCommandCommunicationService {
+  rpc Handle(CoreCommandRequest) returns (CoreCommandResponse);
+}
+
+message CoreQueryRequest {
+  common.ProcessInfo process = 1;
+  string param_name = 2;
+}
+
+message CoreQueryResponse {
+  common.Result result = 1;
+  string param_value = 2;
+}
+
+message CoreCommandRequest {
+  common.ProcessInfo process = 1;
+  // @Todo Here should be value for event
+  string event_name = 2;
+  string event_value = 3;
+}
+
+message CoreCommandResponse {
+  common.Result result = 1;
+}

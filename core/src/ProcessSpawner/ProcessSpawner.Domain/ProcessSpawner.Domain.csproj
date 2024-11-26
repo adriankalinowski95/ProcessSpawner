@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<OutputPath>..\..\bin\Debug\ProcessSpawner.Domain</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<Protobuf Include="Protos\common.proto" GrpcService="Client" />
+		<Protobuf Include="Protos\core_communication.proto" GrpcService="Client" />
+		<Protobuf Include="Protos\communication.proto" GrpcService="Client" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Protos\" />
+		<None Remove="Models\" />
+		<None Remove="Enums\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Protos\" />
+		<Folder Include="Models\" />
+		<Folder Include="Enums\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Google.Protobuf" Version="3.29.2" />
+		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+		<PackageReference Include="Grpc.AspNetCore.Server" Version="2.67.0" />
+		<PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
+	</ItemGroup>
+</Project>

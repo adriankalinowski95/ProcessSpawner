@@ -1,0 +1,36 @@
+<a  mat-list-item 
+    class="menu-item"
+    [routerLink]="item.route"
+    routerLinkActive="selected-menu-item"
+    #rla="routerLinkActive"
+    [activated]="rla.isActive"
+    (click)="toggleNested()"> 
+    <mat-icon matListItemIcon> {{ item.icon }} </mat-icon>
+    @if (isExpanded) {
+        <span matListItemTitle> {{ item.label }} </span>
+    }
+
+    @if (item.subItems) {
+        <span matListItemMeta>
+        @if (nestedMenuOpen()) {
+            <mat-icon>expand_less</mat-icon>
+        } @else {
+            <mat-icon>expand_more</mat-icon>
+        }
+        </span>
+    }
+</a>
+
+@if (item.subItems && nestedMenuOpen()) {
+    <div @expandedContractMenu>
+        <mat-nav-list>
+            @for(subItem of item.subItems; track subItem.route) {
+                <app-sidenav-menu-item 
+                [item]="subItem" 
+                [isExpanded]="isExpanded" 
+                [isSubItem]="true"
+                [class.intended]="isExpanded"></app-sidenav-menu-item>
+            }
+        </mat-nav-list>
+    </div>
+}
