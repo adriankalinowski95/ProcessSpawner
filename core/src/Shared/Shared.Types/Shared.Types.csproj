@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<OutputPath>..\..\bin\Debug\Shared.Types</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Interfaces\" />
+		<None Remove="Tools\" />
+		<None Remove="Generic\" />
+		<None Remove="Generic\Services\" />
+		<None Remove="Generic\RestApi\" />
+		<None Remove="Generic\Repositories\" />
+		<None Remove="BaseClasses\" />
+		<None Remove="Enums\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Interfaces\" />
+		<Folder Include="Tools\" />
+		<Folder Include="Generic\" />
+		<Folder Include="Generic\Services\" />
+		<Folder Include="Generic\RestApi\" />
+		<Folder Include="Generic\Repositories\" />
+		<Folder Include="BaseClasses\" />
+		<Folder Include="Enums\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+	</ItemGroup>
+</Project>

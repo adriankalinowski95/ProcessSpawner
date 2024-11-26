@@ -1,1 +1,9 @@
 /application/build/*
+/.vs/*
+/core/core/bin/*
+/core/core/obj/*
+/core/core/Migrations/*
+**/obj/
+**/bin/
+/core/.vs
+.DS_Store
