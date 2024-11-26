@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "configurations": [
+    {
+      "name": "C++ Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/${config:Project_Name}/${config:Project_Name}",
+      //"program": "${workspaceRoot}/build/process_manager/process_manager",
+      "preLaunchTask": "preLaunchAll",
+      "internalConsoleOptions": "openOnSessionStart",
+      "logging": {
+        "moduleLoad": false,
+        "programOutput": true,
+        "trace": false
+      },
+      "showDisplayString": false,
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceRoot}",
+      "environment": [],
+      "externalConsole": false,
+      "osx": {
+        "MIMode": "lldb"
+      },
+      "targetArchitecture": "arm64"
+    },
+    {
+      "name": "C++ Launch MacOS debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "preLaunchTask": "preLaunchAllMacosDebug",
+      "program": "${workspaceRoot}/build/${config:Project_Name}.app/Contents/MacOS/${config:Project_Name}",
+      "logging": {
+        "moduleLoad": true,
+        "programOutput": true,
+        "trace": true
+      },
+      "showDisplayString": false,
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "MIMode": "lldb",
+      "targetArchitecture": "arm64",
+      "externalConsole": true
+    },
+    {
+      "name": "C++ Launch MacOS release",
+      "type": "cppdbg",
+      "request": "launch",
+      "preLaunchTask": "preLaunchAllMacosRelease",
+      "program": "${workspaceRoot}/build/${config:Project_Name}.app/Contents/MacOS/${config:Project_Name}",
+      "logging": {
+        "moduleLoad": true,
+        "programOutput": true,
+        "trace": true
+      },
+      "showDisplayString": false,
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "MIMode": "lldb",
+      "targetArchitecture": "arm64",
+      "externalConsole": true
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/adriankalinowski/Desktop/learning_projects/process_spawner/application/process_manager",
+      "program": "/Users/adriankalinowski/Desktop/learning_projects/process_spawner/application/process_manager/build/Debug/outDebug"
+    }
+  ]
+}
