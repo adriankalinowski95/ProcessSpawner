@@ -1,0 +1,9 @@
+[requires]
+grpc/1.54.3
+nlohmann_json/3.11.3
+protobuf/3.21.12
+[options]
+compiler.cppstd=20
+grpc/*:cpp_plugin = True
+[generators]
+CMakeDeps
