@@ -1,6 +1,7 @@
 ﻿//using core.src.Infrastructure.Services;
 
 using Microsoft.AspNetCore.Mvc;
+using Shared.Tools.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,8 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandling();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -23,4 +26,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
