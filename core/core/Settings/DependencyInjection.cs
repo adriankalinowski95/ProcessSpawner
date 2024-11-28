@@ -34,9 +34,7 @@ public static class DependencyInjection {
 
         services.AddLogging(loggingBuilder => {
             loggingBuilder.ClearProviders();
-            // loggingBuilder.AddConsole();
-            // loggingBuilder.Services
-            loggingBuilder.AddDataBaseLogger(configuration);
+            loggingBuilder.AddDataBaseLoggerProvider(configuration);
         });
 
 

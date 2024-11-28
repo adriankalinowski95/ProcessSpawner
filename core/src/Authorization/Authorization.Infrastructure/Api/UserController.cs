@@ -13,6 +13,8 @@ namespace Authorization.Infrastructure.Api {
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase {
+        // @Todo Repair of saving password to hash and change of controllers (they are returing user, while i needed to have a ObjectResponse)
+        // 
         private readonly ILogger<UserController> m_logger;
         private readonly IUserRepository m_userService;
         private readonly IUserAuthenticationService m_userAuthenticationService;
@@ -24,7 +26,6 @@ namespace Authorization.Infrastructure.Api {
 
         [HttpGet]
         public async Task<IEnumerable<User>> GetAsync() {
-            m_logger.Log(LogLevel.Information, "GET ALL!!!!");
             return await m_userService.GetAllAsync();
         }
 

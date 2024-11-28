@@ -24,6 +24,7 @@ namespace core.Settings {
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             options.UseSqlite($"Data Source={DbPath}");
+
             // options.EnableSensitiveDataLogging();
         }
 

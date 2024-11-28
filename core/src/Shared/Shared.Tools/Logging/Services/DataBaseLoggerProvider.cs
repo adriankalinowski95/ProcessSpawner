@@ -4,38 +4,30 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Tools.Logging.Repositories;
-using Shared.Tools.Logging.Services;
 
 namespace Shared.Tools.Logging {
     public class DataBaseLoggerProvider : ILoggerProvider {
         private readonly IConfiguration m_configuration;
         private readonly IServiceCollection m_serviceCollection;
-        private DbContext m_dbContext;
-        private Mutex mutex = new Mutex();
-        // private readonly ILoggerRepository m_loggerRepository;
-
-        /*
-        public DataBaseLoggerProvider(IConfiguration configuration, ILoggerRepository loggerRepository) {
-            m_configuration = configuration;
-            m_loggerRepository = loggerRepository;
-        }
-        */
+        private readonly Mutex m_savingToDbMutex;
+        private readonly DbContext m_dbContext;
+        private readonly LoggerRepository m_loggerRepository;
 
         public DataBaseLoggerProvider(IConfiguration configuration, IServiceCollection serviceCollection) {
             m_configuration = configuration;
             m_serviceCollection = serviceCollection;
+            m_savingToDbMutex = new Mutex();
 
             m_dbContext = m_serviceCollection.BuildServiceProvider().GetService<DbContext>();
-            // var loggerRepository = new LoggerRepository(dbContext);
-            // m_loggerRepository = loggerRepository;
+            if (m_dbContext == null) {
+                throw new NullReferenceException("DbContext is empty while loading logger!");
+            }
+
+            m_loggerRepository = new LoggerRepository(m_dbContext);
         }
 
         public ILogger CreateLogger(string categoryName) {
-            // builder.Services.BuildServiceProvider().GetService<DbContext>();
-            //var dbContext = m_serviceCollection.BuildServiceProvider().GetService<DbContext>();
-            var loggerRepository = new LoggerRepository(m_dbContext);
-            //return new DefaultDataBaseLogger(m_configuration, m_loggerRepository, (categoryName) => true, categoryName);
-            return new DefaultDataBaseLogger(m_configuration, loggerRepository, (categoryName) => true, categoryName, mutex);
+            return new DefaultDataBaseLogger(m_configuration, m_loggerRepository, (categoryName) => true, categoryName, m_savingToDbMutex);
         }
 
         public void Dispose() {

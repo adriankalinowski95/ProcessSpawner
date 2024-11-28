@@ -24,21 +24,16 @@ namespace Shared.Tools.Logging.Repositories {
         }
 
         public virtual async Task<Log> AddAsync(Log entity) {
-            try {
-                var dbSet = m_context.Set<Log>();
+            var dbSet = m_context.Set<Log>();
 
-                var obj = await dbSet.AddAsync(entity);
+            var obj = await dbSet.AddAsync(entity);
 
-                //m_context.SaveChanges();
-                // @Todo Tutaj jest problem, bo zapisytwanie generuje logi. Z kolei logi, powoduja to, ze jest odpalany loger i tak sie robi nieskonczona petla
-                // musi byc jakie rozroznienie dla loggerow czy cos.
-                await m_context.SaveChangesAsync();
+            //m_context.SaveChanges();
+            // @Todo Tutaj jest problem, bo zapisytwanie generuje logi. Z kolei logi, powoduja to, ze jest odpalany loger i tak sie robi nieskonczona petla
+            // musi byc jakie rozroznienie dla loggerow czy cos.
+            await m_context.SaveChangesAsync();
 
-                return obj.Entity;
-            } catch (Exception ex) {
-                Console.WriteLine("XDd");
-                return null;
-            }
+            return obj.Entity;
         }
 
         public virtual async void Update(Log entity) {

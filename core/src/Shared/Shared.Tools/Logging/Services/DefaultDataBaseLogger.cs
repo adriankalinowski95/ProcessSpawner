@@ -15,20 +15,21 @@ namespace Shared.Tools.Logging {
         private readonly Func<string, bool> m_logLevelFunc;
         private readonly string m_categoryName;
         private Mutex m_mutex;
-        // private SemaphoreSlim semaphore = new(1, 1);
 
-        public DefaultDataBaseLogger(IConfiguration configuration, ILoggerRepository loggerRepository, Func<string, bool> logLevelFunc, string categoryName,
-            Mutex mutex
-            ) {
+        public DefaultDataBaseLogger(
+            IConfiguration configuration,
+            ILoggerRepository loggerRepository,
+            Func<string, bool> logLevelFunc,
+            string categoryName,
+            Mutex mutex) {
             m_configuration = configuration;
             m_loggerRepository = loggerRepository;
-
-            var logLevelString = m_configuration["Logging:LogLevel:Default"];
-            Enum.TryParse<LogLevel>(logLevelString, out m_logLevel);
-
             m_logLevelFunc = logLevelFunc;
             m_categoryName = categoryName;
             m_mutex = mutex;
+
+            var logLevelString = m_configuration["Logging:LogLevel:Default"];
+            Enum.TryParse<LogLevel>(logLevelString, out m_logLevel);
         }
 
         public IDisposable? BeginScope<TState>(TState state) where TState : notnull {
@@ -46,9 +47,8 @@ namespace Shared.Tools.Logging {
         public async void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) {
             var message = formatter(state, exception);
 
-            if (m_categoryName.Contains("EntityFrameworkCore") == true) {
-                // Console.WriteLine(message);
-
+            // Prevent before cycle of saving to database / logging that
+            if (m_categoryName.Contains(Entiy_Framework_Core_Category_Name) == true) {
                 return;
             }
 
@@ -62,17 +62,15 @@ namespace Shared.Tools.Logging {
         }
 
         private async Task WriteLogToDataBase(Models.Log log) {
-            var random = Random.Shared.NextInt64();
             try {
-                Console.WriteLine("RandomBeforeMutex: " + random);
-
                 m_mutex.WaitOne();
 
                 await m_loggerRepository.AddAsync(log);
             } finally {
                 m_mutex.ReleaseMutex();
-                Console.WriteLine("RandomAfterMutex: " + random);
             }
         }
+
+        private static string Entiy_Framework_Core_Category_Name = "EntityFrameworkCore";
     }
 }
