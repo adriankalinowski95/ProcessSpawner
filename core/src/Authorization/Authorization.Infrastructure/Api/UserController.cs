@@ -24,6 +24,7 @@ namespace Authorization.Infrastructure.Api {
 
         [HttpGet]
         public async Task<IEnumerable<User>> GetAsync() {
+            m_logger.Log(LogLevel.Information, "GET ALL!!!!");
             return await m_userService.GetAllAsync();
         }
 

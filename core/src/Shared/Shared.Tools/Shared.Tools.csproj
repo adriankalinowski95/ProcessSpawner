@@ -9,9 +9,21 @@
 
   <ItemGroup>
     <None Remove="ErrorHandling\" />
+    <None Remove="Logging\" />
+    <None Remove="Logging\Services\" />
+    <None Remove="Logging\Models\" />
+    <None Remove="Logging\Repositories\" />
+    <None Remove="Logging\Enums\" />
+    <None Remove="Logging\Mapping\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ErrorHandling\" />
+    <Folder Include="Logging\" />
+    <Folder Include="Logging\Services\" />
+    <Folder Include="Logging\Models\" />
+    <Folder Include="Logging\Repositories\" />
+    <Folder Include="Logging\Enums\" />
+    <Folder Include="Logging\Mapping\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared.Types\Shared.Types.csproj" />
@@ -28,5 +40,6 @@
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
   </ItemGroup>
 </Project>

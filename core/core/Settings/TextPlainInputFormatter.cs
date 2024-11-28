@@ -19,6 +19,7 @@ namespace core.Settings {
             using (var reader = new StreamReader(context.HttpContext.Request.Body, encoding)) {
                 data = await reader.ReadToEndAsync();
             }
+
             return await InputFormatterResult.SuccessAsync(data);
         }
     }

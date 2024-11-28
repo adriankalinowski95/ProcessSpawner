@@ -1,6 +1,7 @@
 ﻿using System;
 using Authorization.Infrastructure.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Shared.Tools.Logging.Mapping;
 
 namespace core.Settings {
     public class DatabaseContext : DbContext {
@@ -23,12 +24,14 @@ namespace core.Settings {
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             options.UseSqlite($"Data Source={DbPath}");
-            options.EnableSensitiveDataLogging();
+            // options.EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            // Console.WriteLine("OnModelCreating!");
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserMap).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(LogMap).Assembly);
         }
     }
 }
-

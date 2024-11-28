@@ -1,6 +1,7 @@
 ﻿using core.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shared.Tools;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +24,22 @@ public static class DependencyInjection {
         services.AddInfrastructureForAuthorization(configuration);
 
         services.AddDbContext<DatabaseContext>();
-        services.AddScoped<DbContext, DatabaseContext>();
+        services.AddTransient<DbContext, DatabaseContext>();
+
+        services.AddSingleton<IServiceCollection>(provider => {
+            return services;
+        });
+
+        services.AddLoggingDependencies(configuration);
+
+        services.AddLogging(loggingBuilder => {
+            loggingBuilder.ClearProviders();
+            // loggingBuilder.AddConsole();
+            // loggingBuilder.Services
+            loggingBuilder.AddDataBaseLogger(configuration);
+        });
+
+
 
         // @Todo
         // Middleware

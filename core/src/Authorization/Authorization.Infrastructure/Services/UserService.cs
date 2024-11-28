@@ -1,6 +1,7 @@
 ﻿using System;
 using Authorization.Application.Services;
 using Authorization.Domain.Models;
+using Microsoft.Extensions.Logging;
 using Shared.Generic.RestApi;
 
 namespace Authorization.Infrastructure.Services {
@@ -8,12 +9,14 @@ namespace Authorization.Infrastructure.Services {
     // Like, all of my functions have a try/catch, so i should a make w rapper to minimalize code.
     // Or just a middleware??
     public class UserService : IUserService {
+        private readonly ILogger<IUserService> m_logger;
         private IUserRepository m_userRepository;
         private IUserAuthenticationService m_userAuthenticationService;
 
-        public UserService(IUserRepository userRepository, IUserAuthenticationService userAuthenticationService) {
+        public UserService(IUserRepository userRepository, IUserAuthenticationService userAuthenticationService, ILogger<IUserService> logger) {
             m_userRepository = userRepository;
             m_userAuthenticationService = userAuthenticationService;
+            m_logger = logger;
         }
 
         public async Task<ObjectOperationResult<User>> Get(int id) {
@@ -33,8 +36,13 @@ namespace Authorization.Infrastructure.Services {
             }
         }
 
-        public Task<ObjectsResponse<User>> GetAll() {
-            throw new NotImplementedException();
+        public async Task<ObjectsResponse<User>> GetAll() {
+            m_logger.Log(LogLevel.Error, "MyCustomError!!@#!@#!@#");
+
+            return new ObjectsResponse<User> {
+
+            };
+            // throw new NotImplementedException();
         }
 
         public async Task<ObjectOperationResult<User>> Create(User obj) {
