@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Xml.Linq;
+using Shared.Generic.RestApi;
+using Authorization.Application.DTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Authorization.Infrastructure.Api {
     [Route("api/[controller]")]
@@ -24,28 +27,30 @@ namespace Authorization.Infrastructure.Api {
         }
 
         [HttpPost("accesstoken", Name = "login")]
-        public IActionResult Login([FromBody] Authorization.Application.DTOs.AuthenticationDto auth) {
-            try {
-                return Ok(m_userAuthenticationService.Login(auth));
-            } catch (Exception e) {
-                return BadRequest(e);
-            }
+        public ObjectResponse<TokenDto> Login([FromBody] Authorization.Application.DTOs.AuthenticationDto auth) {
+            return new ObjectResponse<TokenDto> {
+                ErrorMessage = string.Empty,
+                Status = BaseResponseStatus.Ok,
+                Object = m_userAuthenticationService.Login(auth)
+            };
         }
 
         [Authorize(AuthenticationSchemes = "refresh")]
         [HttpPut("accesstoken", Name = "refresh")]
-        public IActionResult Refresh() {
-            Claim refreshtoken = User.Claims.FirstOrDefault(x => x.Type == "refresh");
-            Claim username = User.Claims.FirstOrDefault(x => x.Type == "username");
+        public ObjectResponse<TokenDto> Refresh() {
+            var refreshtoken = User.Claims.FirstOrDefault(x => x.Type == "refresh");
+            var username = User.Claims.FirstOrDefault(x => x.Type == "username");
             if (refreshtoken == null || username == null) {
-                return BadRequest("Refresh token or username is empty!");
+                throw new UnauthorizedAccessException("Refresh token or username is empty!");
             }
 
-            try {
-                return Ok(m_userAuthenticationService.RefreshToken(username, refreshtoken));
-            } catch (Exception e) {
-                return BadRequest(e.Message);
-            }
+            var token = m_userAuthenticationService.RefreshToken(username, refreshtoken);
+
+            return new ObjectResponse<TokenDto> {
+                ErrorMessage = string.Empty,
+                Status = BaseResponseStatus.Ok,
+                Object = token
+            };
         }
     }
 }

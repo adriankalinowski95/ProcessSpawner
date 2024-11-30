@@ -16,56 +16,53 @@ namespace Authorization.Infrastructure.Api {
         // @Todo Repair of saving password to hash and change of controllers (they are returing user, while i needed to have a ObjectResponse)
         // 
         private readonly ILogger<UserController> m_logger;
-        private readonly IUserRepository m_userService;
+        private readonly IUserService m_userService;
         private readonly IUserAuthenticationService m_userAuthenticationService;
 
-        public UserController(ILogger<UserController> logger, IUserRepository userService) {
+        public UserController(ILogger<UserController> logger, IUserService userService, IUserAuthenticationService userAuthenticationService) {
             m_logger = logger;
             m_userService = userService;
-        }
-
-        [HttpGet]
-        public async Task<IEnumerable<User>> GetAsync() {
-            return await m_userService.GetAllAsync();
-        }
-
-        [HttpGet("{userId}", Name = "GetOne")]
-        public async Task<User> GetOne([FromRoute] int userId) {
-            return await m_userService.GetByIdAsync(userId);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateOneAsync([FromBody] User user) {
-            user = await m_userService.AddAsync(user);
-
-            return CreatedAtRoute("GetOne", new { userId = user.Id }, user);
-        }
-
-        [HttpPut("{userId}")]
-        public User UpdateOne([FromRoute] string userId, [FromBody] User user) {
-            m_userService.Update(user);
-
-            return user;
-        }
-
-        [HttpDelete("{userId}")]
-        public async Task<IActionResult> DeleteOneAsync([FromRoute] int userId) {
-            var user = await m_userService.GetByIdAsync(userId);
-            m_userService.Remove(user);
-
-            return NoContent();
+            m_userAuthenticationService = userAuthenticationService;
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("getUserByToken", Name = "getUserByToken")]
-        public User GetUserByToken() {
-            try {
-                return m_userAuthenticationService.GetCurrentUser();
-            } catch (Exception ex) {
-                m_logger.LogError(RestUtils.FormatException(ex));
+        [HttpGet]
+        public async Task<ObjectsResponse<User>> GetAll() {
+            return await m_userService.GetAll();
+        }
 
-                return null;
-            }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("{userId}")]
+        public async Task<ObjectResponse<User>> Get([FromRoute] int userId) {
+            return await m_userService.Get(userId);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost]
+        public async Task<ObjectResponse<User>> Create([FromBody] User user) {
+            return await m_userService.Create(user);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPut("{userId}")]
+        public async Task<ObjectOperationResult<User>> Put([FromRoute] int userId, [FromBody] User user) {
+            return await m_userService.Put(userId, user);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete("{userId}")]
+        public async Task<ObjectOperationResult<User>> Delete([FromRoute] int userId) {
+            return await m_userService.Delete(userId);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("getByToken", Name = "getByToken")]
+        public async Task<ObjectResponse<User>> GetByToken() {
+            return new ObjectResponse<User> {
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                Object = m_userAuthenticationService.GetCurrentUser()
+            };
         }
     }
 }

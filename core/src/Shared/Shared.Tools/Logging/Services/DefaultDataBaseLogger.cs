@@ -48,7 +48,12 @@ namespace Shared.Tools.Logging {
             var message = formatter(state, exception);
 
             // Prevent before cycle of saving to database / logging that
-            if (m_categoryName.Contains(Entiy_Framework_Core_Category_Name) == true) {
+            if (IsCategoryFiltred(m_categoryName)) {
+                return;
+            }
+
+            if (IsCategoryToPrint(m_categoryName)) {
+                Console.WriteLine(message);
                 return;
             }
 
@@ -61,6 +66,14 @@ namespace Shared.Tools.Logging {
             await WriteLogToDataBase(logModel);
         }
 
+        private static bool IsCategoryFiltred(string categoryName) {
+            return categoryName.Contains(Entiy_Framework_Core_Category_Name);
+        }
+
+        private static bool IsCategoryToPrint(string categoryName) {
+            return categoryName.Contains(Microsoft_Hostring_Lifetime_Category_Name);
+        }
+
         private async Task WriteLogToDataBase(Models.Log log) {
             try {
                 m_mutex.WaitOne();
@@ -71,6 +84,7 @@ namespace Shared.Tools.Logging {
             }
         }
 
-        private static string Entiy_Framework_Core_Category_Name = "EntityFrameworkCore";
+        private const string Entiy_Framework_Core_Category_Name = "EntityFrameworkCore";
+        private const string Microsoft_Hostring_Lifetime_Category_Name = "Microsoft.Hosting.Lifetime";
     }
 }

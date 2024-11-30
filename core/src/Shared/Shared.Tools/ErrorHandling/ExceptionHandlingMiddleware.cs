@@ -27,12 +27,23 @@ namespace Shared.Tools.Middlewares {
             m_logger.LogError(ex, ex.Message);
 
             context.Response.ContentType = "application/json";
+            context.Response.StatusCode = GetStatusCode(ex);
+
             var result = JsonSerializer.Serialize(new BaseResponse {
                 Status = BaseResponseStatus.Error,
                 ErrorMessage = RestUtils.FormatException(ex)
             });
 
             await context.Response.WriteAsync(result);
+        }
+
+        public static int GetStatusCode(Exception exception) {
+            return exception switch {
+                KeyNotFoundException => StatusCodes.Status404NotFound,
+                ArgumentOutOfRangeException => StatusCodes.Status400BadRequest,
+                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                _ => StatusCodes.Status500InternalServerError // Domyślny kod
+            };
         }
     }
 }
