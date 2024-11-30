@@ -1,0 +1,22 @@
+<div style="padding: 20px; background-color: #3f51b5; height: 100%">
+<mat-card
+   class="styled-card"
+  >
+    <mat-form-field appearance="outline">
+      <mat-icon matSuffix>account_circle</mat-icon>
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="Username or email" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-icon matSuffix>password</mat-icon>
+      <mat-label>Password</mat-label>
+      <input matInput type="password" placeholder="Password" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="submit()">
+      Login
+    </button>
+  </mat-card>
+  
+</div>
