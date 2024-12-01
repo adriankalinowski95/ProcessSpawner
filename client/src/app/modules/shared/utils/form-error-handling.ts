@@ -40,16 +40,27 @@ export class FormErrorHandlingService {
     controlHasErrors(fieldName: string): boolean {
         const control = this.m_form.get(fieldName);
         if (!control) {
+            console.log("Control desont't exist");
           return false;
         }
-    
-        return control && control.errors != null && (control.touched || control.dirty);
+
+        // const result = control && control.errors != null && (control.touched || control.dirty);
+        return control.status == 'INVALID';
+        
+        /*
+        console.log(control);
+        console.log("result:" + result);
+
+        return result;
+        */
     }
   
     getErrorKeys(fieldName: string): string[] {
         const control = this.m_form.get(fieldName);
         const result = control && control.errors ? Object.keys(control.errors) : [];
-    
+        
+        console.log("Get error keys");
+        
         return result;
     }
   
@@ -103,13 +114,19 @@ export class FormErrorHandlingService {
     }
 
     getErrorMessageTranslation(fieldName: string, errorKey: string, errorValue: any): string {
+        if (fieldName == null || fieldName == '') {
+            return 'Unkwon error';
+        }
+
+        fieldName = fieldName[0].toUpperCase() + fieldName.slice(1);
+
         const messages: { [key: string]: string } = {
-          required: `${fieldName} jest wymagane.`,
-          minlength: `${fieldName} musi mieć co najmniej ${errorValue.requiredLength} znaków.`,
-          maxlength: `${fieldName} może mieć maksymalnie ${errorValue.requiredLength} znaków.`,
-          pattern: `${fieldName} ma nieprawidłowy format.`,
+          required: `${fieldName} is required.`,
+          minlength: `${fieldName} minimum length is ${errorValue.requiredLength}.`,
+          maxlength: `${fieldName} maximum length is ${errorValue.requiredLength}.`,
+          pattern: `${fieldName} have bad format.`,
         };
     
-        return messages[errorKey] || `Nieznany błąd dla pola ${fieldName}.`;
+        return messages[errorKey] || `Unkown error of field ${fieldName}.`;
       }
   }

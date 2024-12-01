@@ -22,43 +22,11 @@
                 name="email" 
                 formControlName="email" 
                 autocomplete="off"/>
-                    <!--
-                    <mat-error *ngFor="let errorKey of formErrorHandlerService.getErrorKeys('password')">
-                        {{ formErrorHandlerService.getErrorMessage('password', errorKey) }}
+                @if (formErrorHandlerService.controlHasErrors('email')) {
+                    <mat-error *ngFor="let errorKey of formErrorHandlerService.getErrorKeys('email')">
+                        {{ formErrorHandlerService.getErrorMessage('email', errorKey) }}
                     </mat-error>
-                    -->
-                    <!-- to dziala
-                    @if (errors.get('email')?.length) {
-                    <mat-error >
-                        @for(err of errors.get('email'); track err) {
-                            {{ err }} 
-                        }
-                    </mat-error>
-                    
-                    }
-                    -->
-                    <!--
-                    @if (formErrorHandlerService.controlHasErrors('email')) {
-                        <mat-error>
-                            @for(errKey of formErrorHandlerService.getErrorKeys('email'); track errKey) {
-                                {{ formErrorHandlerService.getErrorMessage('email', errKey) }} 
-                            }
-                        </mat-error>
-                    }
-                    -->
-                    
-                    @if (formErrorHandlerService.controlHasErrors('email')) {
-                        <mat-error>
-                            @for(errKey of formErrorHandlerService.getErrorKeys('email'); track errKey) {
-                                @if(errKey) {
-                                    <p>
-                                        {{ formErrorHandlerService.getErrorMessage('email', errKey) }} 
-                                    </p>
-                                }
-                            }
-                        </mat-error>
-                    }
-
+                }
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-icon matSuffix>password</mat-icon>
@@ -87,6 +55,19 @@
                 Login
             </button>
         </form>
+
+        <!-- {{loginForm.get('email')?.errors}} -->
+        <!--
+        <ng-container *ngIf="loginForm.get('email')?.errors.length != 0">
+            <div class="custom-error">
+                <ng-container *ngFor="let errKey of formErrorHandlerService.getErrorKeys('email')">
+                    {{ formErrorHandlerService.getErrorMessage('email', errKey) }}
+                </ng-container>
+            </div>
+            
+       
+        </ng-container>
+        -->
         </mat-card-content>
     </mat-card>
 </div>

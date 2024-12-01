@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { shared } from '../../../shared/shared';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -8,6 +8,11 @@ import { HttpClient } from '@angular/common/http';
 import { first, Observable, tap } from 'rxjs';
 import { UserDto } from '../../models/user-dto';
 import { TokenDto } from '../../models/token-dto';
+
+interface KeyValuePair {
+    key: number;
+    value: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -30,12 +35,11 @@ export class LoginComponent implements OnInit, OnDestroy{
       }
     };
 
-
-    public errors: Map<string, string[]> = new Map<string, string[]>();
-
     returnUrl: string = "";
     isLoading$: Observable<boolean>;
-     
+    
+    errors: Map<string, KeyValuePair[]> = new Map<string, KeyValuePair[]>();
+
     // private fields
     private subs: SubSink = new SubSink();
     
@@ -77,13 +81,18 @@ export class LoginComponent implements OnInit, OnDestroy{
         //this.initForm();
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
-        
+        let x = this.loginForm.get('email')?.errors;
+        console.log(x);
+        /*
         this.loginForm.get('email')?.valueChanges.subscribe((vales) => {
             let messageKeys = this.formErrorHandlerService.getErrorKeys('email').map((key) => key);
             let messages = messageKeys.map((key) => this.formErrorHandlerService.getErrorMessage('email', key));
 
-            this.errors.set('email', messages);
+            this.errors.set('email', messages.map((message) => {
+                return { key: shared.getRandomNumber(), value: message };
+            }));
         });
+        */
     }
 
     // convenience getter for easy access to form fields
