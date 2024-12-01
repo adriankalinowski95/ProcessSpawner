@@ -1,4 +1,4 @@
-export class Authenticate {
+export class AuthenticateDto {
     readonly username: string;
     readonly password: string;
 

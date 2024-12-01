@@ -1,21 +1,35 @@
-import { AuthDto } from "./auth-dto";
+import { shared } from "../../shared/shared";
+import { TokenDto } from "./token-dto";
 
 export class UserDto {
     readonly id: number;
     readonly email: string;
-    private auth?: AuthDto;
+    private token?: TokenDto;
 
-    constructor(data: { id: number, email: string, auth?: AuthDto }) {
+    constructor(data: { id: number, email: string, token?: TokenDto }) {
         this.id = data.id;
         this.email = data.email;
-        this.auth = data.auth;
+        this.token = data.token;
     }
 
-    setAuth(auth: AuthDto): void {
-        this.auth = auth;
+    setToken(token: TokenDto): void {
+        this.token = token;
     }
 
-    getAuth(): AuthDto | undefined {
-        return this.auth;
+    getToken(): TokenDto | undefined {
+        return this.token;
+    }
+
+    static IsValid(data: any): data is UserDto {
+        if (!shared.isNotNullOrUndefined(data)) {
+            return false;
+        }
+
+        const isIdField = 'id' in data;
+        const isEmailField = 'email' in data;
+        const isTokenFiled = 'token' in data;
+        
+        return isIdField && isEmailField && isTokenFiled;
     }
 }
+

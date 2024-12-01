@@ -10,3 +10,8 @@ export function getRandomString(length:number = shared.definitions.ID_DIGITS_COU
   
   return out;
 }
+
+export function getRandomNumber(min: number = shared.definitions.ID_MIN_NUMBER, max: number = shared.definitions.ID_MAX_NUMBER): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+

@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, first, map, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, first, map, Observable, of, retry, tap } from 'rxjs';
 import { UserDto } from '../models/user-dto';
 import { environment } from '../../../../environments/environment.prod';
 import { SubSink } from 'subsink';
 import { AuthHTTPService } from './auth-http.service';
 import { Router } from '@angular/router';
 import { shared } from '../../shared/shared';
+import { TokenDto } from '../models/token-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -35,12 +36,21 @@ export class AuthService implements OnDestroy {
         this.currentUserSubject.next(user);
     }
   
-    login(email: string, password: string): Observable<UserDto | undefined> {
+    login(email: string, 
+        password: string, 
+        callback?: (response: shared.response.Object<any>) => void): Observable<UserDto | undefined> {
+        
+            /*
         this.isLoadingSubject.next(true);
-
         return this.authHttpService.login(email, password).pipe(
                 first(),
-                tap((user: UserDto) => {
+                tap((tokenResponse: shared.response.Object<TokenDto>) => {
+                    if (tokenResponse.status != shared.enums.BaseResponseStatus.Ok) {
+                        if (!callback) {
+                            return of(undefined);
+                        }
+                    }
+                
                     if (user) {
                         localStorage.setItem(this.authLocalStorageToken, JSON.stringify(user));
                         this.currentUserSubject.next(user);
@@ -54,6 +64,8 @@ export class AuthService implements OnDestroy {
                 finalize(() => {
                     this.isLoadingSubject.next(false)
                 }));
+                */
+        return of(undefined);
     }
 
     logout(): void {    
@@ -65,9 +77,14 @@ export class AuthService implements OnDestroy {
 
     getUserByToken(): Observable<UserDto | undefined> { 
         const user = this.getAuthFromLocalStorage();
-        const auth = user?.getAuth();
+        if (!UserDto.IsValid(user)) {
+            this.logout();
         
-        if (!shared.isNotNullOrUndefined(user) || !shared.isNotNullOrUndefined(auth)) {
+            return of(undefined);
+        }
+
+        const token = user?.getToken();
+        if (!shared.isNotNullOrUndefined(user) || !shared.isNotNullOrUndefined(token)) {
           this.logout();
     
           return of(undefined);
@@ -75,7 +92,7 @@ export class AuthService implements OnDestroy {
     
         this.isLoadingSubject.next(true);
     
-        return this.authHttpService.getUserByToken(auth).pipe(
+        return this.authHttpService.getUserByToken(token).pipe(
           map((user: UserDto) => {
             if (user) {
               this.currentUserSubject.next(user);

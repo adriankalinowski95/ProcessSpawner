@@ -43,4 +43,5 @@ export namespace shared {
     export import isNotNullOrUndefined = IsNotNullOrUnd.isNotNullOrUndefined;
     export import Base64Converter = Base64Conv.Base64Converter;
     export import getRandomString = CommonMeth.getRandomString;
+    export import getRandomNumber = CommonMeth.getRandomNumber;
 }

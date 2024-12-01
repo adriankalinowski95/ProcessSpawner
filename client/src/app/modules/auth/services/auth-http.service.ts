@@ -2,10 +2,10 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment.prod";
 import { Observable, of } from "rxjs";
-import { AuthDto } from "../models/auth-dto";
+import { TokenDto } from "../models/token-dto";
 import { UserDto } from "../models/user-dto";
 import { shared } from "../../shared/shared";
-import { Authenticate } from "../models/authenticate";
+import { AuthenticateDto } from "../models/authenticate-dto";
 
 @Injectable({
     providedIn: 'root',
@@ -18,27 +18,13 @@ export class AuthHTTPService {
 
     constructor(private http: HttpClient) {}
 
-    login(email: string, password: string): Observable<any> {
-        const notFoundError = new Error('Not Found');
-        if (!email || !password) {
-            return of(notFoundError);
-        }
-
-        const authenticate: Authenticate = ({ 
-            username:email, password:password}
-        );
-
-        return this.http.post<AuthDto>(this.TOKENS_URL, authenticate);
+    login(authenticate: AuthenticateDto): Observable<any> {
+        return this.http.post(this.TOKENS_URL, authenticate);
     }
 
-    getUserByToken(token: AuthDto): Observable<any> {
-        const notFoundError = new Error('Not Found');
-        if (!shared.isNotNullOrUndefined(token) || shared.isNotNullOrUndefined(token.accessToken) ) {
-            return of(notFoundError);
-        }
-        
+    getUserByToken(token: TokenDto): Observable<any> {
         // @Todo change this to a sending request!
         // Right now we are returnig current user from local storage
-        return this.http.post<UserDto>(this.USER_GET_BY_TOKEN_URL, null);
+        return this.http.post(this.USER_GET_BY_TOKEN_URL, null);
     }
 }

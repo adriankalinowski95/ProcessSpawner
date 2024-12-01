@@ -1,7 +1,38 @@
+
 .styled-card {
     display: flex; 
     flex-direction: column; 
     margin: 100px auto;
     max-width: 400px;
     padding: 16px;
+}
+
+.styled-card .content {
+    display: grid;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 12px;
+    align-content: center;   
+}
+
+.is-valid {
+    border-color: green;
+}
+
+.is-invalid {
+    border-color: red;
+}
+
+:host ::ng-deep .mat-mdc-form-field-bottom-align {
+    padding-top: 5px;
+}
+
+:host ::ng-deep .mat-mdc-form-field-bottom-align::before {
+    height: 10px !important;
+    content: none;
+}
+
+:host ::ng-deep .mat-mdc-form-field-error-wrapper {
+    position: relative !important;
 }

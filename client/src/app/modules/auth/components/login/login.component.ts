@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { first, Observable, tap } from 'rxjs';
 import { UserDto } from '../../models/user-dto';
+import { TokenDto } from '../../models/token-dto';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,18 @@ export class LoginComponent implements OnInit, OnDestroy{
     };
     
     public loginForm: FormGroup;
-    hasError: boolean = false;
+
+    public formErrorHandlerService: shared.services.FormErrorHandling;
+
+    private validationMessages = {
+      email: {
+        required: 'Email is required!'
+      }
+    };
+
+
+    public errors: Map<string, string[]> = new Map<string, string[]>();
+
     returnUrl: string = "";
     isLoading$: Observable<boolean>;
      
@@ -31,9 +43,7 @@ export class LoginComponent implements OnInit, OnDestroy{
         private fb: FormBuilder,
         private authService: AuthService,
         private route: ActivatedRoute,
-        private router: Router,
-        private http: HttpClient,
-        private notificationService: shared.services.NotificationService) {
+        private router: Router) {
         this.isLoading$ = this.authService.isLoading$;
         // redirect to home if already logged in
         if (this.authService.currentUserValue) {
@@ -58,13 +68,22 @@ export class LoginComponent implements OnInit, OnDestroy{
                     Validators.maxLength(100),
                 ]),
                 ],
-            });
+        });
+
+        this.formErrorHandlerService = new shared.services.FormErrorHandling(this.loginForm, this.validationMessages);
     }
 
     ngOnInit(): void {
         //this.initForm();
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
+        
+        this.loginForm.get('email')?.valueChanges.subscribe((vales) => {
+            let messageKeys = this.formErrorHandlerService.getErrorKeys('email').map((key) => key);
+            let messages = messageKeys.map((key) => this.formErrorHandlerService.getErrorMessage('email', key));
+
+            this.errors.set('email', messages);
+        });
     }
 
     // convenience getter for easy access to form fields
@@ -95,21 +114,35 @@ export class LoginComponent implements OnInit, OnDestroy{
     }
 
     submit() {
-        this.hasError = false;
+        const errorHandler = (response: shared.response.ObjectOperation<any>) => {
+            for (let err of response.validationResult) {
+                const field = err.field.toLowerCase();
+      
+                this.loginForm.get(field)?.setErrors({ [err.code]: err.message });
+            }
+        };
+
+        /*
         const loginSubscr = this.authService.login(this.form["email"].value, this.form["password"].value).pipe(
             first(),
             tap((user: UserDto | undefined) => {
               if (user) {
                 this.router.navigate([this.returnUrl]);
               } else {
-                this.hasError = true;
+                errorHandle(operationResponse);
               }
             })).subscribe();
         
         this.subs.add(loginSubscr);
+        */
     }
 
     ngOnDestroy() {
         this.subs.unsubscribe();
     }
+
+    trackByError(index: number, error: string): string {
+        return error;
+      }
+      
 }
