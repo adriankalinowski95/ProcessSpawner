@@ -6,6 +6,7 @@ import { AuthHTTPService } from './auth-http.service';
 import { Router } from '@angular/router';
 import { shared } from '../../shared/shared';
 import { TokenDto } from '../models/token-dto';
+import { IsUserAuthValid, UserAuth } from '../models/user-auth';
 
 @Injectable({
   providedIn: 'root'
@@ -13,31 +14,31 @@ import { TokenDto } from '../models/token-dto';
 export class AuthService {
     private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
 
-    currentUserSubject: BehaviorSubject<UserDto | undefined>;
+    currentUserSubject: BehaviorSubject<UserAuth | undefined>;
     isLoadingSubject: BehaviorSubject<boolean>;
 
-    currentUser$: Observable<UserDto | undefined>;
+    currentUser$: Observable<UserAuth | undefined>;
     isLoading$: Observable<boolean>;
   
     constructor(private authHttpService: AuthHTTPService, private router: Router) { 
         this.isLoadingSubject = new BehaviorSubject<boolean>(false);
-        this.currentUserSubject = new BehaviorSubject<UserDto | undefined>(undefined);
+        this.currentUserSubject = new BehaviorSubject<UserAuth | undefined>(undefined);
         this.currentUser$ = this.currentUserSubject.asObservable();
         this.isLoading$ = this.isLoadingSubject.asObservable();
     }
 
-    get currentUserValue(): UserDto | undefined{
+    get currentUserValue(): UserAuth | undefined{
         return this.currentUserSubject.value;
     }
     
-    set currentUserValue(user: UserDto) {
+    set currentUserValue(user: UserAuth) {
         this.currentUserSubject.next(user);
     }
   
     login(
         email: string, 
         password: string, 
-        responseCallback?: (response: shared.response.Object<any>) => void): Observable<UserDto | undefined> {
+        responseCallback?: (response: shared.response.Object<any>) => void): Observable<UserAuth | undefined> {
         
         this.isLoadingSubject.next(true);
 
@@ -52,9 +53,19 @@ export class AuthService {
                         throw new Error(tokenResponse.errorMessage);
                     }
 
-                    return this.authHttpService.getUserByToken(tokenResponse.object);
+                    return this.authHttpService.getUserByToken(tokenResponse.object).pipe(
+                        first(),
+                        map((userResponse: shared.response.Object<UserDto>) => 
+                            [tokenResponse, userResponse ] as [shared.response.Object<TokenDto>, shared.response.Object<UserDto>]
+                        )
+                    );
                 }),
-                switchMap((userResponse: shared.response.Object<UserDto>) => {
+                switchMap((response: [shared.response.Object<TokenDto>, shared.response.Object<UserDto>] | undefined) => {
+                    if (!response) {
+                        return of(undefined);
+                    }
+
+                    const [tokenResponse, userResponse] = response;
                     if (userResponse.status != shared.enums.BaseResponseStatus.Ok) {
                         if (!responseCallback) {
                             return of(undefined);
@@ -63,15 +74,18 @@ export class AuthService {
                         throw new Error(userResponse.errorMessage);
                     }
 
-                    if (!this.setAuthFromLocalStorage(new UserDto(userResponse.object))) {
-                        throw new Error("Error setting user data to local storage");
+                    const userAuth: UserAuth = {
+                        user: userResponse.object,
+                        token: tokenResponse.object
+                    };
 
-                        return of(undefined);
+                    if (!this.setAuthFromLocalStorage(userAuth)) {
+                        throw new Error("Error setting user data to local storage");
                     }
 
-                    this.currentUserSubject.next(userResponse.object);
+                    this.currentUserSubject.next(userAuth);
 
-                    return of(userResponse.object);
+                    return of(userAuth);
                 }),
                 catchError((err) => {
                     if (responseCallback) {
@@ -96,39 +110,45 @@ export class AuthService {
         });
     }   
 
-    getUserByToken(): Observable<UserDto | undefined> { 
-        const user = this.getAuthFromLocalStorage();
-        if (!UserDto.IsValid(user)) {
+    getUserByToken(): Observable<UserAuth | undefined> { 
+        const userAuth = this.getAuthFromLocalStorage();
+        if (!shared.isNotNullOrUndefined(userAuth)) {
             this.logout();
         
             return of(undefined);
         }
 
-        const token = user.token;
-        if (!shared.isNotNullOrUndefined(user) || !shared.isNotNullOrUndefined(token)) {
+        if (!IsUserAuthValid(userAuth)) {
             this.logout();
-    
+        
             return of(undefined);
         }
     
         this.isLoadingSubject.next(true);
     
-        return this.authHttpService.getUserByToken(token).pipe(
-            map((user: UserDto) => {
+        return this.authHttpService.getUserByToken(userAuth.token).pipe(
+            map((user: shared.response.Object<UserDto>) => {
                 if (user) {
-                  this.currentUserSubject.next(user);
+                    const newUserAuth: UserAuth = {
+                        user: user.object,
+                        token: userAuth.token
+                    };
+
+                    this.currentUserSubject.next(newUserAuth);
+
+                    this.setAuthFromLocalStorage(newUserAuth);
                 } else {
                   this.logout();
                 }
 
-                return user;
+                return undefined;
             }),
             finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
-    private setAuthFromLocalStorage(userAuth: UserDto): boolean {
-        if (shared.isNotNullOrUndefined(userAuth) && userAuth.token) {
+    private setAuthFromLocalStorage(userAuth: UserAuth): boolean {
+        if (shared.isNotNullOrUndefined(userAuth)) {
             localStorage.setItem(this.authLocalStorageToken, JSON.stringify(userAuth));
 
             return true;
@@ -137,7 +157,7 @@ export class AuthService {
         return false;
     }
 
-    getAuthFromLocalStorage(): UserDto | undefined {
+    getAuthFromLocalStorage(): UserAuth | undefined {
         try {
             const lsValue = localStorage.getItem(this.authLocalStorageToken);
             if (!lsValue) {

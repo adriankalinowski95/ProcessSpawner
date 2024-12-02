@@ -88,7 +88,6 @@ namespace Authorization.Infrastructure.Services {
             var jwtKey = m_config.GetSection("Jwt:Key").Get<string>();
             var jwtIssuer = m_config.GetSection("Jwt:Issuer").Get<string>();
 
-
             var accToken = new JwtBuilder()
                     .WithAlgorithm(new HMACSHA256Algorithm())
                     .WithSecret(jwtKey)

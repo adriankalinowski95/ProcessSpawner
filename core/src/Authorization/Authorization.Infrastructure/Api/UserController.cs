@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Xml.Linq;
 using Shared.Generic.RestApi;
 using Authorization.Application.DTOs;
+using AutoMapper;
 
 namespace Authorization.Infrastructure.Api {
     [Route("api/[controller]")]
@@ -19,11 +20,13 @@ namespace Authorization.Infrastructure.Api {
         private readonly ILogger<UserController> m_logger;
         private readonly IUserService m_userService;
         private readonly IUserAuthenticationService m_userAuthenticationService;
+        private readonly IMapper m_mapper;
 
-        public UserController(ILogger<UserController> logger, IUserService userService, IUserAuthenticationService userAuthenticationService) {
+        public UserController(ILogger<UserController> logger, IUserService userService, IUserAuthenticationService userAuthenticationService, IMapper mapper) {
             m_logger = logger;
             m_userService = userService;
             m_userAuthenticationService = userAuthenticationService;
+            m_mapper = mapper;
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -62,8 +65,8 @@ namespace Authorization.Infrastructure.Api {
             return new ObjectResponse<UserDto> {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
-                Object = m_userAuthenticationService.GetCurrentUserDto();
-        };
+                Object = m_mapper.Map<UserDto>(m_userAuthenticationService.GetCurrentUser())
+            };
+        }
     }
-}
 }

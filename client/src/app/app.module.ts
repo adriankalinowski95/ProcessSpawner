@@ -42,7 +42,7 @@ function appInitializer(authService: AuthService) {
     MatLabel
   ],
   providers: [
-    provideClientHydration(),
+    // provideClientHydration(),
     { 
         provide: HTTP_INTERCEPTORS, 
         useClass: JwtInterceptor, 

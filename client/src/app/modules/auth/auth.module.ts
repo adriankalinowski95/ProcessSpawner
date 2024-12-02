@@ -13,31 +13,7 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-
-const routes: Routes = [
-    {
-      path: '',
-      component: AuthComponent,
-      children: [
-        {
-          path: '',
-          redirectTo: 'login',
-          pathMatch: 'full',
-        },
-        {
-          path: 'login',
-          component: LoginComponent,
-          data: { returnUrl: window.location.pathname },
-        },
-        {
-          path: 'registration',
-          component: RegistrationComponent,
-        },
-        { path: '', redirectTo: 'login', pathMatch: 'full' },
-        { path: '**', redirectTo: 'login', pathMatch: 'full' },
-      ],
-    },
-  ];
+import { AuthRoutingModule } from './auth-routing.module';
 
 @NgModule({
   declarations: [
@@ -47,7 +23,7 @@ const routes: Routes = [
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes),
+    AuthRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

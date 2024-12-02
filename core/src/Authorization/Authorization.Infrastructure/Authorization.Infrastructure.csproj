@@ -14,17 +14,20 @@
 		<None Remove="Repositories\" />
 		<None Remove="Mapping\" />
 		<None Remove="Api\" />
+		<None Remove="Tools\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Services\" />
 		<Folder Include="Repositories\" />
 		<Folder Include="Mapping\" />
 		<Folder Include="Api\" />
+		<Folder Include="Tools\" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Authorization.Application\Authorization.Application.csproj" />

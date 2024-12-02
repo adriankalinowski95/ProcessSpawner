@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { first, Observable, tap } from 'rxjs';
 import { UserDto } from '../../models/user-dto';
 import { TokenDto } from '../../models/token-dto';
+import { UserAuth } from '../../models/user-auth';
 
 interface KeyValuePair {
     key: number;
@@ -47,11 +48,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router) {
         this.isLoading$ = this.authService.isLoading$;
-
-        if (this.authService.currentUserValue) {
-            this.router.navigate(['/']);
-        }
-
         this.loginForm = this.fb.group({
             email: [
                 this.defaultAuth.email,
@@ -73,12 +69,18 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
 
         this.formErrorHandlerService = new shared.services.FormErrorHandling(this.loginForm, this.validationMessages);
+
+        if (this.authService.currentUserValue) {
+            this.router.navigateByUrl('/');
+        }
     }
 
     ngOnInit(): void {
         //this.initForm();
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
+
+        console.log("return url: " + this.returnUrl);
     }
 
     // convenience getter for easy access to form fields
@@ -117,12 +119,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         this.authService.login(this.form["email"].value, this.form["password"].value, errorHandler).pipe(
             first(),
-            tap((user: UserDto | undefined) => {
+            tap((user: UserAuth | undefined) => {
                 if (shared.isNotNullOrUndefined(user)) {
-                    this.router.navigate([this.returnUrl]);
+                    // this.router.navigate([this.returnUrl]);
+                    this.router.navigate(['/dashboard']);
                 }
-            })).subscribe(
-        );
+            })).subscribe();
     }
 
     ngOnDestroy() {

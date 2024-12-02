@@ -8,8 +8,5 @@ namespace Authorization.Application.DTOs {
 
         [JsonPropertyName("email")]
         public string Email { get; set; }
-
-        [JsonPropertyName("token")]
-        public TokenDto Token { get; set; }
     }
 }

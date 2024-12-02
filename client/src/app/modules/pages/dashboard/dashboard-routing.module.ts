@@ -1,0 +1,21 @@
+import { RouterModule, Routes } from "@angular/router";
+import { DashboardComponent } from "./componenets/dashboard/dashboard.component";
+import { NgModule } from "@angular/core";
+
+const routes: Routes = [
+    {   
+        path: '', 
+        redirectTo: 'common', 
+        pathMatch: 'full' 
+    },
+    {
+      path: 'common',
+      component: DashboardComponent,
+    }
+  ];
+  
+  @NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
+  })
+  export class DashboardRoutingModule {}
