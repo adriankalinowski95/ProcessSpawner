@@ -10,7 +10,7 @@ namespace core.Settings {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
 
-            DbPath = System.IO.Path.Join(path, "main.db");
+            DbPath = System.IO.Path.Join(path, "main2.db");
             Console.WriteLine("path:" + path);
         }
 

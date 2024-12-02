@@ -22,12 +22,16 @@
                 name="email" 
                 formControlName="email" 
                 autocomplete="off"/>
-                @if (formErrorHandlerService.controlHasErrors('email')) {
-                    <mat-error *ngFor="let errorKey of formErrorHandlerService.getErrorKeys('email')">
-                        {{ formErrorHandlerService.getErrorMessage('email', errorKey) }}
-                    </mat-error>
-                }
             </mat-form-field>
+
+            <ng-container *ngIf="loginForm.controls['email'].dirty">
+                <div class="custom-error">
+                    <ng-container class="custom-error" *ngFor="let errKey of formErrorHandlerService.getErrorKeys('email')">
+                        {{ formErrorHandlerService.getErrorMessage('email', errKey) }}
+                    </ng-container>
+                </div>
+            </ng-container>
+
             <mat-form-field appearance="outline">
                 <mat-icon matSuffix>password</mat-icon>
                 <mat-label>Password</mat-label>
@@ -37,37 +41,16 @@
                     name="password" 
                     autocomplete="off"
                     formControlName="password"/>
-                    @if (formErrorHandlerService.controlHasErrors('password')) {
-                        <!--
-                        <mat-error *ngFor="let errorKey of formErrorHandlerService.getErrorKeys('password')">
-                            {{ formErrorHandlerService.getErrorMessage('password', errorKey) }}
-                        </mat-error>
-                        -->
-                        <!--
-                        <mat-error>
-                            {{ formErrorHandlerService.getErrorMessageAggregate('password') }}
-                        </mat-error>
-                        -->
-                    }
             </mat-form-field>
+
+            <div class="custom-error">
+                {{ lastValidateMessage }}
+            </div>
 
             <button mat-raised-button color="primary" (click)="submit()">
                 Login
             </button>
         </form>
-
-        <!-- {{loginForm.get('email')?.errors}} -->
-        <!--
-        <ng-container *ngIf="loginForm.get('email')?.errors.length != 0">
-            <div class="custom-error">
-                <ng-container *ngFor="let errKey of formErrorHandlerService.getErrorKeys('email')">
-                    {{ formErrorHandlerService.getErrorMessage('email', errKey) }}
-                </ng-container>
-            </div>
-            
-       
-        </ng-container>
-        -->
         </mat-card-content>
     </mat-card>
 </div>

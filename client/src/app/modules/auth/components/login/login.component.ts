@@ -19,29 +19,27 @@ interface KeyValuePair {
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit, OnDestroy{
+export class LoginComponent implements OnInit, OnDestroy {
+    private subs: SubSink = new SubSink();
+    private validationMessages = {
+        email: {
+            required: 'Email is required!'
+        },
+        password: {
+            required: 'Password is required'
+        }
+    };
+    private returnUrl: string = "";
+
     defaultAuth: any = {
         email: 'admin@gmail.com',
         password: 'admin123456',
     };
     
     public loginForm: FormGroup;
-
     public formErrorHandlerService: shared.services.FormErrorHandling;
-
-    private validationMessages = {
-      email: {
-        required: 'Email is required!'
-      }
-    };
-
-    returnUrl: string = "";
-    isLoading$: Observable<boolean>;
-    
-    errors: Map<string, KeyValuePair[]> = new Map<string, KeyValuePair[]>();
-
-    // private fields
-    private subs: SubSink = new SubSink();
+    public lastValidateMessage: string = "";
+    public isLoading$: Observable<boolean>;
     
     constructor(
         private fb: FormBuilder,
@@ -49,9 +47,9 @@ export class LoginComponent implements OnInit, OnDestroy{
         private route: ActivatedRoute,
         private router: Router) {
         this.isLoading$ = this.authService.isLoading$;
-        // redirect to home if already logged in
+
         if (this.authService.currentUserValue) {
-          this.router.navigate(['/']);
+            this.router.navigate(['/']);
         }
 
         this.loginForm = this.fb.group({
@@ -61,7 +59,7 @@ export class LoginComponent implements OnInit, OnDestroy{
                     Validators.required,
                     Validators.email,
                     Validators.minLength(3),
-                    Validators.maxLength(320), // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
+                    Validators.maxLength(320),
                 ]),
             ],
             password: [
@@ -71,7 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy{
                     Validators.minLength(3),
                     Validators.maxLength(100),
                 ]),
-                ],
+            ],
         });
 
         this.formErrorHandlerService = new shared.services.FormErrorHandling(this.loginForm, this.validationMessages);
@@ -81,18 +79,6 @@ export class LoginComponent implements OnInit, OnDestroy{
         //this.initForm();
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
-        let x = this.loginForm.get('email')?.errors;
-        console.log(x);
-        /*
-        this.loginForm.get('email')?.valueChanges.subscribe((vales) => {
-            let messageKeys = this.formErrorHandlerService.getErrorKeys('email').map((key) => key);
-            let messages = messageKeys.map((key) => this.formErrorHandlerService.getErrorMessage('email', key));
-
-            this.errors.set('email', messages.map((message) => {
-                return { key: shared.getRandomNumber(), value: message };
-            }));
-        });
-        */
     }
 
     // convenience getter for easy access to form fields
@@ -123,35 +109,23 @@ export class LoginComponent implements OnInit, OnDestroy{
     }
 
     submit() {
-        const errorHandler = (response: shared.response.ObjectOperation<any>) => {
-            for (let err of response.validationResult) {
-                const field = err.field.toLowerCase();
-      
-                this.loginForm.get(field)?.setErrors({ [err.code]: err.message });
-            }
+        this.lastValidateMessage = "";
+
+        const errorHandler = (response: shared.response.Object<any>) => {
+            this.lastValidateMessage = response.errorMessage.toString();
         };
 
-        /*
-        const loginSubscr = this.authService.login(this.form["email"].value, this.form["password"].value).pipe(
+        this.authService.login(this.form["email"].value, this.form["password"].value, errorHandler).pipe(
             first(),
             tap((user: UserDto | undefined) => {
-              if (user) {
-                this.router.navigate([this.returnUrl]);
-              } else {
-                errorHandle(operationResponse);
-              }
-            })).subscribe();
-        
-        this.subs.add(loginSubscr);
-        */
+                if (shared.isNotNullOrUndefined(user)) {
+                    this.router.navigate([this.returnUrl]);
+                }
+            })).subscribe(
+        );
     }
 
     ngOnDestroy() {
         this.subs.unsubscribe();
     }
-
-    trackByError(index: number, error: string): string {
-        return error;
-      }
-      
 }

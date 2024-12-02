@@ -28,10 +28,12 @@ namespace Authorization.Infrastructure.Api {
 
         [HttpPost("accesstoken", Name = "login")]
         public ObjectResponse<TokenDto> Login([FromBody] Authorization.Application.DTOs.AuthenticationDto auth) {
+            var token = m_userAuthenticationService.Login(auth);
+
             return new ObjectResponse<TokenDto> {
                 ErrorMessage = string.Empty,
                 Status = BaseResponseStatus.Ok,
-                Object = m_userAuthenticationService.Login(auth)
+                Object = token
             };
         }
 

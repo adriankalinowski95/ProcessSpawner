@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -14,6 +14,7 @@ import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { JwtInterceptor } from './modules/auth/services/jwt.interceptor';
 
 function appInitializer(authService: AuthService) {
     return () => {
@@ -42,6 +43,11 @@ function appInitializer(authService: AuthService) {
   ],
   providers: [
     provideClientHydration(),
+    { 
+        provide: HTTP_INTERCEPTORS, 
+        useClass: JwtInterceptor, 
+        multi: true 
+    },
     {
         provide: APP_INITIALIZER,
         useFactory: appInitializer,
@@ -52,6 +58,6 @@ function appInitializer(authService: AuthService) {
     provideAnimations(),
     provideToastr(),
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

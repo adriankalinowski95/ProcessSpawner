@@ -44,6 +44,31 @@ namespace Authorization.Infrastructure.Services {
             return user;
         }
 
+        public UserDto GetCurrentUserDto() {
+            if (m_httpContextAccessor.HttpContext == null) {
+                throw new UnauthorizedAccessException("http context doesn't exist!");
+            }
+
+            var userClaims = m_httpContextAccessor.HttpContext.User;
+            if (userClaims == null || userClaims.Identity == null || !userClaims.Identity.IsAuthenticated) {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            var userToken = userClaims.Claims.FirstOrDefault(x => x.Type == "username");
+            if (userToken == null) {
+                throw new UnauthorizedAccessException("Claims doesn't user type!");
+            }
+
+            var user = m_userRepository.GetByName(userToken.Value);
+            if (user == null) {
+                throw new UnauthorizedAccessException("User doesn't exist!");
+            }
+
+            return new UserDto {
+
+            };
+        }
+
         public TokenDto Login(AuthenticationDto authentication) {
             User user = m_userRepository.GetByName(authentication.Username);
             if (user == null) {
@@ -62,13 +87,15 @@ namespace Authorization.Infrastructure.Services {
             // @Todo move this shit to jwttokenservice
             var jwtKey = m_config.GetSection("Jwt:Key").Get<string>();
             var jwtIssuer = m_config.GetSection("Jwt:Issuer").Get<string>();
+
+
             var accToken = new JwtBuilder()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(jwtKey)
-                .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-                .AddClaim("iss", jwtIssuer)
-                .AddClaim("username", user.Username)
-                .Encode();
+                    .WithAlgorithm(new HMACSHA256Algorithm())
+                    .WithSecret(jwtKey)
+                    .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                    .AddClaim("iss", jwtIssuer)
+                    .AddClaim("username", user.Username)
+                    .Encode();
 
             return new TokenDto {
                 AccessToken = accToken,

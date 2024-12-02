@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Xml.Linq;
 using Shared.Generic.RestApi;
+using Authorization.Application.DTOs;
 
 namespace Authorization.Infrastructure.Api {
     [Route("api/[controller]")]
@@ -56,13 +57,13 @@ namespace Authorization.Infrastructure.Api {
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("getByToken", Name = "getByToken")]
-        public async Task<ObjectResponse<User>> GetByToken() {
-            return new ObjectResponse<User> {
+        [HttpPost("GetByToken", Name = "GetByToken")]
+        public async Task<ObjectResponse<UserDto>> GetByToken() {
+            return new ObjectResponse<UserDto> {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
-                Object = m_userAuthenticationService.GetCurrentUser()
-            };
-        }
+                Object = m_userAuthenticationService.GetCurrentUserDto();
+        };
     }
+}
 }
