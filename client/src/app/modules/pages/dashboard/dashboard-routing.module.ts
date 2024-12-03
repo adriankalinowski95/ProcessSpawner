@@ -3,13 +3,8 @@ import { DashboardComponent } from "./componenets/dashboard/dashboard.component"
 import { NgModule } from "@angular/core";
 
 const routes: Routes = [
-    {   
-        path: '', 
-        redirectTo: 'common', 
-        pathMatch: 'full' 
-    },
     {
-      path: 'common',
+      path: '',
       component: DashboardComponent,
     }
   ];

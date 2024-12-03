@@ -35,7 +35,6 @@ import { AuthRoutingModule } from './auth-routing.module';
     ToastrModule.forRoot()
   ],
   providers: [
-    provideAnimations(),
     provideToastr(),
   ],
 })

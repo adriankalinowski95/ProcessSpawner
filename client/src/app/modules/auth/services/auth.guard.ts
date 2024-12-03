@@ -9,7 +9,7 @@ export class AuthGuard  {
   constructor(private authService: AuthService, private router: Router) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const currentUser = this.authService.currentUserValue;
+        const currentUser = this.authService.getAuthFromLocalStorage();
         if (currentUser) {
             // logged in so return true
             return true;

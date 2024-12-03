@@ -42,7 +42,8 @@ function appInitializer(authService: AuthService) {
     MatLabel
   ],
   providers: [
-    // provideClientHydration(),
+    provideAnimations(),
+    AuthService,
     { 
         provide: HTTP_INTERCEPTORS, 
         useClass: JwtInterceptor, 
@@ -53,10 +54,7 @@ function appInitializer(authService: AuthService) {
         useFactory: appInitializer,
         multi: true,
         deps: [ AuthService ],
-    },
-    provideAnimationsAsync(),
-    provideAnimations(),
-    provideToastr(),
+    }
   ],
   bootstrap: [ AppComponent ]
 })

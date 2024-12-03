@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             required: 'Password is required'
         }
     };
+
     private returnUrl: string = "";
 
     defaultAuth: any = {
@@ -48,26 +49,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router) {
         this.isLoading$ = this.authService.isLoading$;
-        this.loginForm = this.fb.group({
-            email: [
-                this.defaultAuth.email,
-                Validators.compose([
-                    Validators.required,
-                    Validators.email,
-                    Validators.minLength(3),
-                    Validators.maxLength(320),
-                ]),
-            ],
-            password: [
-                this.defaultAuth.password,
-                Validators.compose([
-                    Validators.required,
-                    Validators.minLength(3),
-                    Validators.maxLength(100),
-                ]),
-            ],
-        });
-
+        this.initForm();
         this.formErrorHandlerService = new shared.services.FormErrorHandling(this.loginForm, this.validationMessages);
 
         if (this.authService.currentUserValue) {
@@ -76,16 +58,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        //this.initForm();
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
-
-        console.log("return url: " + this.returnUrl);
-    }
-
-    // convenience getter for easy access to form fields
-    get form() {
-        return this.loginForm.controls;
     }
 
     initForm() {
@@ -117,12 +91,11 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.lastValidateMessage = response.errorMessage.toString();
         };
 
-        this.authService.login(this.form["email"].value, this.form["password"].value, errorHandler).pipe(
+        this.authService.login(this.loginForm.controls["email"].value, this.loginForm.controls["password"].value, errorHandler).pipe(
             first(),
             tap((user: UserAuth | undefined) => {
                 if (shared.isNotNullOrUndefined(user)) {
-                    // this.router.navigate([this.returnUrl]);
-                    this.router.navigate(['/dashboard']);
+                    this.router.navigate(['/']);
                 }
             })).subscribe();
     }

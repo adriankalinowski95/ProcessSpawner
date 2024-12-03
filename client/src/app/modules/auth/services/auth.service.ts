@@ -12,6 +12,7 @@ import { IsUserAuthValid, UserAuth } from '../models/user-auth';
   providedIn: 'root'
 })
 export class AuthService {
+    private id: number;
     private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
 
     currentUserSubject: BehaviorSubject<UserAuth | undefined>;
@@ -25,9 +26,13 @@ export class AuthService {
         this.currentUserSubject = new BehaviorSubject<UserAuth | undefined>(undefined);
         this.currentUser$ = this.currentUserSubject.asObservable();
         this.isLoading$ = this.isLoadingSubject.asObservable();
+
+        this.id = shared.getRandomNumber();
     }
 
-    get currentUserValue(): UserAuth | undefined{
+    get currentUserValue(): UserAuth | undefined {
+        console.log("AuthService -> get currentUserValue -> this.id", this.id);
+        
         return this.currentUserSubject.value;
     }
     
@@ -79,11 +84,9 @@ export class AuthService {
                         token: tokenResponse.object
                     };
 
-                    if (!this.setAuthFromLocalStorage(userAuth)) {
+                    if (!this.setAuthForService(userAuth)) {
                         throw new Error("Error setting user data to local storage");
                     }
-
-                    this.currentUserSubject.next(userAuth);
 
                     return of(userAuth);
                 }),
@@ -104,7 +107,8 @@ export class AuthService {
     }
 
     logout(): void {    
-        localStorage.removeItem(this.authLocalStorageToken);
+        this.removeAuthForService();
+
         this.router.navigate(['/auth/login'], {
           queryParams: {},
         });
@@ -134,9 +138,10 @@ export class AuthService {
                         token: userAuth.token
                     };
 
-                    this.currentUserSubject.next(newUserAuth);
+                    if (!this.setAuthFromLocalStorage(newUserAuth)) {
+                        throw new Error("Error setting user data to local storage");
+                    }
 
-                    this.setAuthFromLocalStorage(newUserAuth);
                 } else {
                   this.logout();
                 }
@@ -145,16 +150,6 @@ export class AuthService {
             }),
             finalize(() => this.isLoadingSubject.next(false))
         );
-    }
-
-    private setAuthFromLocalStorage(userAuth: UserAuth): boolean {
-        if (shared.isNotNullOrUndefined(userAuth)) {
-            localStorage.setItem(this.authLocalStorageToken, JSON.stringify(userAuth));
-
-            return true;
-        }
-
-        return false;
     }
 
     getAuthFromLocalStorage(): UserAuth | undefined {
@@ -172,5 +167,26 @@ export class AuthService {
             
             return undefined;
         }
+    }
+
+    private setAuthFromLocalStorage(userAuth: UserAuth): boolean {
+        if (shared.isNotNullOrUndefined(userAuth)) {
+            localStorage.setItem(this.authLocalStorageToken, JSON.stringify(userAuth));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private setAuthForService(userAuth: UserAuth): boolean {
+        this.currentUserSubject.next(userAuth);
+
+        return this.setAuthFromLocalStorage(userAuth);
+    }
+
+    private removeAuthForService(): void {
+        this.currentUserSubject.next(undefined);
+        localStorage.removeItem(this.authLocalStorageToken);
     }
 }

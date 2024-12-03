@@ -16,14 +16,12 @@ export const routes: Routes = [
     },
     */
     {
-        path: 'dashboard',
+        path: '',
         canActivate: [ AuthGuard ],
         loadChildren: () =>
-           // import('./modules/layout/layout.module').then((m) => m.LayoutModule),
-            import('./modules/pages/dashboard/dashboard.module').then((m) => m.DashboardModule)
+           import('./modules/layout/layout.module').then((m) => m.LayoutModule),
       },
-      { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-      { path: '**', redirectTo: '/dashboard' },
+      { path: '**', redirectTo: 'error/404' },
 ];
 
 @NgModule({
