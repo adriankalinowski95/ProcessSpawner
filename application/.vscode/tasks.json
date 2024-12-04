@@ -144,8 +144,8 @@
         {
             "label": "preLaunchAll",
             "dependsOn": [
-                "clean_build",
-                "create_builder_folder",
+                //"clean_build",
+                //"create_builder_folder",
                 "cmake_build",
                 "make_compile"
             ],

@@ -1,0 +1,43 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ProcessSpawner.Protobuf";
+
+package Communication;
+
+service ManagerService {
+  rpc SpawnProcess(SpawnRequest) returns (SpawnResponse);
+  rpc StopProcess(StopRequest) returns (StopResponse);
+}
+
+service CoreService {
+  rpc SendStatus(StatusRequest) returns (StatusResponse);
+}
+
+message SpawnRequest {
+  string process_type = 1;
+  map<string, string> parameters = 2;
+}
+
+message SpawnResponse {
+  bool success = 1;
+  string message = 2;
+  string process_id = 3;
+}
+
+message StopRequest {
+  string process_id = 1;
+}
+
+message StopResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message StatusRequest {
+  string process_id = 1;
+  string status = 2;
+}
+
+message StatusResponse {
+  bool received = 1;
+}

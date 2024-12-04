@@ -7,10 +7,10 @@ import { AuthService } from '../../../auth/services/auth.service';
   styleUrl: './toolbar.component.scss'
 })
 export class ToolbarComponent {
-    private isExpanded: boolean = false;
-
     @Output()
     isExpandedEvent = new EventEmitter<boolean>();
+    
+    private isExpanded: boolean = false;
 
     constructor(private authService: AuthService) {}
     

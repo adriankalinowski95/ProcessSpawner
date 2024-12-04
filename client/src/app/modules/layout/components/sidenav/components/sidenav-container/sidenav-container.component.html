@@ -1,0 +1,8 @@
+<mat-sidenav-container autosize class="custom-sidenav-container">
+    <mat-sidenav [opened]="isOpened()" mode="side" class="custom-sidenav" [style.width]="sideNavWidth()" >
+        <app-sidenav [isExpanded]="isExpanded"></app-sidenav>
+    </mat-sidenav>
+    <mat-sidenav-content class="content" [style.margin-left]="sideNavWidth()">
+        <app-content></app-content>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

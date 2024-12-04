@@ -43,5 +43,8 @@
 		<ProjectReference Include="..\src\Shared\Shared.Tools\Shared.Tools.csproj">
 		  <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
 		</ProjectReference>
+		<ProjectReference Include="..\src\ProcessSpawner\ProcessSpawner.Infrastructure\ProcessSpawner.Infrastructure.csproj">
+		  <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+		</ProjectReference>
 	</ItemGroup>
 </Project>

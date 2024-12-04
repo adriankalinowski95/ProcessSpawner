@@ -9,12 +9,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { ContentComponent } from './components/content/content.component';
-import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { SidenavContainerComponent } from './components/sidenav/components/sidenav-container/sidenav-container.component';
 import { MatListModule } from '@angular/material/list';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SidenavComponent } from './components/sidenav/components/sidenav/sidenav.component';
 
 const routes: Routes = [
     {
@@ -28,8 +29,9 @@ const routes: Routes = [
   declarations: [
     LayoutComponent,
     ContentComponent,
-    SidenavComponent,
-    ToolbarComponent
+    SidenavContainerComponent,
+    ToolbarComponent,
+    SidenavComponent
   ],
   imports: [
     CommonModule,

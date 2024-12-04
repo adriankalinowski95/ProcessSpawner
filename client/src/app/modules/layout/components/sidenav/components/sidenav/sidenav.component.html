@@ -1,0 +1,23 @@
+<div class="sidenav-header">
+    <div class="header-text" [class.hide-header-text]="!isExpanded">
+        @if (authService.getAuthFromLocalStorage(); as userAuth) {
+            <h2>Email</h2>
+            <p>{{ userAuth.user.email }}</p>
+        }
+    </div>
+</div>
+
+<mat-nav-list>
+    @for(item of menuItems; track item) {
+        <a  mat-list-item 
+            [routerLink]="item.route"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [activated]="rla.isActive"> 
+            <mat-icon matListItemIcon> {{item.icon}} </mat-icon>
+            @if (isExpanded) {
+                <span matListItemTitle> {{item.label }} </span>
+            }
+        </a>
+    }
+</mat-nav-list>

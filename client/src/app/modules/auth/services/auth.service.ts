@@ -12,7 +12,6 @@ import { IsUserAuthValid, UserAuth } from '../models/user-auth';
   providedIn: 'root'
 })
 export class AuthService {
-    private id: number;
     private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
 
     currentUserSubject: BehaviorSubject<UserAuth | undefined>;
@@ -26,13 +25,9 @@ export class AuthService {
         this.currentUserSubject = new BehaviorSubject<UserAuth | undefined>(undefined);
         this.currentUser$ = this.currentUserSubject.asObservable();
         this.isLoading$ = this.isLoadingSubject.asObservable();
-
-        this.id = shared.getRandomNumber();
     }
 
     get currentUserValue(): UserAuth | undefined {
-        console.log("AuthService -> get currentUserValue -> this.id", this.id);
-        
         return this.currentUserSubject.value;
     }
     

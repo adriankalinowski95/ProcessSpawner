@@ -15,7 +15,6 @@ public static class DependencyInjection {
         services.AddSwaggerGen();
         services.AddGrpc();
 
-
         var specificOrigins = configuration["AllowSpecificOrigins"];
         var clientAddress = configuration["ClientAddress"];
         services.AddCors(options => {
@@ -56,8 +55,7 @@ public static class DependencyInjection {
             loggingBuilder.AddDataBaseLoggerProvider(configuration);
         });
 
-        // @Todo
-        // Middleware
+        services.AddInfrastructureForProcessSpawner(configuration);
 
         return services;
     }

@@ -1,11 +1,35 @@
 #include <iostream>
+
 #include <communication.pb.h>
+#include <grpc/grpc.h> 
+#include <grpcpp/server_builder.h>
+
+#include "process_manager/environments/environments.h"
+#include "process_manager/src/infrastructure/process_manager_service.h"
+
+#include <shared/src/infrastructure/services/DefaultLogger.h>
 
 int main(int argc, char** argv) {
-    std::cout << "hello world!" << std::endl;
-    Communication::StopRequest stop_request;
-    if (stop_request.process_id() == "123") {
-        std::cout << "process_id is 123" << std::endl;
+    auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
+    if (!logger) {
+        std::cout << "Logger doesn't works!!!!!!!!";
+
+        return 0;
+    }
+
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
+
+    // <START> Endpoints 
+    grpc_services::ProcessManagerService managerService{ logger };
+    builder.RegisterService(&managerService);
+    // <END> Endpoints
+
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    if (server) {
+        logger->log("Server started!");
+
+	    server->Wait();
     }
 
     return 0;

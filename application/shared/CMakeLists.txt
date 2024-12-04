@@ -20,7 +20,7 @@ set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/src/domain/protos")
 set(PROTO_IMPORT_DIRS "${CMAKE_CURRENT_LIST_DIR}/src/domain/protos")
 
 set(PROTO_FILES
-    src/domain/protos/communication.proto
+    shared/src/domain/protos/communication.proto
 )
 
 get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)
@@ -28,10 +28,10 @@ get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)
 add_library(${TARGET_NAME} ${PROTO_FILES})
 
 # For communication.pb.cc files - with this, they will be able to #include "src/domain/protos/communication.pb.h"
-include_directories(${TARGET_NAME} INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} .)
 
 # For extended project - with this, they will be able to #include <communication.pb.h> and #include "src/domain/protos/communication."
-target_include_directories(${TARGET_NAME} INTERFACE ${CMAKE_CURRENT_BINARY_DIR} ${PROTO_BINARY_DIR})
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${PROTO_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC

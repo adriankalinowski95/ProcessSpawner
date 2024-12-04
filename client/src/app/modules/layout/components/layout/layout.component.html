@@ -1,5 +1,4 @@
 <mat-drawer-container autosize class="custom-container">
     <app-toolbar (isExpandedEvent)="isExpandedHandler($event)"></app-toolbar>
-    <app-sidenav [ngStyle]= "{'width': isExpanded ? '200px' : '50px'}" [isExpanded]="isExpanded" [menu]="menu"></app-sidenav> 
-    <app-content></app-content>
+    <app-sidenav-container [isExpanded]="isExpanded"></app-sidenav-container> 
 </mat-drawer-container>
