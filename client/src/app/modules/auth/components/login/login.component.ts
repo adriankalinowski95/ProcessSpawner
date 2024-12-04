@@ -22,6 +22,7 @@ interface KeyValuePair {
 })
 export class LoginComponent implements OnInit, OnDestroy {
     private subs: SubSink = new SubSink();
+    private returnUrl: string = "";
     private validationMessages = {
         email: {
             required: 'Email is required!'
@@ -30,8 +31,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             required: 'Password is required'
         }
     };
-
-    private returnUrl: string = "";
 
     defaultAuth: any = {
         email: 'admin@gmail.com',

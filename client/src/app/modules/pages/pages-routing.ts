@@ -6,6 +6,10 @@ const PagesRouting: Routes = [
         loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
     },
     {
+        path: 'process-spawner',
+        loadChildren: () => import('./process-spawner/process-spawner.module').then((m) => m.ProcessSpawnerModule),
+    },
+    {
         path: '',
         redirectTo: '/dashboard',
         pathMatch: 'full',

@@ -1,0 +1,151 @@
+.custom-sidenav-container {
+    flex:1;
+}
+
+.content-container {
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 25px;
+}
+
+.not-expanded {
+    width: 60px;
+}
+
+.expanded {
+    width: 200px;
+}
+.sidenav {
+    width: 250px;
+}
+
+.toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 25px 0;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  
+  .nav {
+    .active-link {
+      background-color: #fafafa;
+      border-left: solid 3px #1976d2;
+    }
+  
+    .hover {
+      transition-duration: 400ms;
+      transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition-property: transform, border, background-color;
+    }
+  
+    mat-list-item,
+    a {
+      border: none;
+      box-sizing: border-box;
+      text-decoration: none;
+      &:hover {
+        cursor: pointer;
+        background-color: #fafafa;
+        border-left: solid 3px #1976d2;
+      }
+    }
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+  
+
+
+
+
+
+  .mat-expansion-panel {
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  .mat-expansion-panel-header {
+    padding: 0 16px;
+  }
+  
+  .mat-expansion-panel-header-title,
+  .mat-expansion-panel-header-description {
+    align-items: center;
+  }
+  
+  .mat-list-icon {
+    padding: 4px;
+  }
+  
+  .mat-list-item {
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: 0.2s all;
+  
+    box-sizing: border-box;
+  }
+  
+  .mat-list-item:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  
+  .mat-list-base {
+    padding-top: 0;
+  }
+  
+  .mat-list-base .mat-list-item {
+    height: 50px;
+  }
+  
+  .list-item {
+    font-size: 16px;
+    padding-left: 16px;
+  }
+  
+  .mat-line {
+    white-space: normal !important;
+  }
+  
+  .active {
+    background: #94a5ff33 !important;
+    border-left: 4px solid #3f51b5;
+  }
+  
+
+
+  .example-container {
+    height: 500px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+  }
+  .example-sidenav-content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  .example-sidenav {
+     user-select: none;
+  }
+  .full-width {
+    width: 100%;
+  }
+  .menu-button {
+    transition: 300ms ease-in-out;
+    transform: rotate(0deg);
+  }
+  .menu-button.rotated {
+    transform: rotate(180deg);
+  }
+  .submenu {
+    overflow-y: hidden;
+    transition: transform 300ms ease;
+    transform: scaleY(0);
+    transform-origin: top;
+    padding-left: 30px;
+  }
+  .submenu.expanded {
+    transform: scaleY(1);
+  }

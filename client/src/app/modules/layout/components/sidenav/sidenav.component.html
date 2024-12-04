@@ -1,0 +1,14 @@
+<mat-sidenav-container autosize class="custom-sidenav-container">
+    <mat-sidenav [mode]="isMobile ? 'side' : 'side'" [opened]="isOpened()" [fixedInViewport]="true" fixedTopGap="60">
+    <section [class.sidenav]="isExpanded">
+        <mat-list class="nav" *ngFor="let route of routeLinks">
+            <a mat-list-item routerLinkActive="active-link" class="hover" routerLink="{{ route.link }}">
+              <mat-icon mat-list-icon [matTooltip]="!isExpanded ? route.name : ''" 
+              matTooltipPosition="right">{{ route.icon }}</mat-icon>
+              <p matLine *ngIf="isExpanded">{{ route.name }}</p>
+            </a>
+          </mat-list>
+      </section>
+
+    </mat-sidenav>
+  </mat-sidenav-container>

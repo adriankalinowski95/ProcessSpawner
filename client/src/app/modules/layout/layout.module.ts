@@ -8,6 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
+import { ContentComponent } from './components/content/content.component';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { MatListModule } from '@angular/material/list';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const routes: Routes = [
     {
@@ -19,7 +26,10 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    LayoutComponent
+    LayoutComponent,
+    ContentComponent,
+    SidenavComponent,
+    ToolbarComponent
   ],
   imports: [
     CommonModule,
@@ -29,6 +39,11 @@ const routes: Routes = [
     MatIconModule,
     MatSidenavModule,
     MatMenuModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatExpansionModule,
   ],
   exports: [ RouterModule ]
 })

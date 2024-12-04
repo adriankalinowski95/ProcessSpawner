@@ -1,19 +1,5 @@
-
 .styled-card {
-    display: flex; 
-    flex-direction: column; 
-    margin: 100px auto;
     max-width: 400px;
-    padding: 16px;
-}
-
-.styled-card .content {
-    display: grid;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1.2rem;
-    margin-top: 12px;
-    align-content: center;   
 }
 
 .is-valid {

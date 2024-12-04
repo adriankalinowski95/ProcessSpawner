@@ -1,22 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardComponent } from './componenets/dashboard/dashboard.component';
-import { DashboardRoutingModule } from './dashboard-routing.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { ProcessSpawnerRoutingModule } from './process-spawner-routing.module';
+import { ProcessListComponent } from './components/process-list/process-list.component';
 import { HttpClientModule } from '@angular/common/http';
-import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+
 
 @NgModule({
   declarations: [
-    DashboardComponent
+    ProcessListComponent
   ],
   imports: [
     CommonModule,
-    DashboardRoutingModule,
+    ProcessSpawnerRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -27,4 +29,4 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
   ]
 })
-export class DashboardModule { }
+export class ProcessSpawnerModule { }

@@ -1,31 +1,5 @@
-<mat-drawer-container autosize style="height: 100%; background-color: #efefef">
-    <mat-toolbar color="primary" class="mat-elevation-z5">
-      <button mat-icon-button aria-label="Toolbar menu" (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span style="flex: 1"></span>
-      <button mat-icon-button aria-label="Account" [matMenuTriggerFor]="menu">
-        <mat-icon>account_circle</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="logout()">Logout</button>
-      </mat-menu>
-    </mat-toolbar>
-
-    <mat-drawer #drawer mode="over" style="min-width: 300px">
-      <mat-toolbar color="primary">
-        <mat-toolbar-row style="gap: 5px">
-          <mat-icon>account_circle</mat-icon>
-          <span>User</span>
-        </mat-toolbar-row>
-        <mat-toolbar-row style="gap: 5px">
-          <mat-icon>email</mat-icon>
-          <span>user&#64;mail.com</span>
-        </mat-toolbar-row>
-      </mat-toolbar>
-    </mat-drawer>
-  
-    <div>
-        <router-outlet></router-outlet>
-    </div>
+<mat-drawer-container autosize class="custom-container">
+    <app-toolbar (isExpandedEvent)="isExpandedHandler($event)"></app-toolbar>
+    <app-sidenav [ngStyle]= "{'width': isExpanded ? '200px' : '50px'}" [isExpanded]="isExpanded" [menu]="menu"></app-sidenav> 
+    <app-content></app-content>
 </mat-drawer-container>
