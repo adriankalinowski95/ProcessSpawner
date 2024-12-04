@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MenuItem } from '../../../../models/menu-item';
+import { MenuItem } from '../../models/menu-item';
 import { AuthService } from '../../../../../auth/services/auth.service';
 
 @Component({
@@ -17,13 +17,17 @@ export class SidenavComponent {
             route: '/dashboard'
         },
         {
-            label: 'Process spawner',
+            label: 'Process Spawner',
             icon: 'dns icon',
-            route: '/process-spawner'
+            subItems: [
+                {
+                    label: 'Process spawner list',
+                    icon: 'dns icon',
+                    route: '/process-spawner'
+                }
+            ]
         }
     ];
 
-    constructor(public authService: AuthService) {
-        console.log(authService);
-    }
+    constructor(public authService: AuthService) {}
 }

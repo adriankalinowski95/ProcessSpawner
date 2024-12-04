@@ -9,10 +9,12 @@ import { AuthService } from '../../../auth/services/auth.service';
 export class ToolbarComponent {
     @Output()
     isExpandedEvent = new EventEmitter<boolean>();
-    
-    private isExpanded: boolean = false;
 
-    constructor(private authService: AuthService) {}
+    private isExpanded: boolean = true;
+
+    constructor(private authService: AuthService) {
+        this.isExpandedEvent.emit(this.isExpanded);
+    }
     
     logout() {
         this.authService.logout();

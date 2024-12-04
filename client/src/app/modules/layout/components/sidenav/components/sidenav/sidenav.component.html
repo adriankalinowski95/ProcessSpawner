@@ -9,16 +9,6 @@
 
 <mat-nav-list>
     @for(item of menuItems; track item) {
-        <a  mat-list-item 
-            class="menu-item"
-            [routerLink]="item.route"
-            routerLinkActive="selected-menu-item"
-            #rla="routerLinkActive"
-            [activated]="rla.isActive"> 
-            <mat-icon matListItemIcon> {{item.icon}} </mat-icon>
-            @if (isExpanded) {
-                <span matListItemTitle> {{item.label }} </span>
-            }
-        </a>
+        <app-sidenav-menu-item [item]="item" [isExpanded]="isExpanded"></app-sidenav-menu-item>
     }
 </mat-nav-list>

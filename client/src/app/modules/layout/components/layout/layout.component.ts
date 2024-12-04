@@ -9,7 +9,7 @@ import { AuthService } from '../../../auth/services/auth.service';
   styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
-    isExpanded: boolean = false;
+    isExpanded: boolean = true;
 
     isExpandedHandler(isExpanded: boolean) {
         this.isExpanded = isExpanded;

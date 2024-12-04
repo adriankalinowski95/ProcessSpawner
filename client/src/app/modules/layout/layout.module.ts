@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SidenavComponent } from './components/sidenav/components/sidenav/sidenav.component';
+import { SidenavMenuItemComponent } from './components/sidenav/components/sidenav-menu-item/sidenav-menu-item.component';
 
 const routes: Routes = [
     {
@@ -31,7 +32,8 @@ const routes: Routes = [
     ContentComponent,
     SidenavContainerComponent,
     ToolbarComponent,
-    SidenavComponent
+    SidenavComponent,
+    SidenavMenuItemComponent
   ],
   imports: [
     CommonModule,

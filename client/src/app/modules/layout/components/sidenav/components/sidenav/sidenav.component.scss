@@ -25,13 +25,3 @@
 :host * {
     transition: all 500ms ease-in-out;
 }
-
-.selected-menu-item {
-    border-left-color: blue !important;
-    background: rgba(0,0,0,0.05);
-}
-
-.menu-item {
-    border-left: 5px solid;
-    border-left-color: rgba(0,0,0,0);
-}
