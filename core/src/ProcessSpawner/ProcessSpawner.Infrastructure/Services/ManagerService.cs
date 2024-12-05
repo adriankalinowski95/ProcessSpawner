@@ -15,29 +15,34 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_logger = logger;
         }
 
-        public async Task<ObjectOperationResult<SpawnProcessResponseDto>> SpawnProcess(SpawnProcessRequestDto startBotRequest) {
-            var channelIp = m_configuration["gRPCBotManagerIp"];
+        public async Task<SpawnProcessResponseDto> SpawnProcess(SpawnProcessRequestDto startBotRequest) {
+            var channelIp = m_configuration["gRPCManagerAddress"];
             if (channelIp == null || channelIp.Length == 0) {
                 throw new Exception("Can't find bot manager ip");
             }
 
             var channel = Grpc.Net.Client.GrpcChannel.ForAddress(channelIp);
             var client = new Protobuf.ManagerService.ManagerServiceClient(channel);
+            var response = await client.SpawnProcessAsync(GetStartRequestProto(startBotRequest));
 
-            var response = await client.SpawnProcessAsync(await GetStartRequestProto(startBotRequest));
+            return GetSpawnResponseDto(response);
+        }
 
-            return new ObjectOperationResult<SpawnProcessResponseDto> {
-                Status = BaseResponseStatus.Ok
+        private Protobuf.SpawnRequest GetStartRequestProto(SpawnProcessRequestDto request) {
+            return new Protobuf.SpawnRequest {
+                ProcessType = request.process_type,
+                Parameters = {
+                    new Google.Protobuf.Collections.MapField<string, string> { request.parameters }
+                }
             };
         }
 
-        private Task<Protobuf.SpawnRequest> GetStartRequestProto(SpawnProcessRequestDto request) {
-            var spawnRequest = new Protobuf.SpawnRequest {
-                ProcessType = request.process_type,
-                Parameters = { new Google.Protobuf.Collections.MapField<string, string> { request.parameters } }
-            };
-
-            return Task.FromResult(spawnRequest);
+        private SpawnProcessResponseDto GetSpawnResponseDto(Protobuf.SpawnResponse response) {
+            return new SpawnProcessResponseDto(
+                response.Success,
+                response.Message,
+                response.ProcessId
+            );
         }
     }
 }

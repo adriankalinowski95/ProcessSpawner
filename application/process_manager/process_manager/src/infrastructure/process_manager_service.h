@@ -12,12 +12,16 @@ public:
     ProcessManagerService(std::shared_ptr<shared::application::services::ILogger> logger) : 
         m_logger{ logger } {
         if (!m_logger) {
-                throw std::runtime_error("Logger is not initialized!");
+            throw std::runtime_error("Logger is not initialized!");
         }
     }
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         m_logger->log("SpawnProcess called!");
+
+        response->set_success(true);
+        response->set_message("Process spawned!");
+        response->set_process_id("1234");
 
         return grpc::Status::OK;
     }

@@ -29,7 +29,7 @@ export const defaultConfig: MainConfig = {
           name: 'runBot',
           displayName: 'Run',
           actionType: ActionType.RunBot,
-          type: Type.Info,
+          type: Type.Default,
           iconName: 'start'
         }
       ],
@@ -71,6 +71,7 @@ export const defaultColumns: DisplayedColumns = [
   {name: 'weight', displayName: 'Weight'},
   {name: 'symbol', displayName: 'Symbol'}
 ];
+
 export const ELEMENT_DATA: DataSource[] = [
   {index: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
   {index: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},

@@ -13,10 +13,16 @@
   <ItemGroup>
     <None Remove="Api\" />
     <None Remove="Services\" />
+    <None Remove="Repositories\" />
+    <None Remove="Tools\" />
+    <None Remove="Mapping\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Api\" />
     <Folder Include="Services\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Tools\" />
+    <Folder Include="Mapping\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProcessSpawner.Application\ProcessSpawner.Application.csproj" />
