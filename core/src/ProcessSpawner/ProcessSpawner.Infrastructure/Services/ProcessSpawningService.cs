@@ -34,7 +34,7 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_mapper = mapper;
         }
 
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(SpawnProcessRequestDto obj) {
+        public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(ProcessSpawnRequestDto obj) {
             // @Todo Validator
 
             var spawnProcessResponse = await m_managerService.SpawnProcess(obj);

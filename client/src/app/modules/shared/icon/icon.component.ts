@@ -41,7 +41,7 @@ export class IconComponent {
   }
 
   private numberOfChanges = 0;
-  get showSvg(): boolean {
+  get showSvg(): boolean { 
     return !!this.getSvg();
   }
   constructor(private iconRegistry: MatIconRegistry,

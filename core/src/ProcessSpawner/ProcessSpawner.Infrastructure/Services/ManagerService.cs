@@ -15,7 +15,7 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_logger = logger;
         }
 
-        public async Task<SpawnProcessResponseDto> SpawnProcess(SpawnProcessRequestDto startBotRequest) {
+        public async Task<ProcessSpawnResponseDto> SpawnProcess(ProcessSpawnRequestDto startBotRequest) {
             var channelIp = m_configuration["gRPCManagerAddress"];
             if (channelIp == null || channelIp.Length == 0) {
                 throw new Exception("Can't find bot manager ip");
@@ -28,7 +28,7 @@ namespace ProcessSpawner.Infrastructure.Services {
             return GetSpawnResponseDto(response);
         }
 
-        private Protobuf.SpawnRequest GetStartRequestProto(SpawnProcessRequestDto request) {
+        private Protobuf.SpawnRequest GetStartRequestProto(ProcessSpawnRequestDto request) {
             return new Protobuf.SpawnRequest {
                 ProcessType = request.process_type,
                 Parameters = {
@@ -37,8 +37,8 @@ namespace ProcessSpawner.Infrastructure.Services {
             };
         }
 
-        private SpawnProcessResponseDto GetSpawnResponseDto(Protobuf.SpawnResponse response) {
-            return new SpawnProcessResponseDto(
+        private ProcessSpawnResponseDto GetSpawnResponseDto(Protobuf.SpawnResponse response) {
+            return new ProcessSpawnResponseDto(
                 response.Success,
                 response.Message,
                 response.ProcessId

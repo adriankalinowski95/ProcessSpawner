@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input, OnChanges,
@@ -42,6 +43,7 @@ export class ElementListContentComponent implements OnInit, AfterViewInit, OnCha
       this.tableDataSource = new MatTableDataSource<DataSource>(this.dataSource);
     }
   }
+
   ngOnInit() {
     this.tableDataSource = new MatTableDataSource<DataSource>(this.dataSource);
     this.applyConfiguration();

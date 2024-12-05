@@ -17,7 +17,6 @@ export class ElementListComponent {
   @Input() displayedColumns: DisplayedColumns;
   @Output() handelContent: EventEmitter<HandelContentEvent> = new EventEmitter<HandelContentEvent>();
 
-
   onHandleContent($event: HandelContentEvent) {
     this.handelContent.emit($event);
   }

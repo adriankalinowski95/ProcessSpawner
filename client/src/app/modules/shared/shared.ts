@@ -13,6 +13,8 @@ import * as _BaseCrudService from "./request/base-crud-service"
 import * as _ExtendCrudService from "./request/extend-crud-service"
 import * as _ObjectsResponse from "./response/objects-response"
 import * as _NotificationService from "./services/notification.service"
+import * as _BaseStateHolder from "./services/base-state-holder"
+import * as _ExtendStateHolder from "./services/extend-state-holder"
 
 import * as ElementListModuleImport from "./element-list/element-list.module"
 import * as ElementListConfigModel from "./element-list/models/ElementListConfig";
@@ -45,6 +47,8 @@ export namespace shared {
         export import BaseCrudService = _BaseCrudService.BaseCrudService;
         export import ExtendCrudService = _ExtendCrudService.ExtendCrudService;
         export import NotificationService = _NotificationService.NotificationService;
+        export import BaseStateHolder = _BaseStateHolder.BaseStateHolder;
+        export import ExtendStateHolder = _ExtendStateHolder.ExtendStateHolder;
     }
 
     export import definitions = CommonDefinitions.definitions

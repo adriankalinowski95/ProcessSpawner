@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "../../../../../environments/environment.prod";
-import { SpawnProcessRequestDto } from "../models/spawn-process-request-dto";
+import { ProcessSpawnRequestDto } from "../models/process-spawn-request-dto";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -12,7 +12,7 @@ export class SpawnProcessCrudService {
 
     constructor(private http: HttpClient) { }
 
-    spawnProcess(spawnProcessRequest: SpawnProcessRequestDto): Observable<any> {
+    spawnProcess(spawnProcessRequest: ProcessSpawnRequestDto): Observable<any> {
         return this.http.post(this.PROCESS_SPAWNING_BASE_PATH + '/SpawnProcess', spawnProcessRequest);
     }
 }

@@ -23,7 +23,7 @@ namespace ProcessSpawner.Infrastructure.Api {
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectResponse<ProcessInstanceDto>> Create([FromBody] SpawnProcessRequestDto spawnProcessRequestDto) {
+        public async Task<ObjectResponse<ProcessInstanceDto>> Create([FromBody] ProcessSpawnRequestDto spawnProcessRequestDto) {
             return await m_processSpawningService.Create(spawnProcessRequestDto);
         }
 
