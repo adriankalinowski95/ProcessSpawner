@@ -1,13 +1,15 @@
-<div style="padding: 20px">
-    <mat-card class="styled-card">
-    <mat-card-header style="justify-content: center;">
+<mat-card class="styled-card">
+    <mat-card-header>
         <div class="mb-10 bg-light-info p-8 rounded">
-            <div class="text-info">
+            <div class="header-text-info">
                 Process list
             </div>
         </div>
     </mat-card-header>
     <mat-card-content>
+        <app-element-list [config]="config"
+                  [dataSource]="dataSource"
+                  [displayedColumns]="displayedColumns"
+                  (handelContent)="testF($event)"></app-element-list>
     </mat-card-content>
 </mat-card>
-</div>

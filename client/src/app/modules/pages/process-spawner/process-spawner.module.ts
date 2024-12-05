@@ -10,7 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-
+import { ElementListModule } from "../../shared/element-list/element-list.module";
 
 @NgModule({
   declarations: [
@@ -27,6 +27,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    ElementListModule
   ]
 })
 export class ProcessSpawnerModule { }

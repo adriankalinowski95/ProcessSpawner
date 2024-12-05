@@ -9,7 +9,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .styled-card {
     display: flex; 
     flex-direction: column; 
-    margin: 100px auto;
     padding: 16px;
 }
 
@@ -20,4 +19,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     gap: 1.2rem;
     margin-top: 12px;
     align-content: center;   
+}
+
+.styled-card mat-card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.styled-card mat-card-header .header-text-info {
+    font-size: 1rem;
+    line-height: 1.5rem;
 }

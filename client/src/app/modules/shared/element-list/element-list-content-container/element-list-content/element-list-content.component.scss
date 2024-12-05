@@ -1,0 +1,7 @@
+.example-container {
+  height: calc(100% - 40px);
+  overflow: auto;
+  app-icon:hover {
+    cursor: pointer;
+  }
+}

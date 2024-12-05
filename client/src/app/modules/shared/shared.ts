@@ -14,6 +14,14 @@ import * as _ExtendCrudService from "./request/extend-crud-service"
 import * as _ObjectsResponse from "./response/objects-response"
 import * as _NotificationService from "./services/notification.service"
 
+import * as ElementListModuleImport from "./element-list/element-list.module"
+import * as ElementListConfigModel from "./element-list/models/ElementListConfig";
+import * as ActionButtonConfig from "./action-button/models/action-button-config";
+import * as DataSourceModel from "./element-list/models/data-source";
+import * as DisplayedColumnsModel from "./element-list/models/displayed-columns";
+import * as IconConfig from "./icon/models/icon-config";
+
+
 export namespace shared {
     export namespace response {
         export import Base = BaseResponse.BaseResponse;
@@ -44,4 +52,30 @@ export namespace shared {
     export import Base64Converter = Base64Conv.Base64Converter;
     export import getRandomString = CommonMeth.getRandomString;
     export import getRandomNumber = CommonMeth.getRandomNumber;
+
+
+    export namespace element_list {
+        export namespace models {
+          export import MainConfig = ElementListConfigModel.MainConfig;
+          export import FilterConfig = ElementListConfigModel.FilterConfig;
+          export import PaginationConfig = ElementListConfigModel.PaginationConfig;
+          export import ContentHandlerConfig = ElementListConfigModel.ContentHandlerConfig;
+          export import ContentConfig = ElementListConfigModel.ContentConfig;
+          export import RowTableIcon = ElementListConfigModel.RowTableIcon;
+          export import DataSource = DataSourceModel.DataSource;
+          export import DisplayedColumns = DisplayedColumnsModel.DisplayedColumns;
+        }
+      }
+      export namespace action_button {
+        export namespace models {
+          export import Config = ActionButtonConfig.Config
+          export import Type = ActionButtonConfig.Type
+          export import ActionType = ActionButtonConfig.ActionType
+        }
+      }
+      export namespace icon {
+        export namespace models {
+          export import Type = IconConfig.Type
+        }
+      }
 }

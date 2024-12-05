@@ -19,13 +19,7 @@ export class SidenavComponent {
         {
             label: 'Process Spawner',
             icon: 'dns icon',
-            subItems: [
-                {
-                    label: 'Process spawner list',
-                    icon: 'dns icon',
-                    route: '/process-spawner'
-                }
-            ]
+            route: '/process-spawner'
         }
     ];
 

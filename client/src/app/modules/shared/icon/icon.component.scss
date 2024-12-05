@@ -1,0 +1,27 @@
+
+.mmm-icon {
+  display: inline-block;
+
+  .mat-icon {
+    display: flex;
+
+    svg {
+      height: inherit;
+      width: inherit;
+    }
+  }
+}
+
+.icon-color-0 {
+  --mat-icon-color: black;
+}
+.icon-color-1 {
+  --mat-icon-color: blue;
+}
+.icon-color-2 {
+  --mat-icon-color: #FFCC00;
+}
+.icon-color-3 {
+  --mat-icon-color: red;
+}
+
