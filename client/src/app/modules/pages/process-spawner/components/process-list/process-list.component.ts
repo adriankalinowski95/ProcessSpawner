@@ -38,7 +38,7 @@ export class ProcessListComponent implements OnInit {
     
     ngOnInit(): void {
         this.processInstancesHolderSerivce.items$.subscribe((processInstances: ProcessInstanceDto[]) => {
-            this.dataSource = processInstances.map((processInstance: ProcessInstanceDto) => {
+            const x = processInstances.map((processInstance: ProcessInstanceDto) => {
                 return {
                     index: processInstance.id,
                     processType: processInstance.processType,
@@ -46,12 +46,22 @@ export class ProcessListComponent implements OnInit {
                     status: processInstance.status
                 };
             });
+
+            this.dataSource = x;
         });
+
+        this.getAllProcesses();
     }
 
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
             this.createProcess();
+        } else if ($event.actionType === ActionType.Delete) {
+            if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
+                return;
+            }
+
+            this.delete($event.content[0].index);
         }
     }
 
@@ -72,6 +82,36 @@ export class ProcessListComponent implements OnInit {
             tap((spawnProcessResponse: ProcessInstanceDto | undefined) => {
                 if (shared.isNotNullOrUndefined(spawnProcessResponse)) {
                     this.processInstancesHolderSerivce.addItem(spawnProcessResponse);
+                }
+            })
+        ).subscribe();
+    }
+
+    getAllProcesses() {
+        const errorHandler = (response: shared.response.Object<any>) => {
+            // this.notificationService.error(response.errorMessage);
+        };
+
+        this.processSpawnService.getAll().pipe(
+            first(),
+            tap((processInstances: ProcessInstanceDto[] | undefined) => {
+                if (shared.isNotNullOrUndefined(processInstances)) {
+                    this.processInstancesHolderSerivce.setItems(processInstances);
+                }
+            })
+        ).subscribe();
+    }
+
+    delete(id: number) {
+        const errorHandler = (response: shared.response.Object<any>) => {
+            // this.notificationService.error(response.errorMessage);
+        };
+
+        this.processSpawnService.delete(id, errorHandler).pipe(
+            first(),
+            tap((processInstance: ProcessInstanceDto | undefined) => {
+                if (shared.isNotNullOrUndefined(processInstance)) {
+                    this.processInstancesHolderSerivce.deleteById(processInstance.id);
                 }
             })
         ).subscribe();

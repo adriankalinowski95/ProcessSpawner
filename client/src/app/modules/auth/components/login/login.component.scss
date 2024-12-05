@@ -29,3 +29,11 @@
     font-size: 12px;
     top: -10px;
 }
+
+:host .styled-card mat-card-header {
+    align-items: center !important;
+}
+
+:host .styled-card {
+    margin: 100px auto;
+}

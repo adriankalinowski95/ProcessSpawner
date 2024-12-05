@@ -5,8 +5,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 @Component({
   selector: 'app-sidenav-container',
   templateUrl: './sidenav-container.component.html',
-  styleUrl: './sidenav-container.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './sidenav-container.component.scss'
 })
 export class SidenavContainerComponent implements OnInit {
     @Input() 

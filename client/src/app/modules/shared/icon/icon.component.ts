@@ -17,8 +17,7 @@ import {Type} from "./models/icon-config";
   selector: 'app-icon',
   templateUrl: './icon.component.html',
   styleUrl: './icon.component.scss',
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  encapsulation: ViewEncapsulation.None
 })
 export class IconComponent {
   @Input() type: Type;
