@@ -2,12 +2,13 @@
 
 #include <memory>
 #include <string_view>
-#include <communication.grpc.pb.h>
+#include <shared/src/domain/protos/communication.pb.h>
+#include <shared/src/domain/protos/communication.grpc.pb.h>
 #include <shared/src/application/services/ILogger.h>
 
 namespace grpc_services {
 
-class ProcessManagerService final : public Communication::ManagerService::Service {
+class ProcessManagerService : public Communication::ManagerService::Service {
 public:
     ProcessManagerService(std::shared_ptr<shared::application::services::ILogger> logger) : 
         m_logger{ logger } {
@@ -18,7 +19,6 @@ public:
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         m_logger->log("SpawnProcess called!");
-
         response->set_success(true);
         response->set_message("Process spawned!");
         response->set_process_id("1234");
@@ -31,7 +31,7 @@ public:
 
         return grpc::Status::OK;
     }
-
+    
 private:
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 };

@@ -41,6 +41,35 @@ target_link_libraries(${TARGET_NAME}
         gRPC::grpc++
 )
 
+# Funkcja do wypisywania plików
+function(print_included_files target)
+    # Pobranie katalogów include
+    get_target_property(include_dirs ${target} INTERFACE_INCLUDE_DIRECTORIES)
+    if(NOT include_dirs)
+        message(WARNING "No include directories found for target ${target}")
+        return()
+    endif()
+
+    message("Include directories for target ${target}: ${include_dirs}")
+
+    # Iteracja po katalogach i wypisanie plików
+    foreach(dir ${include_dirs})
+        if(EXISTS ${dir})
+            message("Checking directory: ${dir}")
+            file(GLOB_RECURSE files "${dir}/*.h")
+            foreach(file ${files})
+                message("Found file: ${file}")
+            endforeach()
+        else()
+            message(WARNING "Directory does not exist: ${dir}")
+        endif()
+    endforeach()
+endfunction()
+
+# Wywołanie funkcji dla danego targetu
+print_included_files(${TARGET_NAME})
+
+
 protobuf_generate(
     TARGET ${TARGET_NAME} 
     LANGUAGE cpp

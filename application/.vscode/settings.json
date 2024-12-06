@@ -111,5 +111,7 @@
     "variant": "cpp",
     "vector": "cpp",
     "algorithm": "cpp"
-}
+},
+"C_Cpp.errorSquiggles": "disabled",
+"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

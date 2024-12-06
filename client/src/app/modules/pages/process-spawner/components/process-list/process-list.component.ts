@@ -13,6 +13,7 @@ import { ProcessSpawnResponseDto } from '../../models/process-spawn-response-dto
 import { ProcessSpawnService } from '../../services/process-spawn.service';
 import { ProcessInstanceDto } from '../../models/process-instance-dto';
 import { ProcessInstancesHolderService } from '../../services/process-instances-holder.service';
+import { ProcessStatus } from '../../enums/process-status.enum';
 // import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Component({
@@ -38,16 +39,14 @@ export class ProcessListComponent implements OnInit {
     
     ngOnInit(): void {
         this.processInstancesHolderSerivce.items$.subscribe((processInstances: ProcessInstanceDto[]) => {
-            const x = processInstances.map((processInstance: ProcessInstanceDto) => {
+            this.dataSource = processInstances.map((processInstance: ProcessInstanceDto) => {
                 return {
                     index: processInstance.id,
                     processType: processInstance.processType,
                     processId: processInstance.processId,
-                    status: processInstance.status
+                    status: ProcessStatus[processInstance.status]
                 };
             });
-
-            this.dataSource = x;
         });
 
         this.getAllProcesses();

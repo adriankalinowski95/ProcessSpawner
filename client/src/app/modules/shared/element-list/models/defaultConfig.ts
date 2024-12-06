@@ -14,6 +14,7 @@ export const defaultConfig: MainConfig = {
       rowTableIcons: [
         {
           name: 'edit',
+          displayName: 'Edit',
           actionType: ActionType.Edit,
           type: Type.Default,
           iconName: 'edit-outline'
@@ -27,7 +28,7 @@ export const defaultConfig: MainConfig = {
         },
         {
           name: 'runBot',
-          displayName: 'Run',
+          displayName: 'Pause',
           actionType: ActionType.RunBot,
           type: Type.Default,
           iconName: 'start'

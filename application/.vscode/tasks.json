@@ -35,7 +35,8 @@
             "command": "cmake",
             "args": [
                 "-B",
-                "${workspaceFolder}/build"
+                "${workspaceFolder}/build",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
             ],
             "type": "shell",
             "presentation": {
@@ -80,7 +81,8 @@
                 "-G",
                 "\"Xcode\"",
                 "-DPROJECT_ARCH=\"arm64\"",
-                "-DCMAKE_IS_MACOS=\"true\""
+                "-DCMAKE_IS_MACOS=\"true\"",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
             ],
             "group": {
                 "kind": "build",
@@ -144,8 +146,8 @@
         {
             "label": "preLaunchAll",
             "dependsOn": [
-                //"clean_build",
-                //"create_builder_folder",
+                "clean_build",
+                "create_builder_folder",
                 "cmake_build",
                 "make_compile"
             ],

@@ -1,12 +1,11 @@
 #include <iostream>
 
-#include <communication.pb.h>
+#include <shared/src/domain/protos/communication.pb.h>
 #include <grpc/grpc.h> 
 #include <grpcpp/server_builder.h>
 
 #include "process_manager/environments/environments.h"
-#include "process_manager/src/infrastructure/process_manager_service.h"
-
+#include "process_manager/src/infrastructure/ProcessManagerService.h"
 #include <shared/src/infrastructure/services/DefaultLogger.h>
 
 int main(int argc, char** argv) {
