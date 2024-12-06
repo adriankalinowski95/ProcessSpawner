@@ -110,8 +110,21 @@
     "unordered_map": "cpp",
     "variant": "cpp",
     "vector": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "__tree": "cpp",
+    "deque": "cpp",
+    "forward_list": "cpp",
+    "iomanip": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "span": "cpp",
+    "unordered_set": "cpp",
+    "future": "cpp",
+    "thread": "cpp",
+    "condition_variable": "cpp",
+    "queue": "cpp",
+    "memory": "cpp"
 },
-"C_Cpp.errorSquiggles": "disabled",
 "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

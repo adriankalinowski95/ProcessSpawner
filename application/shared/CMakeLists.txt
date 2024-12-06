@@ -41,9 +41,7 @@ target_link_libraries(${TARGET_NAME}
         gRPC::grpc++
 )
 
-# Funkcja do wypisywania plików
 function(print_included_files target)
-    # Pobranie katalogów include
     get_target_property(include_dirs ${target} INTERFACE_INCLUDE_DIRECTORIES)
     if(NOT include_dirs)
         message(WARNING "No include directories found for target ${target}")
@@ -52,7 +50,6 @@ function(print_included_files target)
 
     message("Include directories for target ${target}: ${include_dirs}")
 
-    # Iteracja po katalogach i wypisanie plików
     foreach(dir ${include_dirs})
         if(EXISTS ${dir})
             message("Checking directory: ${dir}")
@@ -66,8 +63,7 @@ function(print_included_files target)
     endforeach()
 endfunction()
 
-# Wywołanie funkcji dla danego targetu
-print_included_files(${TARGET_NAME})
+# print_included_files(${TARGET_NAME})
 
 
 protobuf_generate(

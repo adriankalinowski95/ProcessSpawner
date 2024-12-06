@@ -4,8 +4,9 @@
 #include <grpc/grpc.h> 
 #include <grpcpp/server_builder.h>
 
-#include "process_manager/environments/environments.h"
-#include "process_manager/src/infrastructure/ProcessManagerService.h"
+#include <process_manager/environments/environments.h>
+#include <process_manager/src/infrastructure/services/ProcessManagerService.h>
+
 #include <shared/src/infrastructure/services/DefaultLogger.h>
 
 int main(int argc, char** argv) {
@@ -20,7 +21,7 @@ int main(int argc, char** argv) {
     builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
 
     // <START> Endpoints 
-    grpc_services::ProcessManagerService managerService{ logger };
+    process_manager::infrastructure::services::ProcessManagerService managerService{ logger };
     builder.RegisterService(&managerService);
     // <END> Endpoints
 
