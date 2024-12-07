@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "C++ Launch",
-      "type": "cppdbg",
+      "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/${config:Project_Name}/${config:Project_Name}",
       //"program": "${workspaceRoot}/build/process_manager/process_manager",

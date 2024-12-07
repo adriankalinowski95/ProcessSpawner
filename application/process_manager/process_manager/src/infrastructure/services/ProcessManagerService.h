@@ -60,9 +60,6 @@ public:
         //response->set_message("Process spawned!");
         //response->set_process_id("1234");
 
-        process_manager::infrastructure::services::unix::UnixPlatformIO io;
-
-
         return grpc::Status::OK;
     }
 
