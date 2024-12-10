@@ -1,11 +1,12 @@
 #pragma once
 
+#include <spawn.h>
 #include <memory>
 #include <exception>
-#include <shared/src/application/services/ILogger.h>
-#include <boost/asio.hpp>
 #include <vector>
 #include <string>
+#include <shared/src/application/services/ILogger.h>
+#include <boost/asio.hpp>
 
 namespace process_manager::infrastructure::services {
 
@@ -88,12 +89,23 @@ public:
 
     void startProcess(const std::string& program, const std::vector<std::string>& args) {
         std::vector<char*> cargs;
-            cargs.reserve(args.size() + 2);
-            cargs.push_back(const_cast<char*>(program.c_str()));
-            for (auto &arg : args) {
-                cargs.push_back(const_cast<char*>(arg.c_str()));
-            }
-            cargs.push_back(nullptr);
+        cargs.reserve(args.size() + 2);
+        cargs.push_back(const_cast<char*>(program.c_str()));
+        for (auto &arg : args) {
+            cargs.push_back(const_cast<char*>(arg.c_str()));
+        }
+
+        cargs.push_back(nullptr);
+
+        // posix_spawn tworzy nowy proces i uruchamia w nim podany program
+        pid_t pid;
+        int status = posix_spawn(&pid, program.data(), NULL, NULL, cargs.data(), NULL);
+
+        if (status == 0) {
+            std::cout << "Uruchomiono nowy proces o PID: " << pid << "\n";
+        } else {
+            std::cerr << "posix_spawn nie powiodl sie, kod: " << status << "\n";
+        }
     }
 
 private:

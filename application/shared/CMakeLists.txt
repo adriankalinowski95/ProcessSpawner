@@ -2,24 +2,22 @@ cmake_minimum_required(VERSION 3.10)
 
 set(TARGET_NAME "shared")
 
+# conan_basic_setup()
 
-#if(NOT EXISTS "${CMAKE_BINARY_DIR}/shared/cmakedeps_macros.cmake")
-#    message(STATUS "Uruchamianie Conan" ${CMAKE_BINARY_DIR} "   " ${CMAKE_CURRENT_SOURCE_DIR})
-#    execute_process(COMMAND conan install ${CMAKE_CURRENT_SOURCE_DIR} --build missing -of=${CMAKE_BINARY_DIR}/shared
-#                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/shared
-#                    RESULT_VARIABLE result)
-#    if(result)
-#        message(FATAL_ERROR "Błąd podczas uruchamiania Conan. Kod błędu: ${result}")
-#    endif()
-#endif()
-
-include(FindProtobuf)
+# its overwritting some 
+# include(FindProtobuf)
 include(FindBoost)
 
-find_package(absl REQUIRED )
-find_package(Protobuf CONFIG REQUIRED)
+find_package(absl REQUIRED)
+find_package(Protobuf CONFIG REQUIRED NO_SYSTEM_ENVIRONMENT_PATH)
 find_package(gRPC CONFIG REQUIRED)
 find_package(Boost 1.85.0 REQUIRED COMPONENTS system)
+
+# FOR DEBUGGING
+# get_cmake_property(_variableNames VARIABLES)
+# foreach (_variableName ${_variableNames})
+#    message("${_variableName}=${${_variableName}}")
+# endforeach()
 
 set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/src/domain/protos")
 set(PROTO_IMPORT_DIRS "${CMAKE_CURRENT_LIST_DIR}/src/domain/protos")
@@ -32,8 +30,6 @@ set(protobuf_ABSL_USED_TARGETS
     absl::log_internal_message
     absl::log_internal_check_op
 )
-
-#message(STATUS "GRPC ROOT: ${GRPC_ROOT}")
 
 get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)
 
@@ -80,15 +76,20 @@ endfunction()
 
 # print_included_files(${TARGET_NAME})
 
+message(STATUS "HERE1")
+
+set(Protobuf_PROTOC_EXECUTABLE "${protobuf_PACKAGE_FOLDER_DEBUG}/bin/protoc")
 
 protobuf_generate(
     TARGET ${TARGET_NAME} 
     LANGUAGE cpp
+    PLUGIN "protoc-gen-grpc=${protobuf_PACKAGE_FOLDER_DEBUG}/bin/protoc"
 )
 
 protobuf_generate(
     TARGET ${TARGET_NAME} 
     LANGUAGE grpc 
     GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc 
-    PLUGIN "protoc-gen-grpc=${grpc_cpp_plugin_location}"
+    # PLUGIN "protoc-gen-grpc=${grpc_cpp_plugin_location}"
+    PLUGIN "protoc-gen-grpc=${grpc_PACKAGE_FOLDER_DEBUG}/bin/grpc_cpp_plugin"
 )

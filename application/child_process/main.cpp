@@ -7,6 +7,15 @@ using boost::asio::ip::tcp;
 
 int main(int argc, char** argv) {
     try {
+        if (argc != 0 && argv != nullptr) {
+            for (auto i = 0; i < argc; i++) {
+                auto param = argv[i];
+                if (param != nullptr) {
+                    std::cout << "Param_" << std::to_string(i) << ": "  << param << std::endl;
+                }
+            }
+        }
+
         std::cout << "child project!" << std::endl;
         // Inicjalizacja kontekstu I/O
         boost::asio::io_context io_context;

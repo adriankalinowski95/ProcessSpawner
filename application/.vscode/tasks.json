@@ -37,9 +37,6 @@
                 "-B",
                 "${workspaceFolder}/build",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-                // "-Dprotobuf_ABSL_PROVIDER=package",
-                // "-DgRPC_INSTALL=ON",
-                // "-DgRPC_BUILD_TESTS=OFF",
                 "-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=${workspaceFolder}/conan_provider.cmake"
             ],
             "type": "shell",
@@ -150,8 +147,8 @@
         {
             "label": "preLaunchAll",
             "dependsOn": [
-                "clean_build",
-                "create_builder_folder",
+                // "clean_build",
+                // "create_builder_folder",
                 "cmake_build",
                 "make_compile"
             ],
