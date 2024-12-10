@@ -21,7 +21,11 @@ int main(int argc, char** argv) {
     builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
 
     // <START> Endpoints 
-    process_manager::infrastructure::services::ProcessManagerService managerService{ logger };
+    process_manager::infrastructure::services::ProcessManagerService managerService{
+        std::make_unique<process_manager::infrastructure::services::ProcessManager2>(logger),
+        logger 
+    };
+
     builder.RegisterService(&managerService);
     // <END> Endpoints
 

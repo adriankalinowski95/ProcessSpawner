@@ -15,8 +15,8 @@ namespace process_manager::infrastructure::services {
 class ProcessManager final : public process_manager::application::services::IProcessManager {
 public:
     explicit ProcessManager(std::unique_ptr<process_manager::application::services::IProcessFactory> factory) :
-        processFactory_(std::move(factory)), 
-        stopFlag_(false) {}
+        processFactory_{ std::move(factory) }, 
+        stopFlag_{}  {}
 
     int startProcess(const std::string &program, const std::vector<std::string> &args) override {
         auto proc = processFactory_->createProcess(program, args);

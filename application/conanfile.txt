@@ -1,7 +1,6 @@
 [requires]
-grpc/1.54.3
 nlohmann_json/3.11.3
-protobuf/3.21.12
+protobuf/5.27.0
 [options]
 compiler.cppstd=20
 grpc/*:cpp_plugin = True

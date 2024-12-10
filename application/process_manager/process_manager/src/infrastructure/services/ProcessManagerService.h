@@ -14,14 +14,32 @@
 #include <process_manager/src/infrastructure/services/ProcessManager.h>
 #include <process_manager/src/infrastructure/services/ProcessFactory.h>
 
+#include <process_manager/src/infrastructure/services/ProcessManager2.h>
+
 namespace process_manager::infrastructure::services {
 
 using namespace process_manager::infrastructure::services::unix;
 
 class ProcessManagerService : public Communication::ManagerService::Service {
 public:
-    ProcessManagerService(std::shared_ptr<shared::application::services::ILogger> logger) : 
-        m_logger{ logger } {
+    /*
+    ProcessManagerService(std::unique_ptr<process_manager::application::services::IProcessManager> manager,
+        std::shared_ptr<shared::application::services::ILogger> logger) : 
+            m_manager{ std::move(manager) },
+            m_logger{ logger } 
+    {
+        if (!m_logger) {
+            throw std::runtime_error("Logger is not initialized!");
+        }
+    }
+    */
+
+   ProcessManagerService(
+        std::unique_ptr<process_manager::infrastructure::services::ProcessManager2> manager,
+        std::shared_ptr<shared::application::services::ILogger> logger) : 
+            m_manager{ std::move(manager) },
+            m_logger{ logger } 
+    {
         if (!m_logger) {
             throw std::runtime_error("Logger is not initialized!");
         }
@@ -29,10 +47,12 @@ public:
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         m_logger->log("SpawnProcess called!");
-        
+        m_manager->startProcess("/Users/adriankalinowski/Desktop/learning_projects/process_spawner/application/build/child_process/child_process", {});
+
+        /*
         auto platformLauncher = std::make_shared<UnixPlatformProcessLauncher>();
         auto platformIO = std::make_shared<UnixPlatformIO>();
-        auto factory = std::make_unique<ProcessFactory>(platformLauncher, platformIO, nullptr);
+        auto factory = std::make_unique<ProcessFactory>(platformLauncher, platformIO, m_logger);
         
         ProcessManager manager(std::move(factory));
 
@@ -55,7 +75,7 @@ public:
         // Sygnalizujemy zamknięcie menedżera
         shutdownPromise.set_value();
         managerThread.join();
-
+        */
         //response->set_success(true);
         //response->set_message("Process spawned!");
         //response->set_process_id("1234");
@@ -70,6 +90,8 @@ public:
     }
     
 private:
+    std::unique_ptr<process_manager::infrastructure::services::ProcessManager2> m_manager;
+
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 };
 
