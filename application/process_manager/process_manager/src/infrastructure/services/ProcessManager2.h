@@ -61,25 +61,26 @@ public:
         
         thr = std::thread([]() {
             try {
-            boost::asio::io_context io_context;
-            tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 8080));
-            std::cout << "Asynchroniczny serwer oczekuje na połączenie na porcie 8080..." << std::endl;
+                boost::asio::io_context io_context;
+                tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 8080));
 
-            // Funkcja lambda do akceptacji nowych połączeń
-            std::function<void()> do_accept;
-            do_accept = [&]() {
-                acceptor.async_accept(
-                    [&](boost::system::error_code ec, tcp::socket socket) {
-                        if (!ec) {
-                            std::make_shared<Session>(std::move(socket))->start();
-                        }
-                        do_accept();
-                    });
-            };
+                std::cout << "Asynchronous server started port: 8080" << std::endl;
 
-            do_accept();
+                std::function<void()> do_accept;
+                do_accept = [&]() {
+                    acceptor.async_accept(
+                        [&](boost::system::error_code ec, tcp::socket socket) {
+                            if (!ec) {
+                                std::make_shared<Session>(std::move(socket))->start();
+                            }
+                            
+                            do_accept();
+                        });
+                };
 
-            io_context.run();
+                do_accept();
+
+                io_context.run();
             }
             catch(std::exception& e) {
                 std::cerr << e.what() << std::endl;
@@ -97,10 +98,8 @@ public:
 
         cargs.push_back(nullptr);
 
-        // posix_spawn tworzy nowy proces i uruchamia w nim podany program
         pid_t pid;
         int status = posix_spawn(&pid, program.data(), NULL, NULL, cargs.data(), NULL);
-
         if (status == 0) {
             std::cout << "Uruchomiono nowy proces o PID: " << pid << "\n";
         } else {

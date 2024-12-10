@@ -11,12 +11,24 @@ include(FindBoost)
 find_package(absl REQUIRED)
 find_package(Protobuf CONFIG REQUIRED NO_SYSTEM_ENVIRONMENT_PATH)
 find_package(gRPC CONFIG REQUIRED)
-find_package(Boost 1.85.0 REQUIRED COMPONENTS system)
+# find_package(Boost 1.86.0 REQUIRED COMPONENTS system)
+
+#if(Protobuf_FOUND)
+#    message(STATUS "protobuf found.")
+#else()
+#    message(FATAL_ERROR "Boost nie został znaleziony.")
+#endif()
 
 # FOR DEBUGGING
 # get_cmake_property(_variableNames VARIABLES)
 # foreach (_variableName ${_variableNames})
-#    message("${_variableName}=${${_variableName}}")
+#     string(TOLOWER "boost" MY_STRING_LOWER)
+#     string(TOLOWER "${_variableName}" SEARCH_SUBSTRING_LOWER)
+# 
+#     string(FIND "${SEARCH_SUBSTRING_LOWER}" "${MY_STRING_LOWER}" HAS_BOOST)
+#     if (HAS_BOOST GREATER -1)
+#         message("${_variableName}=${${_variableName}}")
+#     endif()
 # endforeach()
 
 set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/src/domain/protos")
@@ -36,10 +48,10 @@ get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)
 add_library(${TARGET_NAME} ${PROTO_FILES})
 
 # For communication.pb.cc files - with this, they will be able to #include "src/domain/protos/communication.pb.h"
-include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} . )
+include_directories(${TARGET_NAME} INTERFACE ${CMAKE_CURRENT_BINARY_DIR} . ${Boost_INCLUDE_DIR} ${CMAKE_SOURCE_DIR})
 
 # For extended project - with this, they will be able to #include <communication.pb.h> and #include "src/domain/protos/communication."
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${PROTO_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${TARGET_NAME} INTERFACE ${CMAKE_CURRENT_BINARY_DIR} ${PROTO_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}  ${Boost_INCLUDE_DIR})
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -64,7 +76,7 @@ function(print_included_files target)
     foreach(dir ${include_dirs})
         if(EXISTS ${dir})
             message("Checking directory: ${dir}")
-            file(GLOB_RECURSE files "${dir}/*.h")
+            file(GLOB_RECURSE files "${dir}/*.hpp")
             foreach(file ${files})
                 message("Found file: ${file}")
             endforeach()
@@ -75,10 +87,6 @@ function(print_included_files target)
 endfunction()
 
 # print_included_files(${TARGET_NAME})
-
-message(STATUS "HERE1")
-
-set(Protobuf_PROTOC_EXECUTABLE "${protobuf_PACKAGE_FOLDER_DEBUG}/bin/protoc")
 
 protobuf_generate(
     TARGET ${TARGET_NAME} 

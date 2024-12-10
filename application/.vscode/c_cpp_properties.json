@@ -6,12 +6,13 @@
                 "${workspaceFolder}/**"
             ],
             "compilerPath": "/usr/bin/clang++",
-            "cStandard": "gnu23",
+            "cStandard": "gnu11",
             "cppStandard": "c++20",
-            "intelliSenseMode": "macos-clang-arm64",
+            "intelliSenseMode": "${default}",
             "compilerArgs": [
                 ""
-            ]
+            ],
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

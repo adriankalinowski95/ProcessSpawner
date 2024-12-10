@@ -124,7 +124,13 @@
     "thread": "cpp",
     "condition_variable": "cpp",
     "queue": "cpp",
-    "memory": "cpp"
+    "memory": "cpp",
+    "any": "cpp",
+    "codecvt": "cpp",
+    "csignal": "cpp",
+    "coroutine": "cpp",
+    "shared_mutex": "cpp",
+    "source_location": "cpp"
 },
 "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }
