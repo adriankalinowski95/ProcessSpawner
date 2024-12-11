@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <shared/src/application/services/ILogger.h>
+#include <grpc/grpc.h> 
+#include <grpcpp/server_builder.h>
 
 namespace shared::infrastructure::services {
 
@@ -10,6 +12,7 @@ namespace shared::infrastructure::services {
 class DefaultLogger : public shared::application::services::ILogger {
 public:
     void log(std::string message) {
+        
         std::cout << message << std::endl;
     }
 

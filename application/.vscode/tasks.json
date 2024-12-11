@@ -31,12 +31,23 @@
             }
         },
         {
+            "label": "conan_install",
+            "command": "conan",
+            "args": [
+                "install",
+                "${workspaceFolder}",
+                "--output=${workspaceFolder}",
+                "--build=missing"
+            ],
+        },
+        {
             "label": "cmake_build",
             "command": "cmake",
             "args": [
                 "-B",
                 "${workspaceFolder}/build",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/Debug/generators/conan_toolchain.cmake"
             ],
             "type": "shell",
             "presentation": {
@@ -148,6 +159,7 @@
             "dependsOn": [
                 "clean_build",
                 "create_builder_folder",
+                "conan_install",
                 "cmake_build",
                 "make_compile"
             ],

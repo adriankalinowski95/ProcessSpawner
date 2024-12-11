@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
 
         return 0;
     }
+    
 
     grpc::ServerBuilder builder;
     builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());

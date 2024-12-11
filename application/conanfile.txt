@@ -1,9 +1,16 @@
 [requires]
-grpc/1.54.3
+grpc/1.67.1
+protobuf/5.27.0
 nlohmann_json/3.11.3
-protobuf/3.21.12
+boost/1.86.0
+
 [options]
 compiler.cppstd=20
 grpc/*:cpp_plugin = True
+
 [generators]
 CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
