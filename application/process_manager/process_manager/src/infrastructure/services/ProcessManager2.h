@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 #include <shared/src/application/services/ILogger.h>
+#include <shared/src/infrastructure/services/AsyncServerService.h>
+
 #include <boost/asio.hpp>
 
 namespace process_manager::infrastructure::services {
@@ -13,52 +15,15 @@ namespace process_manager::infrastructure::services {
 using namespace shared::application::services;
 using boost::asio::ip::tcp;
 
-class Session : public std::enable_shared_from_this<Session> {
-public:
-    Session(tcp::socket socket)
-        : socket_(std::move(socket)) {}
-
-    void start() {
-        do_read();
-    }
-
-private:
-    void do_read() {
-        auto self(shared_from_this());
-        boost::asio::async_read_until(socket_, buffer_, "\n",
-            [this, self](boost::system::error_code ec, std::size_t length) {
-                if (!ec) {
-                    std::istream is(&buffer_);
-                    std::string message;
-                    std::getline(is, message);
-                    std::cout << "Odebrano od klienta: " << message << std::endl;
-
-                    // Wysyłanie odpowiedzi
-                    std::string reply = "Witaj z asynchronicznego serwera!\n";
-                    do_write(reply);
-                }
-            });
-    }
-
-    void do_write(const std::string& msg) {
-        auto self(shared_from_this());
-        boost::asio::async_write(socket_, boost::asio::buffer(msg),
-            [this, self](boost::system::error_code ec, std::size_t /*length*/) {
-                if (!ec) {
-                    // Możesz kontynuować czytanie kolejnych wiadomości lub zakończyć sesję
-                }
-            });
-    }
-
-    tcp::socket socket_;
-    boost::asio::streambuf buffer_;
-};
-
 class ProcessManager2 {
 public:
     ProcessManager2(std::shared_ptr<ILogger> logger) :
-        m_logger{ logger } {
-        
+        m_logger{ logger },
+        m_server{"192.168.1.190", 8080} {
+            
+        m_server.start();
+
+        /*
         thr = std::thread([]() {
             try {
                 boost::asio::io_context io_context;
@@ -86,6 +51,7 @@ public:
                 std::cerr << e.what() << std::endl;
             }
         });
+        */
     }
 
     void startProcess(const std::string& program, const std::vector<std::string>& args) {
@@ -109,7 +75,7 @@ public:
 
 private:
     std::shared_ptr<ILogger> m_logger;
-    std::thread thr;
+    shared::infrastructure::services::AsyncServerService m_server;
 };
 
 }

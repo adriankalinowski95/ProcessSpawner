@@ -26,6 +26,30 @@
       "targetArchitecture": "arm64"
     },
     {
+        "name": "C++ Just Launch",
+        "type": "lldb",
+        "request": "launch",
+        "program": "${workspaceRoot}/build/${config:Project_Name}/${config:Project_Name}",
+        //"program": "${workspaceRoot}/build/process_manager/process_manager",
+        "preLaunchTask": "justLanuch",
+        "internalConsoleOptions": "openOnSessionStart",
+        "logging": {
+          "moduleLoad": false,
+          "programOutput": true,
+          "trace": false
+        },
+        "showDisplayString": false,
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceRoot}",
+        "environment": [],
+        "externalConsole": false,
+        "osx": {
+          "MIMode": "lldb"
+        },
+        "targetArchitecture": "arm64"
+      },
+    {
       "name": "C++ Launch MacOS debug",
       "type": "cppdbg",
       "request": "launch",

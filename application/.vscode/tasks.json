@@ -164,6 +164,17 @@
                 "make_compile"
             ],
             "dependsOrder": "sequence"
-        }       
+        },
+        {
+            "label": "justLanuch",
+            "dependsOn": [
+                //"clean_build",
+                //"create_builder_folder",
+                // "conan_install",
+                "cmake_build",
+                "make_compile"
+            ],
+            "dependsOrder": "sequence"
+        }    
     ]
 }

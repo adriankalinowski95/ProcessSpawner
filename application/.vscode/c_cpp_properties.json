@@ -3,7 +3,9 @@
         {
             "name": "macos-clang-arm64",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/Users/adriankalinowski/.conan2/p/b/boost0a4d1ba992121/p/include",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include"
             ],
             "compilerPath": "/usr/bin/clang++",
             "cStandard": "gnu11",
