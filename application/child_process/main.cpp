@@ -89,7 +89,13 @@ private:
 
 int main(int argc, char** argv) {
     try {
-        const auto params = child_process::application::utils::ProcessParserUtils::GetParams(argc, argv);
+        const auto params = child_process::application::utils::ChildProcessParamsParser::GetParams(argc, argv);
+        if (params.empty()) {
+            std::cerr << "Niepoprawne parametry!" << std::endl;
+            return 1;
+        }
+
+        
 
         shared::infrastructure::services::RequestSenderService sender{"127.0.0.1", 8080};
         sender.sendRequest("Hello, server!");

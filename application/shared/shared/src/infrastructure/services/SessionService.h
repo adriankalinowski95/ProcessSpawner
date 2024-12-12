@@ -33,20 +33,10 @@ public:
             boost::asio::streambuf buffer{};
             boost::asio::read_until(m_socket, buffer, "\0");
 
-            std::string result{};
-            
-            /*
-            auto begin = boost::asio::buffers_begin(buffer);
-            auto end = boost::asio::buffers_end(buffer);
-            
-            std::ranges::transform(begin, end, std::back_inserter(result), [](char c) {
-                return c == '\0' ? '\n' : c;
-            });
+            auto bufs = buffer.data();
+            std::string result(buffers_begin(bufs), buffers_begin(bufs) + buffer.size());
 
             return result;
-            */
-
-           return result;
         } catch(std::exception& e) {
             // @Todo logger
 

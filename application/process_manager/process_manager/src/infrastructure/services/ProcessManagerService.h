@@ -47,7 +47,9 @@ public:
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         m_logger->log("SpawnProcess called!");
-        m_manager->startProcess("/Users/adriankalinowski/Desktop/learning_projects/process_spawner/application/build/child_process/child_process", {"param!"});
+        m_manager->startProcess(
+            environment::child_process::Process_Path,
+            {"param!"});
 
         /*
         auto platformLauncher = std::make_shared<UnixPlatformProcessLauncher>();
