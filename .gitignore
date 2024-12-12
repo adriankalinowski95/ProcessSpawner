@@ -7,3 +7,4 @@
 **/bin/
 /core/.vs
 .DS_Store
+/application/temp_files/*

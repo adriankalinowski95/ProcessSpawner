@@ -9,24 +9,17 @@
 #include <shared/src/domain/protos/communication.grpc.pb.h>
 #include <shared/src/application/services/ILogger.h>
 
-#include <process_manager/src/infrastructure/services/unix/UnixPlatformIO.h>
-#include <process_manager/src/infrastructure/services/unix/UnixPlatformProcessLauncher.h>
 #include <process_manager/src/infrastructure/services/ProcessManager.h>
-#include <process_manager/src/infrastructure/services/ProcessFactory.h>
-
-#include <process_manager/src/infrastructure/services/ProcessManager2.h>
 #include <process_manager/src/application/utils/ChildProcessConfigProvider.h>
 
 #include <environments/environments.h>
 
 namespace process_manager::infrastructure::services {
 
-using namespace process_manager::infrastructure::services::unix;
-
 class ProcessManagerService : public Communication::ManagerService::Service {
 public:
    ProcessManagerService(
-        std::unique_ptr<process_manager::infrastructure::services::ProcessManager2> manager,
+        std::unique_ptr<process_manager::infrastructure::services::ProcessManager> manager,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_manager{ std::move(manager) },
             m_configProvider{ 
@@ -48,33 +41,6 @@ public:
             { m_configProvider.GetNextChildConfigJson() }
         );
 
-        /*
-        auto platformLauncher = std::make_shared<UnixPlatformProcessLauncher>();
-        auto platformIO = std::make_shared<UnixPlatformIO>();
-        auto factory = std::make_unique<ProcessFactory>(platformLauncher, platformIO, m_logger);
-        
-        ProcessManager manager(std::move(factory));
-
-        std::promise<void> shutdownPromise;
-        std::future<void> shutdownFuture = shutdownPromise.get_future();
-
-        std::thread managerThread(&ProcessManager::run, &manager, std::move(shutdownFuture));
-
-        int pid = manager.startProcess("/bin/cat", {});
-        manager.sendToProcess(pid, "Hello, process!\n");
-        if (auto output = manager.readFromProcess(pid)) {
-            std::cout << "Received: " << *output << std::endl;
-        }
-
-        manager.sendToProcess(pid, "Another line\n");
-        if (auto output2 = manager.readFromProcess(pid)) {
-            std::cout << "Received: " << *output2 << std::endl;
-        }
-
-        // Sygnalizujemy zamknięcie menedżera
-        shutdownPromise.set_value();
-        managerThread.join();
-        */
         //response->set_success(true);
         //response->set_message("Process spawned!");
         //response->set_process_id("1234");
@@ -89,7 +55,7 @@ public:
     }
     
 private:
-    std::unique_ptr<process_manager::infrastructure::services::ProcessManager2> m_manager;
+    std::unique_ptr<process_manager::infrastructure::services::ProcessManager> m_manager;
     process_manager::application::utils::ChildProcessConfigProvider m_configProvider;
 
     std::shared_ptr<shared::application::services::ILogger> m_logger;

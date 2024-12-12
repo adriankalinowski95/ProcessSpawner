@@ -1,86 +1,68 @@
 #pragma once
 
-#include <memory>
 #include <string>
 #include <cstdint>
-#include <functional>
-#include <boost/asio.hpp>
+#include <memory>
+#include <exception>
+#include <atomic>
 
-#include <shared/src/infrastructure/utils/AsyncSession.h>
-#include <shared/src/infrastructure/services/SessionService.h>
+#include <shared/src/infrastructure/providers/BoostAcceptorProvider.h>
+#include <shared/src/application/services/IEndpointService.h>
 
 namespace shared::infrastructure::services {
 
-using boost::asio::ip::tcp;
-using namespace std;
-
 class AsyncServerService {
 public:
-    virtual ~AsyncServerService() {
-        if (m_ioContext) {
-            m_ioContext->stop();
-        }
-    }
-
-    AsyncServerService(std::string address, std::uint32_t port) :
-        m_address{ address },
-        m_port{ port } {}
+    AsyncServerService(
+        std::string address, 
+        std::uint32_t port, 
+        std::unique_ptr<shared::application::services::IEndpointService> endpointService,
+        std::shared_ptr<shared::application::services::ILogger> logger = nullptr) :
+            m_acceptorProvider{ address, port },
+            m_endpointService{ std::move(endpointService) },
+            m_logger{ logger } {
+                if (!m_endpointService) {
+                    throw std::runtime_error("Endpoint service is not initialized!");
+                }
+            }
 
     void start() {
-        m_thread = std::thread(&AsyncServerService::startThread, this); 
+        m_isRunning = true;
+        m_serverThread = std::thread(&AsyncServerService::run, this); 
+    }
+
+    void stop() {
+        m_isRunning = true;
     }
 
     void join() {
-        m_thread.join();
+        m_serverThread.join();
     }
 
 private:
-    std::string m_address;
-    std::uint32_t m_port;
+    shared::infrastructure::providers::BoostAcceptorProvider m_acceptorProvider;
+    std::unique_ptr<shared::application::services::IEndpointService> m_endpointService;
+    std::shared_ptr<shared::application::services::ILogger> m_logger;
 
-    std::thread m_thread;
+    std::thread m_serverThread;
+    std::atomic<bool> m_isRunning;
 
-    std::unique_ptr<boost::asio::io_context> m_ioContext;
-
-    void startThread() {
+    void run() {
         try {
-            m_ioContext = std::make_unique<boost::asio::io_context>();
-            tcp::endpoint endpoint(boost::asio::ip::make_address(m_address), m_port);
-            tcp::acceptor acceptor(*m_ioContext, endpoint);
+            auto acceptor = m_acceptorProvider.createAcceptor();
+            if (acceptor == nullptr) {
+                throw std::runtime_error("Can't create acceptor");
+            }
 
-            // acceptor.open(endpoint.protocol());
-            // acceptor.set_option(boost::asio::socket_base::reuse_address(true));
-            // acceptor.bind(endpoint);
-        
-            std::function<void()> doAccept;
-            doAccept = [&]() {
-                // auto socket = acceptor.accept();
-                acceptor.async_accept(
-                    [&](boost::system::error_code ec, tcp::socket socket) {
-                        if (!ec) {
-                            auto sessionService = SessionService{ std::move(socket) };
-                            auto result = sessionService.readMessage();
-                            std::cout << "result: " << result.value() << std::endl;
+            while (m_isRunning) {
+                auto socket = acceptor->accept();
 
-                            if (!result.has_value() || result->empty()) {
-                                sessionService.sendMessage("Error", false);
-                            } else {
-                                sessionService.sendMessage("Echo", false);
-                                // result parser
-                            }
-                        }
-
-                        // @Todo
-                        // stack overflow????
-                        doAccept();
-                    });
-            };
-            
-            doAccept();
-
-            m_ioContext->run();
+                m_endpointService->handleRequest(std::move(socket));
+            }
         } catch(std::exception& e) {
-            std::cerr << e.what() << std::endl;
+            if (m_logger) {
+                m_logger->logError(e.what());
+            }
         }
     }
 };

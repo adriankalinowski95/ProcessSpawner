@@ -1,88 +1,61 @@
 #pragma once
 
-#include <map>
+#include <spawn.h>
 #include <memory>
-#include <mutex>
-#include <atomic>
-#include <future>
+#include <exception>
+#include <vector>
+#include <string>
+#include <boost/asio.hpp>
 
-#include <process_manager/src/application/services/IProcess.h>
-#include <process_manager/src/application/services/IProcessFactory.h>
-#include <process_manager/src/application/services/IProcessManager.h>
+#include <shared/src/application/services/ILogger.h>
+#include <shared/src/infrastructure/services/AsyncServerService.h>
+
+#include <process_manager/src/infrastructure/services/ProcessManager.h>
+#include <process_manager/src/infrastructure/services/EndpointService.h>
+
+#include <environments/environments.h>
 
 namespace process_manager::infrastructure::services {
 
-class ProcessManager final : public process_manager::application::services::IProcessManager {
+using namespace shared::application::services;
+using boost::asio::ip::tcp;
+
+class ProcessManager {
 public:
-    explicit ProcessManager(std::unique_ptr<process_manager::application::services::IProcessFactory> factory) :
-        processFactory_{ std::move(factory) }, 
-        stopFlag_{}  {}
-
-    int startProcess(const std::string &program, const std::vector<std::string> &args) override {
-        auto proc = processFactory_->createProcess(program, args);
-        int pid = proc->getProcessId();
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            processes_.emplace(pid, std::move(proc));
+    ProcessManager(std::shared_ptr<ILogger> logger) :
+        m_logger{ logger },
+        m_server{ 
+            environment::parent_process::Address.data(), 
+            environment::parent_process::Port, 
+            std::make_unique<EndpointService>(logger),
+            logger
         }
-    
-        return pid;
+    {
+        m_server.start();
     }
 
-    bool sendToProcess(int processId, std::string_view data) override {
-        std::lock_guard<std::mutex> lock(mutex_);
-        auto it = processes_.find(processId);
-        if (it == processes_.end()) {
-            return false;
+    void startProcess(const std::string& program, const std::vector<std::string>& args) {
+        std::vector<char*> cargs;
+        cargs.reserve(args.size() + 2);
+        cargs.push_back(const_cast<char*>(program.c_str()));
+        for (auto &arg : args) {
+            cargs.push_back(const_cast<char*>(arg.c_str()));
         }
 
-        return it->second->sendData(data);
-    }
+        cargs.push_back(nullptr);
 
-    std::optional<std::string> readFromProcess(int processId) override {
-        // Aby uniknąć długiego blokowania mapy, kopiujemy wskaźnik poza sekcję krytyczną
-        
-        process_manager::application::services::IProcess* proc = nullptr;
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            auto it = processes_.find(processId);
-            if (it == processes_.end()) return std::nullopt;
-            proc = it->second.get();
+        pid_t pid;
+        int status = posix_spawn(&pid, program.data(), NULL, NULL, cargs.data(), NULL);
+        if (status == 0) {
+            std::cout << "Uruchomiono nowy proces o PID: " << pid << "\n";
+        } else {
+            std::cerr << "posix_spawn nie powiodl sie, kod: " << status << "\n";
         }
-        
-        return proc->getNextOutput();
-    }
-
-    void terminateProcess(int processId) override {
-        std::lock_guard<std::mutex> lock(mutex_);
-        auto it = processes_.find(processId);
-        if (it != processes_.end()) {
-            it->second->terminate();
-            processes_.erase(it);
-        }
-    }
-
-    void run(std::future<void> shutdownSignal) override {
-         shutdownSignal.wait();
-        stopFlag_.store(true);
-
-        std::lock_guard<std::mutex> lock(mutex_);
-        for (auto & [_, proc] : processes_) {
-            proc->terminate();
-        }
-        processes_.clear();
     }
 
 private:
-    process_manager::application::services::IProcess* getProcess(int processId) {
-        auto it = processes_.find(processId);
-        return (it == processes_.end()) ? nullptr : it->second.get();
-    }
-
-    std::map<int, std::unique_ptr<process_manager::application::services::IProcess>> processes_;
-    std::unique_ptr<process_manager::application::services::IProcessFactory> processFactory_;
-    std::mutex mutex_;
-    std::atomic<bool> stopFlag_;
+    std::shared_ptr<ILogger> m_logger;
+    shared::infrastructure::services::AsyncServerService m_server;
 };
 
 }

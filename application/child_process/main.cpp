@@ -5,10 +5,11 @@
 #include <boost/asio.hpp>
 
 #include <child_process/src/application/utils/ChildProcessParamsParser.h>
+#include <child_process/src/infrastructure/services/EndpointService.h>
 
 #include <shared/src/infrastructure/services/RequestSenderService.h>
-
 #include <shared/src/infrastructure/services/AsyncServerService.h>
+#include <shared/src/infrastructure/services/DefaultLogger.h>
 
 using boost::asio::ip::tcp;
 
@@ -101,8 +102,10 @@ void setTemporaryParams(int* argc, char*** argv) {
 }
 
 int main(int argc, char** argv) {
+    setTemporaryParams(&argc, &argv);
+    auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
+
     try {
-        // setTemporaryParams(&argc, &argv);
         const auto params = child_process::application::utils::ChildProcessParamsParser::GetParams(argc, argv);
         if (params.empty()) {
             std::cerr << "Bad parameters" << std::endl;
@@ -125,13 +128,18 @@ int main(int argc, char** argv) {
             std::cout << "Didn't recive a hello server result" << std::endl;
         }
 
-        shared::infrastructure::services::AsyncServerService server{ config->childAddress, config->childPort};
+        shared::infrastructure::services::AsyncServerService server { 
+            config->childAddress, 
+            config->childPort, 
+            std::make_unique<child_process::infrastructure::services::EndpointService>(logger),
+            logger
+        };
         
         server.start();
         server.join();
     }
     catch (std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        logger->logError(e.what());
     }
 
     return 0;

@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 
     // <START> Endpoints 
     process_manager::infrastructure::services::ProcessManagerService managerService{
-        std::make_unique<process_manager::infrastructure::services::ProcessManager2>(logger),
+        std::make_unique<process_manager::infrastructure::services::ProcessManager>(logger),
         logger 
     };
 

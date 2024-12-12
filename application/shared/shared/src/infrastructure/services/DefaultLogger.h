@@ -14,11 +14,11 @@ public:
     }
 
     void logInfo(std::string message) {
-        std::cout << "[ERROR] " << message << std::endl;
+        std::cout << "[INFO] " << message << std::endl;
     }
 
     void logError(std::string message) {
-        std::cout << "[INFO] " << message << std::endl;
+        std::cout << "[ERROR] " << message << std::endl;
     }
 };
 
