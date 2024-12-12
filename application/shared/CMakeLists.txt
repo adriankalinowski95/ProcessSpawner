@@ -21,6 +21,7 @@ find_package(absl REQUIRED CONFIG)
 find_package(protobuf REQUIRED CONFIG)
 find_package(gRPC REQUIRED CONFIG)
 find_package(boost REQUIRED CONFIG)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 function(printVeriables) 
     get_cmake_property(_variableNames VARIABLES)
@@ -75,6 +76,7 @@ target_link_libraries(${TARGET_NAME}
         gRPC::grpc++
         Boost::boost
         Boost::system
+        nlohmann_json::nlohmann_json
 )
 
 # Funkcja do wypisywania plików

@@ -3,7 +3,8 @@
 #include <memory>
 #include <deque>
 #include <boost/asio.hpp>
-#include <child_process/src/application/utils/ProcessParserUtils.h>
+
+#include <child_process/src/application/utils/ChildProcessParamsParser.h>
 
 #include <shared/src/infrastructure/services/RequestSenderService.h>
 
@@ -86,26 +87,51 @@ private:
     std::deque<std::string> outbox_;
 };
 
+void setTemporaryParams(int* argc, char*** argv) {
+    std::string params = "{\"childAddress\":\"127.0.0.1\",\"childPort\":8085,\"parentAddress\":\"127.0.0.1\",\"parentPort\":8080}";
+
+    *argc = 2;
+    *argv = new char*[*argc];
+
+    (*argv)[0] = new char[256];
+    (*argv)[0] = "child_process";
+
+    (*argv)[1] = new char[params.size()];
+    memcpy((*argv)[1], params.data(), params.size());
+}
 
 int main(int argc, char** argv) {
     try {
+        // setTemporaryParams(&argc, &argv);
         const auto params = child_process::application::utils::ChildProcessParamsParser::GetParams(argc, argv);
         if (params.empty()) {
-            std::cerr << "Niepoprawne parametry!" << std::endl;
+            std::cerr << "Bad parameters" << std::endl;
+            
+            return 1;
+        }
+        
+        const auto config = child_process::application::utils::ChildProcessParamsParser::ParseConfig(params);
+        if (!config) {
+            std::cerr << "Not correct configuration" << std::endl;
+            
             return 1;
         }
 
+        shared::infrastructure::services::RequestSenderService sender{ config->parentAddress, config->parentPort };
+        const auto result = sender.sendRequest("Hello, server!", true);
+        if (result) {
+            std::cout << "Hello server result: " << *result << std::endl;
+        } else {
+            std::cout << "Didn't recive a hello server result" << std::endl;
+        }
+
+        shared::infrastructure::services::AsyncServerService server{ config->childAddress, config->childPort};
         
-
-        shared::infrastructure::services::RequestSenderService sender{"127.0.0.1", 8080};
-        sender.sendRequest("Hello, server!");
-
-        shared::infrastructure::services::AsyncServerService server{"192.168.1.190", 8081};
         server.start();
         server.join();
     }
     catch (std::exception& e) {
-        std::cerr << "Błąd: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 
     return 0;

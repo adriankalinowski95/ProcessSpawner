@@ -10,6 +10,8 @@
 
 #include <boost/asio.hpp>
 
+#include <environments/environments.h>
+
 namespace process_manager::infrastructure::services {
 
 using namespace shared::application::services;
@@ -19,8 +21,8 @@ class ProcessManager2 {
 public:
     ProcessManager2(std::shared_ptr<ILogger> logger) :
         m_logger{ logger },
-        m_server{"192.168.1.190", 8080} {
-            
+        m_server{ environment::parent_process::Address.data(), environment::parent_process::Port} {
+
         m_server.start();
 
         /*

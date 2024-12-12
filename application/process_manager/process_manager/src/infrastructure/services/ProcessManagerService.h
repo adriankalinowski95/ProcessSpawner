@@ -15,6 +15,9 @@
 #include <process_manager/src/infrastructure/services/ProcessFactory.h>
 
 #include <process_manager/src/infrastructure/services/ProcessManager2.h>
+#include <process_manager/src/application/utils/ChildProcessConfigProvider.h>
+
+#include <environments/environments.h>
 
 namespace process_manager::infrastructure::services {
 
@@ -22,22 +25,14 @@ using namespace process_manager::infrastructure::services::unix;
 
 class ProcessManagerService : public Communication::ManagerService::Service {
 public:
-    /*
-    ProcessManagerService(std::unique_ptr<process_manager::application::services::IProcessManager> manager,
-        std::shared_ptr<shared::application::services::ILogger> logger) : 
-            m_manager{ std::move(manager) },
-            m_logger{ logger } 
-    {
-        if (!m_logger) {
-            throw std::runtime_error("Logger is not initialized!");
-        }
-    }
-    */
-
    ProcessManagerService(
         std::unique_ptr<process_manager::infrastructure::services::ProcessManager2> manager,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_manager{ std::move(manager) },
+            m_configProvider{ 
+                environment::child_process::Address.data(), environment::child_process::Port,
+                environment::parent_process::Address.data(), environment::parent_process::Port
+            },
             m_logger{ logger } 
     {
         if (!m_logger) {
@@ -47,9 +42,11 @@ public:
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         m_logger->log("SpawnProcess called!");
+
         m_manager->startProcess(
-            environment::child_process::Process_Path,
-            {"param!"});
+            environment::child_process::Process_Path.data(),
+            { m_configProvider.GetNextChildConfigJson() }
+        );
 
         /*
         auto platformLauncher = std::make_shared<UnixPlatformProcessLauncher>();
@@ -93,6 +90,7 @@ public:
     
 private:
     std::unique_ptr<process_manager::infrastructure::services::ProcessManager2> m_manager;
+    process_manager::application::utils::ChildProcessConfigProvider m_configProvider;
 
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 };

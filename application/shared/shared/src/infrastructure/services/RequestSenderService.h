@@ -16,7 +16,7 @@ public:
         m_address{ address },
         m_port{ port } {}
 
-    std::optional<std::string> sendRequest(const std::string& request) {
+    std::optional<std::string> sendRequest(const std::string& request, bool withReadResult = true) {
         try {
             boost::asio::io_context io_context;
             tcp::resolver resolver(io_context);
@@ -26,7 +26,7 @@ public:
 
             boost::asio::connect(socket, endpoints);
 
-            return SessionService{ std::move(socket) }.sendMessage(request);
+            return SessionService{ std::move(socket) }.sendMessage(request, withReadResult);
         } catch(std::exception& e) {
             return std::nullopt;
         }

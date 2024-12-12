@@ -16,7 +16,11 @@ using namespace std;
 
 class AsyncServerService {
 public:
-    virtual ~AsyncServerService() = default;
+    virtual ~AsyncServerService() {
+        if (m_ioContext) {
+            m_ioContext->stop();
+        }
+    }
 
     AsyncServerService(std::string address, std::uint32_t port) :
         m_address{ address },
@@ -36,19 +40,28 @@ private:
 
     std::thread m_thread;
 
+    std::unique_ptr<boost::asio::io_context> m_ioContext;
+
     void startThread() {
         try {
-            boost::asio::io_context io_context;
-            tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), m_port));
+            m_ioContext = std::make_unique<boost::asio::io_context>();
+            tcp::endpoint endpoint(boost::asio::ip::make_address(m_address), m_port);
+            tcp::acceptor acceptor(*m_ioContext, endpoint);
+
+            // acceptor.open(endpoint.protocol());
+            // acceptor.set_option(boost::asio::socket_base::reuse_address(true));
+            // acceptor.bind(endpoint);
         
             std::function<void()> doAccept;
             doAccept = [&]() {
-                auto socket = acceptor.accept();
+                // auto socket = acceptor.accept();
                 acceptor.async_accept(
                     [&](boost::system::error_code ec, tcp::socket socket) {
                         if (!ec) {
                             auto sessionService = SessionService{ std::move(socket) };
                             auto result = sessionService.readMessage();
+                            std::cout << "result: " << result.value() << std::endl;
+
                             if (!result.has_value() || result->empty()) {
                                 sessionService.sendMessage("Error", false);
                             } else {
@@ -65,7 +78,7 @@ private:
             
             doAccept();
 
-            io_context.run();
+            m_ioContext->run();
         } catch(std::exception& e) {
             std::cerr << e.what() << std::endl;
         }

@@ -19,9 +19,14 @@ public:
             if (readedSize != msg.size()) {
                 throw std::runtime_error("Not all data was written!");
             }
+            
+            if (withReadResult) {
+                return readMessage();
+            }
 
-            return readMessage();
+            return "";
         } catch(std::exception& e) {
+            std::cout << e.what() << std::endl;
             // @Todo logger
 
             return std::nullopt;
@@ -38,6 +43,7 @@ public:
 
             return result;
         } catch(std::exception& e) {
+            std::cout << e.what() << std::endl;
             // @Todo logger
 
             return std::nullopt;

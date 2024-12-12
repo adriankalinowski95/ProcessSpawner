@@ -8,6 +8,7 @@ namespace shared::application::services {
 
 class ModelsConverter {
 public:
+    template <typename T>
     std::optional<T> fromJson(const std::string& json) {
         try {
             return nlohmann::json::parse(json).get<T>();
@@ -16,6 +17,7 @@ public:
         }
     }
 
+    template <typename T>
     std::string toJson(const T& model) {
         return nlohmann::json(model).dump();
     }

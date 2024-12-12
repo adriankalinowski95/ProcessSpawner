@@ -56,7 +56,6 @@
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
-"Project_Name": "process_manager",
 "files.associations": {
     "iostream": "cpp",
     "__bit_reference": "cpp",
@@ -135,5 +134,6 @@
     "functional": "cpp"
 },
 "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-"C_Cpp.errorSquiggles": "disabled"
+"C_Cpp.errorSquiggles": "disabled",
+"Project_Name": "process_manager"
 }

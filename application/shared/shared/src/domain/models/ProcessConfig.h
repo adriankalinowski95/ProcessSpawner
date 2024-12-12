@@ -13,6 +13,6 @@ struct ProcessConfig {
     std::uint32_t parentPort;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ProcessConfig, address, port)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ProcessConfig, childAddress, childPort, parentAddress, parentPort)
 
 }
