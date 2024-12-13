@@ -37,7 +37,7 @@ private:
     friend class HandlerRegistrar;
 
 protected:
-    http::response<http::string_body> getBaseResponse() {
+    http::response<http::string_body> getBaseResponse(const http::request<http::string_body>& req) {
         http::response<http::string_body> res{
             http::status::ok, 
             req.version()

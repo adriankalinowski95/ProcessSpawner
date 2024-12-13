@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 #include <grpc/grpc.h> 
 #include <grpcpp/server_builder.h>
 
@@ -12,50 +13,63 @@
 #include <shared/src/infrastructure/services/EndpointService.h>
 
 int main(int argc, char** argv) {
-    auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
-    if (!logger) {
-        std::cout << "Logger doesn't works!";
+    try{ 
+        auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
+        if (!logger) {
+            throw std::runtime_error("Can't create logger or process manager");
+        }
 
-        return 0;
-    }
+        auto processManager = std::make_shared<process_manager::infrastructure::services::ProcessManager>(logger);
+        if (!processManager) {
+            throw std::runtime_error("Can't create process manager");
+        }
 
-    auto restServer = std::make_unique<shared::infrastructure::services::AsyncServerService>(
-        environment::parent_process::Address.data(), 
-        environment::parent_process::Port, 
-        std::make_unique<shared::infrastructure::services::EndpointService>(
+        auto restServer = std::make_unique<shared::infrastructure::services::AsyncServerService>(
             environment::parent_process::Address.data(), 
+            environment::parent_process::Port, 
+            std::make_unique<shared::infrastructure::services::EndpointService>(
+                environment::parent_process::Address.data(), 
+                logger
+            ),
             logger
-        ),
-        logger
-    );
+        );
+        if (!restServer) {
+            throw std::runtime_error("Can't create rest server");
+        }
 
-    // <START> rest endpoints
-    process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{};
-    restServer->registerController(childProcessCommunicationController);
+        // <START> rest endpoints
+        process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{};
+        restServer->registerController(childProcessCommunicationController);
+        // <END> rest endpoints
 
-    // <END> rest endpoints
-    
-    grpc::ServerBuilder builder;
-    builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
+        grpc::ServerBuilder builder;
+        builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
 
-    // <START> gRPC endpoints 
-    process_manager::infrastructure::services::ProcessManagerService managerService{
-        std::make_unique<process_manager::infrastructure::services::ProcessManager>(logger),
-        logger 
-    };
 
-    builder.RegisterService(&managerService);
-    // <END> gRPC endpoints
+        // <START> gRPC endpoints 
+        process_manager::infrastructure::services::ProcessManagerService managerService{
+            processManager,
+            logger 
+        };
+        builder.RegisterService(&managerService);
+        // <END> gRPC endpoints
 
-    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-    if (server) {
-        logger->log("Server started!");
+        std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+        if (!server) {
+            throw std::runtime_error("Can't create gRPC server");
+        }
 
-        restServer->start();
-	    server->Wait();
+        if (server) {
+            logger->log("Server started!");
+
+            restServer->start();
+	        server->Wait();
+        }
+
+        restServer->join();
+    } catch (std::exception& e) {
+        std::cout << "Exception: " << e.what() << std::endl;
     }
-
-    restServer->join();
 
     return 0;
 }

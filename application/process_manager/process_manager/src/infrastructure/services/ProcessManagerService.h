@@ -19,9 +19,9 @@ namespace process_manager::infrastructure::services {
 class ProcessManagerService : public Communication::ManagerService::Service {
 public:
    ProcessManagerService(
-        std::unique_ptr<process_manager::infrastructure::services::ProcessManager> manager,
+        std::shared_ptr<process_manager::infrastructure::services::ProcessManager> manager,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
-            m_manager{ std::move(manager) },
+            m_manager{ manager },
             m_configProvider{ 
                 environment::child_process::Address.data(), environment::child_process::Port,
                 environment::parent_process::Address.data(), environment::parent_process::Port
@@ -36,10 +36,16 @@ public:
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         m_logger->log("SpawnProcess called!");
 
-        m_manager->startProcess(
-            environment::child_process::Process_Path.data(),
-            { m_configProvider.GetNextChildConfigJson() }
-        );
+        const auto pid = m_manager->startProcess(environment::child_process::Process_Path.data(), { m_configProvider.GetNextChildConfigJson() });
+        if (!pid) {
+            const std::string message = "Failed to start process!";
+            m_logger->logError(message);
+
+            response->set_success(false);
+            response->set_message(message);
+
+            return grpc::Status::CANCELLED;
+        }
 
         //response->set_success(true);
         //response->set_message("Process spawned!");
@@ -55,9 +61,8 @@ public:
     }
     
 private:
-    std::unique_ptr<process_manager::infrastructure::services::ProcessManager> m_manager;
+    std::shared_ptr<process_manager::infrastructure::services::ProcessManager> m_manager;
     process_manager::application::utils::ChildProcessConfigProvider m_configProvider;
-
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 };
 

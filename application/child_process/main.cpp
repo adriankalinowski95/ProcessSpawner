@@ -26,11 +26,20 @@ void setTemporaryParams(int* argc, char*** argv) {
     memcpy((*argv)[1], params.data(), params.size());
 }
 
+void setTempData(shared::domain::models::ProcessConfig& config) {
+    shared::infrastructure::services::RequestSenderService sender{ config.parentAddress, config.parentPort, "/fun1" };
+    const auto result = sender.sendRequest("Hello, server!", true);
+    if (result) {
+            std::cout << "Hello server result: " << *result << std::endl;
+    } else {
+        std::cout << "Didn't recive a hello server result" << std::endl;
+    }
+}
+
 int main(int argc, char** argv) {
-    setTemporaryParams(&argc, &argv);
+    // setTemporaryParams(&argc, &argv);
     
     auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
-
     try {
         const auto params = child_process::application::utils::ChildProcessParamsParser::GetParams(argc, argv);
         if (params.empty()) {
@@ -44,14 +53,6 @@ int main(int argc, char** argv) {
             std::cerr << "Not correct configuration" << std::endl;
             
             return 1;
-        }
-
-        shared::infrastructure::services::RequestSenderService sender{ config->parentAddress, config->parentPort, "/fun1" };
-        const auto result = sender.sendRequest("Hello, server!", true);
-        if (result) {
-            std::cout << "Hello server result: " << *result << std::endl;
-        } else {
-            std::cout << "Didn't recive a hello server result" << std::endl;
         }
 
         shared::infrastructure::services::AsyncServerService server { 

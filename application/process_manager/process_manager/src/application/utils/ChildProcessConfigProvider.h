@@ -2,17 +2,20 @@
 
 #include <string>
 #include <cstdint>
+
 #include <shared/src/application/utils/ModelsJsonConverter.h>
+#include <shared/src/application/utils/RandomNumberGenerator.h>
 
 namespace process_manager::application::utils {
 
 class ChildProcessConfigProvider {
 public:
-    ChildProcessConfigProvider( 
+    ChildProcessConfigProvider(
         std::string baseChildAddress, 
         std::uint32_t baseChildPort, 
         std::string parentAddress, 
         std::uint32_t parentPort) : 
+            m_id{ shared::application::utils::RandomValueGenerator{}.generateRandomValue() },
             m_baseChildAddress{ baseChildAddress },
             m_baseChildPort{ baseChildPort },
             m_parentAddress{ parentAddress },
@@ -26,6 +29,7 @@ public:
     }
 
 private:
+    std::int32_t m_id;
     std::string m_baseChildAddress;
     std::uint32_t m_baseChildPort;
     std::string m_parentAddress;
@@ -34,6 +38,7 @@ private:
 
     [[nodiscard]] shared::domain::models::ProcessConfig GetNextChildConfig() {
         return shared::domain::models::ProcessConfig{
+            m_id,
             m_baseChildAddress.data(),
             m_lastChildPort++,
             m_parentAddress.data(),

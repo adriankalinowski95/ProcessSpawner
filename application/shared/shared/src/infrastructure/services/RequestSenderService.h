@@ -43,7 +43,7 @@ public:
             http::response<http::string_body> response{};
             http::read(stream, buffer, response);
 
-            return std::string(res.body().c_str());
+            return std::string(response.body().c_str());
         } catch(std::exception& e) {
             return std::nullopt;
         }

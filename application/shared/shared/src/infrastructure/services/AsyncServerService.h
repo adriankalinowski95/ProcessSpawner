@@ -7,8 +7,9 @@
 #include <atomic>
 
 #include <shared/src/infrastructure/providers/BoostAcceptorProvider.h>
+#include <shared/src/application/services/BaseController.h>
 #include <shared/src/application/services/IEndpointService.h>
-#include <shared/shared/src/application/services/ILogger.h>
+#include <shared/src/application/services/ILogger.h>
 
 namespace shared::infrastructure::services {
 
@@ -44,7 +45,7 @@ public:
         return m_endpointService;
     }
 
-    void registerController(shared::application::services::BaseController& controller) {
+    void registerController(BaseController& controller) {
         m_endpointService->addHandlers(controller.getHandlers());
     }
 
