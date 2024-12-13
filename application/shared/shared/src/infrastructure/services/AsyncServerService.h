@@ -40,6 +40,14 @@ public:
         m_serverThread.join();
     }
 
+    std::unique_ptr<shared::application::services::IEndpointService>& getEndpointService() {
+        return m_endpointService;
+    }
+
+    void registerController(shared::application::services::BaseController& controller) {
+        m_endpointService->addHandlers(controller.getHandlers());
+    }
+
 private:
     shared::infrastructure::providers::BoostAcceptorProvider m_acceptorProvider;
     std::unique_ptr<shared::application::services::IEndpointService> m_endpointService;

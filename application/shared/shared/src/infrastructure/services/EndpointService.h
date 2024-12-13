@@ -17,7 +17,7 @@ namespace http = beast::http;
 namespace net = boost::asio;           
 using tcp = net::ip::tcp;
 
-class EndpointService : public shared::application::services::IEndpointService {
+class EndpointService : public shared::application::services::IEndpointService { 
 public:
     EndpointService(const std::string& basePath, const std::shared_ptr<shared::application::services::ILogger>& logger) : 
         m_basePath{ basePath },
@@ -26,8 +26,8 @@ public:
     void handleRequest(boost::asio::ip::tcp::socket socket) override {
         try {
             auto request = getRequest(socket);
-            auto path = pathCat(m_basePath, request.target());
-            auto path2 = request.target();
+            auto path = std::string(request.target().data());
+            
             if (m_handlers.find(path) != m_handlers.end()) {
                 m_handlers[path](socket, request);
             } else {
@@ -38,6 +38,15 @@ public:
         }
     }
 
+    void addHandler(const std::string& route, HandlerFunc handler) override {
+        m_handlers[route] = std::move(handler);
+    }
+
+    void addHandlers(const std::vector<std::pair<std::string, HandlerFunc>>& handlers) override {
+        for (const auto& [route, handler] : handlers) {
+            addHandler(route, handler);
+        }
+    }
 private:
     std::string m_basePath;
     std::shared_ptr<shared::application::services::ILogger> m_logger;

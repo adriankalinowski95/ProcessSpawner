@@ -23,16 +23,7 @@ using boost::asio::ip::tcp;
 class ProcessManager {
 public:
     ProcessManager(std::shared_ptr<ILogger> logger) :
-        m_logger{ logger },
-        m_server{
-            environment::parent_process::Address.data(), 
-            environment::parent_process::Port, 
-            std::make_unique<shared::infrastructure::services::EndpointService>(environment::parent_process::Address.data(), logger),
-            logger
-        }
-    {
-        m_server.start();
-    }
+        m_logger{ logger } {}
 
     void startProcess(const std::string& program, const std::vector<std::string>& args) {
         std::vector<char*> cargs;
@@ -55,7 +46,6 @@ public:
 
 private:
     std::shared_ptr<ILogger> m_logger;
-    shared::infrastructure::services::AsyncServerService m_server;
 };
 
 }
