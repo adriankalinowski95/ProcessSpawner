@@ -2,7 +2,7 @@
 
 #include <string>
 #include <cstdint>
-#include <shared/src/application/services/ModelsMapperService.h>
+#include <shared/src/application/utils/ModelsJsonConverter.h>
 
 namespace process_manager::application::utils {
 
@@ -22,7 +22,7 @@ public:
     [[nodiscard]] std::string GetNextChildConfigJson() {
         const auto nextChildConfig = GetNextChildConfig();
 
-        return shared::application::services::ModelsConverter{}.toJson(nextChildConfig);    
+        return shared::application::utils::ModelsJsonConverter{}.toJson(nextChildConfig);    
     }
 
 private:

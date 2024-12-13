@@ -4,7 +4,7 @@
 #include <string>
 #include <optional>
 #include <shared/src/domain/models/ProcessConfig.h>
-#include <shared/src/application/services/ModelsMapperService.h>
+#include <shared/src/application/utils/ModelsJsonConverter.h>
 
 namespace child_process::application::utils {
 
@@ -30,10 +30,8 @@ public:
         if (params.empty() || params.size() != 2) {
             return std::nullopt;
         }
-
-        auto modelsMapper = shared::application::services::ModelsConverter{};
-
-        return modelsMapper.fromJson<shared::domain::models::ProcessConfig>(params[1]);
+        
+        return shared::application::utils::ModelsJsonConverter{}.fromJson<shared::domain::models::ProcessConfig>(params[1]);
     }
 };
 

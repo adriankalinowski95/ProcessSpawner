@@ -8,6 +8,7 @@
 
 #include <shared/src/infrastructure/providers/BoostAcceptorProvider.h>
 #include <shared/src/application/services/IEndpointService.h>
+#include <shared/shared/src/application/services/ILogger.h>
 
 namespace shared::infrastructure::services {
 
@@ -57,6 +58,7 @@ private:
             while (m_isRunning) {
                 auto socket = acceptor->accept();
 
+                // @Todo create pool of threads
                 m_endpointService->handleRequest(std::move(socket));
             }
         } catch(std::exception& e) {

@@ -9,9 +9,9 @@
 
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
+#include <shared/src/infrastructure/services/EndpointService.h>
 
 #include <process_manager/src/infrastructure/services/ProcessManager.h>
-#include <process_manager/src/infrastructure/services/EndpointService.h>
 
 #include <environments/environments.h>
 
@@ -24,10 +24,10 @@ class ProcessManager {
 public:
     ProcessManager(std::shared_ptr<ILogger> logger) :
         m_logger{ logger },
-        m_server{ 
+        m_server{
             environment::parent_process::Address.data(), 
             environment::parent_process::Port, 
-            std::make_unique<EndpointService>(logger),
+            std::make_unique<shared::infrastructure::services::EndpointService>(environment::parent_process::Address.data(), logger),
             logger
         }
     {

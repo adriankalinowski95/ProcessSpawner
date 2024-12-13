@@ -4,9 +4,9 @@
 #include <string>
 #include <shared/src/domain/models/ProcessConfig.h>
 
-namespace shared::application::services {
+namespace shared::application::utils {
 
-class ModelsConverter {
+class ModelsJsonConverter {
 public:
     template <typename T>
     std::optional<T> fromJson(const std::string& json) {

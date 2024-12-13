@@ -5,11 +5,11 @@
 #include <boost/asio.hpp>
 
 #include <child_process/src/application/utils/ChildProcessParamsParser.h>
-#include <child_process/src/infrastructure/services/EndpointService.h>
 
 #include <shared/src/infrastructure/services/RequestSenderService.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
 #include <shared/src/infrastructure/services/DefaultLogger.h>
+#include <shared/src/infrastructure/services/EndpointService.h>
 
 using boost::asio::ip::tcp;
 
@@ -102,7 +102,7 @@ void setTemporaryParams(int* argc, char*** argv) {
 }
 
 int main(int argc, char** argv) {
-    setTemporaryParams(&argc, &argv);
+    // setTemporaryParams(&argc, &argv);
     auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
 
     try {
@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        shared::infrastructure::services::RequestSenderService sender{ config->parentAddress, config->parentPort };
+        shared::infrastructure::services::RequestSenderService sender{ config->parentAddress, config->parentPort, "/hello" };
         const auto result = sender.sendRequest("Hello, server!", true);
         if (result) {
             std::cout << "Hello server result: " << *result << std::endl;
@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
         shared::infrastructure::services::AsyncServerService server { 
             config->childAddress, 
             config->childPort, 
-            std::make_unique<child_process::infrastructure::services::EndpointService>(logger),
+            std::make_unique<shared::infrastructure::services::EndpointService>(config->childAddress.data(), logger),
             logger
         };
         
