@@ -10,7 +10,7 @@ namespace ProcessSpawner.Domain.Models {
         public int Id { get; set; }
         public string ProcessType { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
-        public string ProcessId { get; set; }
+        public UInt32 ProcessId { get; set; } // PID
         public ProcessStatus Status { get; set; }
     }
 }

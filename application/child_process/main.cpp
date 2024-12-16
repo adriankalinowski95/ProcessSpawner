@@ -5,6 +5,8 @@
 #include <boost/asio.hpp>
 
 #include <child_process/src/application/utils/ChildProcessParamsParser.h>
+#include <child_process/src/application/services/GlobalConfig.h>
+#include <child_process/src/api/controllers/ProcessManagerCommunicationController.h>
 
 #include <shared/src/infrastructure/services/RequestSenderService.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
@@ -28,7 +30,7 @@ void setTemporaryParams(int* argc, char*** argv) {
 
 void setTempData(shared::domain::models::ProcessConfig& config) {
     shared::infrastructure::services::RequestSenderService sender{ config.parentAddress, config.parentPort, "/fun1" };
-    const auto result = sender.sendRequest("Hello, server!", true);
+    const auto result = sender.sendRequest("Hello, server!" , true);
     if (result) {
             std::cout << "Hello server result: " << *result << std::endl;
     } else {
@@ -38,7 +40,6 @@ void setTempData(shared::domain::models::ProcessConfig& config) {
 
 int main(int argc, char** argv) {
     // setTemporaryParams(&argc, &argv);
-    
     auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
     try {
         const auto params = child_process::application::utils::ChildProcessParamsParser::GetParams(argc, argv);
@@ -55,15 +56,22 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        shared::infrastructure::services::AsyncServerService server { 
+        child_process::application::services::GlobalConfig::getInstance().setProcessConfig(*config);
+
+        shared::infrastructure::services::AsyncServerService restServer { 
             config->childAddress, 
             config->childPort, 
             std::make_unique<shared::infrastructure::services::EndpointService>(config->childAddress.data(), logger),
             logger
         };
+
+        // <START> rest endpoints
+        child_process::api::controllers::ProcessManagerCommunicationController processManagerCommunicationController{};
+        restServer.registerController(processManagerCommunicationController);
+        // <END> rest endpoints
         
-        server.start();
-        server.join();
+        restServer.start();
+        restServer.join();
     }
     catch (std::exception& e) {
         logger->logError(e.what());

@@ -4,6 +4,7 @@
 #include <grpcpp/server_builder.h>
 
 #include <process_manager/environments/environments.h>
+#include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ProcessManagerService.h>
 #include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
 
@@ -19,9 +20,9 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create logger or process manager");
         }
 
-        auto processManager = std::make_shared<process_manager::infrastructure::services::ProcessManager>(logger);
-        if (!processManager) {
-            throw std::runtime_error("Can't create process manager");
+        auto processSpawner = std::make_shared<process_manager::infrastructure::tools::ProcessSpawner>(logger);
+        if (!processSpawner) {
+            throw std::runtime_error("Can't create process spawner");
         }
 
         auto restServer = std::make_unique<shared::infrastructure::services::AsyncServerService>(
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
 
         // <START> gRPC endpoints 
         process_manager::infrastructure::services::ProcessManagerService managerService{
-            processManager,
+            processSpawner,
             logger 
         };
         builder.RegisterService(&managerService);

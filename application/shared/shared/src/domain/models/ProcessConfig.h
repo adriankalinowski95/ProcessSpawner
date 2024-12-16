@@ -7,7 +7,6 @@
 namespace shared::domain::models {
 
 struct ProcessConfig {
-    std::int32_t id;
     std::string childAddress;
     std::uint32_t childPort;
     std::string parentAddress;

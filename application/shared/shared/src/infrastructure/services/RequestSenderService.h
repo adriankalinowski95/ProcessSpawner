@@ -21,7 +21,7 @@ public:
         m_port{ port },
         m_path{ path } {}
 
-    std::optional<std::string> sendRequest(const std::string& request, bool withReadResult = true) {
+    std::optional<std::string> sendRequest(std::optional<std::string> data, bool withReadResult = true) {
         try {
             net::io_context ioContext{};
             tcp::resolver resolver{ ioContext };
@@ -35,12 +35,26 @@ public:
                 m_path, 
                 11
             };
+
             request.set(http::field::host, m_address);
             request.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+            
+            if(data) {
+                request.body() = *data;
+                request.prepare_payload();
+            }
+
             http::write(stream, request);
+
+            if (!withReadResult) {
+                return "";
+            }
 
             beast::flat_buffer buffer{};
             http::response<http::string_body> response{};
+            response.version(11);
+            response.set(http::field::content_type, "text/plain");
+            
             http::read(stream, buffer, response);
 
             return std::string(response.body().c_str());

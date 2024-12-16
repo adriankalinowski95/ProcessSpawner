@@ -30,18 +30,20 @@ namespace ProcessSpawner.Infrastructure.Services {
 
         private Protobuf.SpawnRequest GetStartRequestProto(ProcessSpawnRequestDto request) {
             return new Protobuf.SpawnRequest {
+                InternalId = Guid.NewGuid().ToString(),
                 ProcessType = request.process_type,
                 Parameters = {
                     new Google.Protobuf.Collections.MapField<string, string> { request.parameters }
-                }
+                },
             };
         }
 
         private ProcessSpawnResponseDto GetSpawnResponseDto(Protobuf.SpawnResponse response) {
             return new ProcessSpawnResponseDto(
+                response.ProcessId,
+                response.InternalId,
                 response.Success,
-                response.Message,
-                response.ProcessId
+                response.Message
             );
         }
     }
