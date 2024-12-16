@@ -21,14 +21,15 @@ public:
             m_parentPort{ parentPort },
             m_lastChildPort{ baseChildPort } {}
 
-    [[nodiscard]] std::string GetNextChildConfigJson() {
-        const auto nextChildConfig = GetNextChildConfig();
+    [[nodiscard]] std::string GetNextChildConfigJson(const std::string& internalId) {
+        const auto nextChildConfig = GetNextChildConfig(internalId);
 
         return shared::application::utils::ModelsJsonConverter{}.toJson(nextChildConfig);    
     }
 
-    [[nodiscard]] shared::domain::models::ProcessConfig GetNextChildConfig() {
+    [[nodiscard]] shared::domain::models::ProcessConfig GetNextChildConfig(const std::string& internalId) {
         return shared::domain::models::ProcessConfig{
+            internalId,
             m_baseChildAddress.data(),
             m_lastChildPort++,
             m_parentAddress.data(),

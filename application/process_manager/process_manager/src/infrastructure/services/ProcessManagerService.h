@@ -23,14 +23,15 @@ class ProcessManagerService : public Communication::ManagerService::Service {
 public:
    ProcessManagerService(
         std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> processSpawner,
+        std::shared_ptr<ChildProcessHolderService> childProcessHolderService,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
+            m_childProcessHolderService{ childProcessHolderService },
             m_configProvider{ 
                 environment::child_process::Address.data(), environment::child_process::Port,
                 environment::parent_process::Address.data(), environment::parent_process::Port
             },
-            m_logger{ logger },
-            m_childProcessHolderService{}
+            m_logger{ logger }
     {
         if (!m_logger) {
             throw std::runtime_error("Logger is not initialized!");
@@ -38,7 +39,7 @@ public:
     }
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
-        const auto childConfig = m_configProvider.GetNextChildConfig();
+        const auto childConfig = m_configProvider.GetNextChildConfig(request->internal_id());
         const auto childConfigJson = shared::application::utils::ModelsJsonConverter{}.toJson(childConfig);
         const auto pid = m_processSpawner->startProcess(environment::child_process::Process_Path.data(), { childConfigJson });
         if (!pid) {
@@ -68,7 +69,7 @@ public:
             return grpc::Status::CANCELLED;
         }
 
-        m_childProcessHolderService.addChildProcess(*processInstance);
+        m_childProcessHolderService->addChildProcess(*processInstance);
         response->set_internal_id(request->internal_id());
         response->set_process_id((int)processInstance->pid);
         response->set_success(true);
@@ -85,10 +86,9 @@ public:
     
 private:
     std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> m_processSpawner;
+    std::shared_ptr<ChildProcessHolderService> m_childProcessHolderService;
     process_manager::application::utils::ChildProcessConfigProvider m_configProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
-    
-    ChildProcessHolderService m_childProcessHolderService;
 };
 
 }

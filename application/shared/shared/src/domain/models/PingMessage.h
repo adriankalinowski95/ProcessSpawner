@@ -7,10 +7,10 @@
 namespace shared::domain::models {
 
 struct PingMessage {
-    std::uint32_t processId;
+    std::string internalId;
     std::int32_t uniqueNumber;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PingMessage, processId, uniqueNumber)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PingMessage, internalId, uniqueNumber)
 
 }

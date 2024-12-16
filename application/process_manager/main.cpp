@@ -6,6 +6,7 @@
 #include <process_manager/environments/environments.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ProcessManagerService.h>
+#include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
@@ -25,6 +26,11 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create process spawner");
         }
 
+        auto childProcessHolderService = std::make_shared<process_manager::infrastructure::services::ChildProcessHolderService>();
+        if (!childProcessHolderService) {
+            throw std::runtime_error("Can't create child process holder service");
+        }
+
         auto restServer = std::make_unique<shared::infrastructure::services::AsyncServerService>(
             environment::parent_process::Address.data(), 
             environment::parent_process::Port, 
@@ -39,17 +45,17 @@ int main(int argc, char** argv) {
         }
 
         // <START> rest endpoints
-        process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{};
+        process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{childProcessHolderService};
         restServer->registerController(childProcessCommunicationController);
         // <END> rest endpoints
 
         grpc::ServerBuilder builder;
         builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
 
-
         // <START> gRPC endpoints 
         process_manager::infrastructure::services::ProcessManagerService managerService{
             processSpawner,
+            childProcessHolderService,
             logger 
         };
         builder.RegisterService(&managerService);

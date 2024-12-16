@@ -34,10 +34,10 @@ public:
         }
 
     std::optional<process_manager::domain::models::ProcessInstance> init(int timeoutMs = 1000, int retries = 3) {
-        const auto processInstnace = getProcessInstance();
+        auto processInstnace = getProcessInstance();
 
         const auto pingMessage = shared::domain::models::PingMessage {
-            .processId = m_pid,
+            .internalId = m_internalId,
             .uniqueNumber = shared::application::utils::RandomValueGenerator{}.generateRandomValue()
         };
 
@@ -57,6 +57,11 @@ public:
             }
 
             if (response->uniqueNumber == pingMessage.uniqueNumber + 1) {
+                const auto start = std::chrono::steady_clock::now();
+                const auto timeInMs = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
+                processInstnace.createdTimeMs = timeInMs;
+                processInstnace.lastUpdateTimeMs = timeInMs;
+
                 return processInstnace;
             }
         }

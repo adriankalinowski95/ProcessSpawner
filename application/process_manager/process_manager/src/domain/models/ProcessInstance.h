@@ -16,6 +16,9 @@ struct ProcessInstance {
     std::uint32_t pid;
     std::string address;
     std::uint32_t port;
+
+    long long createdTimeMs;
+    long long lastUpdateTimeMs;
 };
 
 }
