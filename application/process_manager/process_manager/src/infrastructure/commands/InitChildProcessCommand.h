@@ -7,20 +7,18 @@
 #include <shared/src/domain/models/PingMessage.h>
 #include <shared/src/domain/models/ProcessConfig.h>
 #include <shared/src/application/services/ILogger.h>
-#include <shared/src/infrastructure/services/RequestSenderService.h>
+#include <shared/src/infrastructure/commands/RequestSenderCommand.h>
 #include <shared/src/application/utils/RandomNumberGenerator.h>
 #include <shared/src/application/utils/ModelsJsonConverter.h>
 #include <process_manager/src/domain/models/ProcessInstance.h> 
 
-namespace process_manager::infrastructure::services {
+namespace process_manager::infrastructure::commands {
 
-class InitChildProcessService {
+class InitChildProcessCommand {
 public:
-    // Serwis, ktory zyje dluzej powinien miec przekazywane parametry przez funkcje
-    // Klasa, ktora robi cos od razu (np. converter / handler / parser ) powinna miec przekazywane parametry przez konstruktor
-    InitChildProcessService(
-        std::uint32_t pid,
-        std::string internalId,
+    InitChildProcessCommand(
+        std::uint32_t pid, 
+        std::string internalId, 
         shared::domain::models::ProcessConfig childConfig,
         std::shared_ptr<shared::application::services::ILogger> logger) :
             m_pid{ pid },
@@ -43,7 +41,7 @@ public:
 
         const auto pingMessageJson = shared::application::utils::ModelsJsonConverter{}.toJson(pingMessage);
         for(auto i = 0; i < retries; i++) {
-            shared::infrastructure::services::RequestSenderService sender{ m_childConfig.childAddress, m_childConfig.childPort, "/init" };
+            shared::infrastructure::commands::RequestSenderCommand sender{ m_childConfig.childAddress, m_childConfig.childPort, "/init" };
             const auto result = sender.sendRequest(pingMessageJson, true);
             if (!result || result->empty()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(timeoutMs));

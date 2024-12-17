@@ -11,7 +11,7 @@
 
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
-#include <process_manager/src/infrastructure/services/InitChildProcessService.h>
+#include <process_manager/src/infrastructure/commands/InitChildProcessCommand.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/domain/models/ProcessInstance.h>
 
@@ -52,7 +52,7 @@ public:
             return grpc::Status::CANCELLED;
         }
         
-        const auto processInstance = process_manager::infrastructure::services::InitChildProcessService{
+        const auto processInstance = process_manager::infrastructure::commands::InitChildProcessCommand{
             *pid,
             request->internal_id(),
             childConfig,

@@ -5,7 +5,6 @@
 #include <map>
 #include <process_manager/src/domain/models/ProcessInstance.h>
 
-
 namespace process_manager::infrastructure::services {
 
 class ChildProcessHolderService {

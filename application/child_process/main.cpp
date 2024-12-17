@@ -8,7 +8,7 @@
 #include <child_process/src/application/services/GlobalConfig.h>
 #include <child_process/src/api/controllers/ProcessManagerCommunicationController.h>
 
-#include <shared/src/infrastructure/services/RequestSenderService.h>
+#include <shared/src/infrastructure/commands/RequestSenderCommand.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
 #include <shared/src/infrastructure/services/DefaultLogger.h>
 #include <shared/src/infrastructure/services/EndpointService.h>
@@ -29,7 +29,7 @@ void setTemporaryParams(int* argc, char*** argv) {
 }
 
 void setTempData(shared::domain::models::ProcessConfig& config) {
-    shared::infrastructure::services::RequestSenderService sender{ config.parentAddress, config.parentPort, "/fun1" };
+    shared::infrastructure::commands::RequestSenderCommand sender{ config.parentAddress, config.parentPort, "/fun1" };
     const auto result = sender.sendRequest("Hello, server!" , true);
     if (result) {
             std::cout << "Hello server result: " << *result << std::endl;

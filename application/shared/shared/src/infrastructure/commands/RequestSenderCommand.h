@@ -7,16 +7,17 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
-namespace shared::infrastructure::services {
+namespace shared::infrastructure::commands {
 
 namespace beast = boost::beast;
 namespace http = beast::http;
 namespace net = boost::asio;
 using tcp = net::ip::tcp;
 
-class RequestSenderService {
+// @Todo could be changed to builder pattern
+class RequestSenderCommand {
 public:
-    RequestSenderService(const std::string& address, const std::uint32_t& port, const std::string& path) :
+    RequestSenderCommand(const std::string& address, const std::uint32_t& port, const std::string& path) :
         m_address{ address },
         m_port{ port },
         m_path{ path } {}
