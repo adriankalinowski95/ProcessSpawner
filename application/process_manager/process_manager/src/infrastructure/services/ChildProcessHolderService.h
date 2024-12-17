@@ -19,7 +19,7 @@ public:
         m_childProcesses[process.internalId] = process;
     }
 
-    [[nodiscard]] const std::vector<process_manager::domain::models::ProcessInstance>& getChildProcesses() const {
+    [[nodiscard]] std::vector<process_manager::domain::models::ProcessInstance> getChildProcesses() const {
         std::vector<process_manager::domain::models::ProcessInstance> result{};
         for (const auto& process : m_childProcesses) {
             result.push_back(process.second);
