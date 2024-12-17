@@ -36,7 +36,6 @@ namespace ProcessSpawner.Infrastructure.Services {
 
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(ProcessSpawnRequestDto obj) {
             // @Todo Validator
-
             var spawnProcessResponse = await m_managerService.SpawnProcess(obj);
             if (!spawnProcessResponse.success) {
                 return new ObjectOperationResult<ProcessInstanceDto> {
@@ -46,8 +45,9 @@ namespace ProcessSpawner.Infrastructure.Services {
             }
 
             var procesInstance = new ProcessInstance {
-                ProcessType = obj.process_type,
                 ProcessId = spawnProcessResponse.process_id,
+                InternalId = spawnProcessResponse.internal_id,
+                ProcessType = obj.process_type,
                 Parameters = obj.parameters,
                 Status = Domain.Enums.ProcessStatus.Started
             };

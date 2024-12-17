@@ -7,6 +7,7 @@
 #include <child_process/src/application/utils/ChildProcessParamsParser.h>
 #include <child_process/src/application/services/GlobalConfig.h>
 #include <child_process/src/api/controllers/ProcessManagerCommunicationController.h>
+#include <child_process/src/infrastructure/services/PingManagerSchedulerService.h>
 
 #include <shared/src/infrastructure/commands/RequestSenderCommand.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
@@ -69,8 +70,13 @@ int main(int argc, char** argv) {
         child_process::api::controllers::ProcessManagerCommunicationController processManagerCommunicationController{};
         restServer.registerController(processManagerCommunicationController);
         // <END> rest endpoints
-        
+
         restServer.start();
+        
+        // Scheduler
+        child_process::infrastructure::services::PingManagerSchedulerService pingManagerSchedulerService{ logger };
+        pingManagerSchedulerService.startAndJoin();
+        
         restServer.join();
     }
     catch (std::exception& e) {

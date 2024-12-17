@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
         }
 
         // <START> rest endpoints
-        process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{childProcessHolderService};
+        process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{ childProcessHolderService, logger};
         restServer->registerController(childProcessCommunicationController);
         // <END> rest endpoints
 

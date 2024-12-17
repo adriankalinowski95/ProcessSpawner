@@ -8,9 +8,10 @@ namespace ProcessSpawner.Domain.Models {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public UInt32 ProcessId { get; set; } // PID
+        public string InternalId { get; set; }
         public string ProcessType { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
-        public UInt32 ProcessId { get; set; } // PID
         public ProcessStatus Status { get; set; }
     }
 }

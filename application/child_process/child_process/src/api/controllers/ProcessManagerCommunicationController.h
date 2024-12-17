@@ -27,12 +27,9 @@ public:
         // add validation 
         message->uniqueNumber = message->uniqueNumber + 1;
 
-        auto baseResponse = this->getBaseResponse(req);
-        baseResponse.body() = shared::application::utils::ModelsJsonConverter{}.toJson(*message);
-        baseResponse.content_length(baseResponse.body().size() + 1);
-        baseResponse.prepare_payload();
+        auto response = getResponseWithData(shared::application::utils::ModelsJsonConverter{}.toJson(*message), req);
 
-        http::write(socket, baseResponse);
+        http::write(socket, response);
     }
 };
 

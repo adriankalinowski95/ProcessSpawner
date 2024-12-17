@@ -48,6 +48,15 @@ protected:
 
         return res;
     }
+
+    http::response<http::string_body> getResponseWithData(std::string data, const http::request<http::string_body>& req) {
+        auto baseResponse = this->getBaseResponse(req);
+        baseResponse.body() = data;
+        baseResponse.content_length(baseResponse.body().size() + 1);
+        baseResponse.prepare_payload();
+
+        return baseResponse;
+    }
 };
 
 inline HandlerRegistrar::HandlerRegistrar(BaseController& controller,
