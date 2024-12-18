@@ -35,6 +35,7 @@ namespace core.Settings {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserMap).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(LogMap).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProcessInstanceMap).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProcessManagerMap).Assembly);
         }
     }
 }

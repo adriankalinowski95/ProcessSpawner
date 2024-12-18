@@ -16,7 +16,7 @@ namespace ProcessSpawner.Infrastructure.Services {
         }
 
         public async Task<ProcessSpawnResponseDto> SpawnProcess(ProcessSpawnRequestDto startBotRequest) {
-            var channelIp = m_configuration["gRPCManagerAddress"];
+            var channelIp = GetgRPCManagerAddress();
             if (channelIp == null || channelIp.Length == 0) {
                 throw new Exception("Can't find bot manager ip");
             }
@@ -45,6 +45,19 @@ namespace ProcessSpawner.Infrastructure.Services {
                 response.Success,
                 response.Message
             );
+        }
+
+        private string GetgRPCManagerAddress() {
+            var isGRPCManagerStaticAddressVerbExist = Boolean.TryParse(m_configuration["IsgRPCManagerStaticAddress"], out bool isGRPCManagerStaticAddress);
+
+            var address = "";
+            if (isGRPCManagerStaticAddressVerbExist && isGRPCManagerStaticAddress) {
+                address = m_configuration["StaticgRPCManagerAddress"];
+            } else {
+                address = m_configuration["gRPCManagerAddress"];
+            }
+
+            return address;
         }
     }
 }
