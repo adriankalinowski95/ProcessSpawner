@@ -10,6 +10,7 @@ namespace ProcessSpawner.Domain.Models {
         public string Name { get; set; }
         public string Address { get; set; }
         public UInt32 Port { get; set; }
+
         public List<ProcessInstance> ProcessInstances { get; set; } = new List<ProcessInstance>();
     }
 }

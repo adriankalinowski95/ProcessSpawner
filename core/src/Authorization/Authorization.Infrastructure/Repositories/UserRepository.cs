@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authorization.Infrastructure.Repositories {
     public class UserRepository : Shared.Generic.Repositories.Int.GenericRepository<User>, Application.Services.IUserRepository {
-        public UserRepository(DbContext dbContext) : base(dbContext) { }
+        public UserRepository(DbContext dbContext) : base(dbContext) {
+
+        }
 
         public User GetByName(string name) {
             var user = m_dbSet.Where(user => user.Username == name).FirstOrDefault();

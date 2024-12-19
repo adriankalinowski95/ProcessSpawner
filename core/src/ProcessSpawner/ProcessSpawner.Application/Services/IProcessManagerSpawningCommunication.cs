@@ -2,7 +2,7 @@
 using ProcessSpawner.Application.DTOs;
 
 namespace ProcessSpawner.Application.Services {
-    public interface IManagerService {
+    public interface IProcessManagerSpawningCommunication {
         Task<ProcessSpawnResponseDto> SpawnProcess(DTOs.ProcessSpawnRequestDto startBotRequest);
     }
 }

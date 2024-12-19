@@ -68,7 +68,6 @@ int main(int argc, char** argv) {
 
         if (server) {
             logger->log("Server started!");
-
             restServer->start();
 	        server->Wait();
         }

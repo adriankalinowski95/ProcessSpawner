@@ -15,33 +15,38 @@ namespace ProcessSpawner.Infrastructure.Services {
     public class ProcessSpawningService : IProcessSpawningService {
         public readonly IConfiguration m_configuration;
         public readonly ILogger<ProcessSpawningService> m_logger;
-        public readonly IManagerService m_managerService;
+        public readonly IProcessManagerSpawningCommunication m_processMangerSpawningCommunication;
         public readonly IUserAuthenticationService m_userAuthenticationService;
         public readonly IProcessInstanceRepository m_processInstanceRepository;
+        public readonly IProcessManagerService m_processManagerService;
         private readonly IMapper m_mapper;
 
         public ProcessSpawningService(IConfiguration configuration,
             ILogger<ProcessSpawningService> logger,
-            IManagerService managerService,
+            IProcessManagerSpawningCommunication processMangerSpawningCommunication,
             IUserAuthenticationService userAuthenticationService,
             IProcessInstanceRepository processInstanceRepository,
+            IProcessManagerService processManagerService,
             IMapper mapper) {
             m_configuration = configuration;
             m_logger = logger;
-            m_managerService = managerService;
+            m_processMangerSpawningCommunication = processMangerSpawningCommunication;
             m_userAuthenticationService = userAuthenticationService;
             m_processInstanceRepository = processInstanceRepository;
+            m_processManagerService = processManagerService;
             m_mapper = mapper;
         }
 
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(ProcessSpawnRequestDto obj) {
             // @Todo Validator
-            var spawnProcessResponse = await m_managerService.SpawnProcess(obj);
+            var spawnProcessResponse = await m_processMangerSpawningCommunication.SpawnProcess(obj);
             if (!spawnProcessResponse.success) {
-                return new ObjectOperationResult<ProcessInstanceDto> {
-                    ErrorMessage = spawnProcessResponse.message,
-                    Status = BaseResponseStatus.Error
-                };
+                throw new Exception(spawnProcessResponse.message);
+            }
+
+            var processManager = await m_processManagerService.GetAvailableProcessManager();
+            if (processManager == null) {
+                throw new Exception("Process manager doesn't exist!");
             }
 
             var procesInstance = new ProcessInstance {
@@ -49,7 +54,9 @@ namespace ProcessSpawner.Infrastructure.Services {
                 InternalId = spawnProcessResponse.internal_id,
                 ProcessType = obj.process_type,
                 Parameters = obj.parameters,
-                Status = Domain.Enums.ProcessStatus.Started
+                Status = Domain.Enums.ProcessStatus.Started,
+                ProcessManager = processManager,
+                ProcessManagerId = processManager.Id
             };
 
             procesInstance = await m_processInstanceRepository.AddAsync(procesInstance);

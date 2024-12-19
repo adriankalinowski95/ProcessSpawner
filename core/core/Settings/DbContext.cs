@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Reflection;
+using System.Xml;
+using Authorization.Domain.Models;
 using Authorization.Infrastructure.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProcessSpawner.Infrastructure.Mapping;
 using Shared.Tools.Logging.Mapping;
 
@@ -25,17 +29,31 @@ namespace core.Settings {
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             options.UseSqlite($"Data Source={DbPath}");
-
-            // options.EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            // Console.WriteLine("OnModelCreating!");
+            var entityTypes = modelBuilder.Model.GetEntityTypes();
+
+            if (entityTypes.ToArray().Length == 0) {
+                Console.WriteLine("entity doesn't exist!");
+            } else {
+                foreach (var entityType in entityTypes) {
+                    // entityType.Name zawiera pełną nazwę typu
+                    Console.WriteLine($"Znaleziono encję: {entityType.Name}");
+                }
+            }
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserMap).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(LogMap).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProcessInstanceMap).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProcessManagerMap).Assembly);
+
+            entityTypes = modelBuilder.Model.GetEntityTypes();
+
+            foreach (var entityType in entityTypes) {
+                // entityType.Name zawiera pełną nazwę typu
+                Console.WriteLine($"Znaleziono encję: {entityType.Name}");
+            }
         }
     }
 }

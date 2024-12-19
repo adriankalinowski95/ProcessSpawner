@@ -136,12 +136,20 @@ export class AuthService {
                     if (!this.setAuthFromLocalStorage(newUserAuth)) {
                         throw new Error("Error setting user data to local storage");
                     }
-
+                    
+                    return newUserAuth;
                 } else {
                   this.logout();
                 }
 
                 return undefined;
+            }),
+            catchError((err) => {
+                console.log(err.message);
+                
+                this.logout();
+
+                return of(undefined);
             }),
             finalize(() => this.isLoadingSubject.next(false))
         );

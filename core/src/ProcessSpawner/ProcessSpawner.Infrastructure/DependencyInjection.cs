@@ -12,7 +12,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection {
     public static IServiceCollection AddInfrastructureForProcessSpawner(this IServiceCollection services, IConfiguration configuration) {
-        services.AddScoped<IManagerService, ManagerService>();
+        services.AddScoped<IProcessManagerRepository, ProcessManagerRepository>();
+        services.AddScoped<IProcessManagerService, ProcessManagerService>();
+        services.AddScoped<IProcessManagerConfigProvider, ProcessManagerConfigProvider>();
+        services.AddScoped<IProcessManagerSpawningCommunication, ProcessManagerSpawningCommunication>();
+
         services.AddScoped<IProcessInstanceRepository, ProcessInstanceRepository>();
         services.AddScoped<IProcessSpawningService, ProcessSpawningService>();
         services.AddGrpc();

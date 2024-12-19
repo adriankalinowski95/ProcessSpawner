@@ -4,8 +4,6 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Tools.Middlewares;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
@@ -20,7 +18,7 @@ Action<IWebHostBuilder> setStaticIp = (webHostBuilder) => {
         if (isStaticAddressVerbExist && isStaticAddress) {
             if (staticIp != null && staticIp.Length != 0 && staticPort != null && staticPort.Length > 0) {
                 serverOptions.Listen(IPAddress.Parse(staticIp), Int32.Parse(staticPort), o => {
-                    o.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                    // o.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
                 });
             }
         } else {
