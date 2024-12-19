@@ -16,11 +16,11 @@ namespace ProcessSpawner.Infrastructure.Mapping {
                 v => JsonSerializer.Serialize(v, new JsonSerializerOptions { WriteIndented = false }),
                 v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, new JsonSerializerOptions()) ?? new Dictionary<string, string>()
             );
-
+            /*
             builder.HasOne(u => u.ProcessManager)
                    .WithMany(u => u.ProcessInstances)
                    .HasForeignKey(u => u.ProcessManagerId);
-
+            */
             builder.Navigation(u => u.ProcessManager)
                   .AutoInclude();
         }

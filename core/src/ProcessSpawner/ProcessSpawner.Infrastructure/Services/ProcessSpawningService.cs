@@ -55,7 +55,6 @@ namespace ProcessSpawner.Infrastructure.Services {
                 ProcessType = obj.process_type,
                 Parameters = obj.parameters,
                 Status = Domain.Enums.ProcessStatus.Started,
-                ProcessManager = processManager,
                 ProcessManagerId = processManager.Id
             };
 
