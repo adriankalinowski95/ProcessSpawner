@@ -1,7 +1,11 @@
 ﻿//using core.src.Infrastructure.Services;
 
 using System.Net;
+using core.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProcessSpawner.Application.Repositories;
+using ProcessSpawner.Application.Services;
 using Shared.Tools.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +41,9 @@ Action<IWebHostBuilder> setStaticIp = (webHostBuilder) => {
 setStaticIp(builder.WebHost);
 
 var app = builder.Build();
+
+// @Todo remove this and just repair a dbcontext
+new RuntimeSeed(app).Seed();
 
 // app.MapGrpcService<CoreGrpcService>();
 
