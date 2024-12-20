@@ -10,7 +10,7 @@ namespace ProcessSpawner.Infrastructure.Repositories {
         public ProcessInstanceRepository(DbContext dbContext) : base(dbContext) { }
 
         public Task<Domain.Models.ProcessInstance> GetByInternalIdAsync(string internalId) {
-            return m_dbSet.Where(process => process.InternalId == internalId).FirstAsync();
+            return m_dbSet.Where(process => process.InternalId == internalId).FirstOrDefaultAsync();
         }
 
         public async Task<int> DeactiveProccesesForManager(int managerId) {

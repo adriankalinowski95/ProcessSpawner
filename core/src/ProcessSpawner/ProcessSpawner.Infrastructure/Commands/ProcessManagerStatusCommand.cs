@@ -34,15 +34,17 @@ namespace ProcessSpawner.Infrastructure.Commands {
         }
 
         private QueryResponseDto GetResponseDto(Protobuf.QueryResponse response) {
+            var processes = response.Processes.Select(x => {
+                return new ProcessInstanceDto {
+                    ProcessId = x.ProcessId,
+                    InternalId = x.InternalId,
+                    CreatedTimeMs = DateTimeOffset.FromUnixTimeMilliseconds(x.CreatedTimeMs).UtcDateTime,
+                    LastUpdateTimeMs = DateTimeOffset.FromUnixTimeMilliseconds(x.LastUpdateTimeMs).UtcDateTime
+                };
+            }).ToList();
+
             return new QueryResponseDto(
-                response.Processes.Select(x => {
-                    return new ProcessInstanceDto {
-                        ProcessId = x.ProcessId,
-                        InternalId = x.InternalId,
-                        CreatedTimeMs = DateTimeOffset.FromUnixTimeSeconds(x.CreatedTimeMs).UtcDateTime,
-                        LastUpdateTimeMs = DateTimeOffset.FromUnixTimeSeconds(x.LastUpdateTimeMs).UtcDateTime
-                    };
-                }).ToList()
+                processes
             );
         }
     }

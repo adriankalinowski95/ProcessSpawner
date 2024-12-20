@@ -52,7 +52,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                 processDb.LastUpdateTimeMs = process.LastUpdateTimeMs;
 
                 // @Todo validate - negative value
-                var timeDifference = DateTime.Now - processDb.LastUpdateTimeMs;
+                var timeDifference = DateTime.Now.ToUniversalTime() - processDb.LastUpdateTimeMs;
                 if (timeDifference.TotalMilliseconds < Offline_Threshold) {
                     processDb.Status = ProcessStatus.Active;
                 } else {

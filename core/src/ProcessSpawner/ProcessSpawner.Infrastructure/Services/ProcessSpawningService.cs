@@ -59,8 +59,8 @@ namespace ProcessSpawner.Infrastructure.Services {
                 ProcessType = obj.process_type,
                 Parameters = obj.parameters,
                 Status = Domain.Enums.ProcessStatus.Started,
-                CreatedTimeMs = DateTimeOffset.FromUnixTimeSeconds(spawnProcessResponse.created_time_ms).UtcDateTime,
-                LastUpdateTimeMs = DateTimeOffset.FromUnixTimeSeconds(spawnProcessResponse.last_update_time_ms).UtcDateTime,
+                CreatedTimeMs = DateTimeOffset.FromUnixTimeMilliseconds(spawnProcessResponse.created_time_ms).UtcDateTime,
+                LastUpdateTimeMs = DateTimeOffset.FromUnixTimeMilliseconds(spawnProcessResponse.last_update_time_ms).UtcDateTime,
                 ProcessManagerId = processManager.Id
             };
 

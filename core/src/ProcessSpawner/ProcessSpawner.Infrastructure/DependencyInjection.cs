@@ -35,7 +35,7 @@ public static class DependencyInjection {
                 .AddJob<ProcessStatusScheduler>(jobKey)
                 .AddTrigger(
                     trigger => trigger.ForJob(jobKey).WithSimpleSchedule(
-                        schedule => schedule.WithIntervalInSeconds(10).RepeatForever()));
+                        schedule => schedule.WithIntervalInSeconds(60).RepeatForever()));
         });
 
         services.AddQuartzHostedService(options => {
