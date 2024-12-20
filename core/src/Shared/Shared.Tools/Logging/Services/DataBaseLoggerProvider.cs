@@ -31,7 +31,7 @@ namespace Shared.Tools.Logging {
         }
 
         public void Dispose() {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
     }
 }

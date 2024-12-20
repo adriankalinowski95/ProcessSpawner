@@ -28,10 +28,7 @@ namespace Shared.Generic.Repositories.Int {
 
         public virtual async void Update(T entity) {
             var result = m_context.Update(entity);
-
             var res = m_context.SaveChanges();
-
-            Console.Write(res);
         }
 
         public virtual void Remove(T entity) {

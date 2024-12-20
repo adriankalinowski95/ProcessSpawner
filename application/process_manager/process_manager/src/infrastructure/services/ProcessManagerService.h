@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <memory>
 #include <string_view>
 #include <thread>
@@ -22,7 +23,7 @@
 // @Todo move to api...
 namespace process_manager::infrastructure::services {
 
-class ProcessManagerService : public Communication::ManagerService::Service {
+class ProcessManagerService : public Communication::SpawnProcessService::Service {
     using InitRequestSenderCommand = shared::infrastructure::commands::GenericRequestSenderCommand<shared::domain::models::PingMessage, shared::domain::models::PingMessage>;
 public:
    ProcessManagerService(
@@ -69,15 +70,16 @@ public:
                 return output.uniqueNumber == pingMessage.uniqueNumber + 1;
             }
         };
-
+ 
         if (!InitRequestSenderCommand{ config }.sendRequest(pingMessage)) {
             return failedSpawnResponse("Failed to initialize process!", response);
         }
 
         // update process holder
-        m_childProcessHolderService->addChildProcess(getProcessInstance(request->internal_id(), *pid, childConfig));
+        const auto processInstance = getProcessInstance(request->internal_id(), *pid, childConfig);
+        m_childProcessHolderService->addChildProcess(processInstance);
 
-        return successSpawnResponse(request->internal_id(), *pid, response);
+        return successSpawnResponse(processInstance, response);
     }
 
     virtual ::grpc::Status StopProcess(::grpc::ServerContext* context, const Communication::StopRequest* request, Communication::StopResponse* response) override {
@@ -96,13 +98,17 @@ private:
         const std::string& internalId,
         std::uint32_t pid,
         const shared::domain::models::ProcessConfig& config) {
+        const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
         return process_manager::domain::models::ProcessInstance {
             .internalId = internalId,
             .processType = "child",
             .parameters = {},
             .pid = pid,
             .address = config.childAddress,
-            .port = config.childPort
+            .port = config.childPort,
+            .createdTimeMs = currentTime,
+            .lastUpdateTimeMs = currentTime
         };
     }
 
@@ -115,9 +121,11 @@ private:
         return grpc::Status::CANCELLED;
     }
 
-    grpc::Status successSpawnResponse(const std::string& internalId, int pid, Communication::SpawnResponse* response) {
-        response->set_internal_id(internalId);
-        response->set_process_id(pid);
+    grpc::Status successSpawnResponse(const process_manager::domain::models::ProcessInstance& processInstance, Communication::SpawnResponse* response) {
+        response->mutable_process()->set_process_id(processInstance.pid);
+        response->mutable_process()->set_internal_id(processInstance.internalId);
+        response->mutable_process()->set_created_time_ms(processInstance.createdTimeMs);
+        response->mutable_process()->set_last_update_time_ms(processInstance.lastUpdateTimeMs);
         response->set_success(true);
         response->set_message("OK");
 

@@ -15,10 +15,10 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_logger = logger;
         }
 
-        public Task<ProcessManager> GetAvailableProcessManager() {
-            var processManager = m_processManagerRepository.GetByName("default_process_manager");
+        public async Task<ProcessManager> GetAvailableProcessManager() {
+            var processManager = await m_processManagerRepository.GetByNameAsync("default_process_manager");
 
-            return Task.FromResult(processManager);
+            return processManager;
         }
     }
 }

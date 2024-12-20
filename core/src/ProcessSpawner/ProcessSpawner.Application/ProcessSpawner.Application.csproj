@@ -18,10 +18,14 @@
     <None Remove="Services\" />
     <None Remove="DTOs\" />
     <None Remove="Repositories\" />
+    <None Remove="Commands\" />
+    <None Remove="Queries\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="DTOs\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Commands\" />
+    <Folder Include="Queries\" />
   </ItemGroup>
 </Project>

@@ -2,13 +2,20 @@ syntax = "proto3";
 
 package Communication;
 
-service ManagerService {
+service SpawnProcessService {
   rpc SpawnProcess(SpawnRequest) returns (SpawnResponse);
   rpc StopProcess(StopRequest) returns (StopResponse);
 }
 
-service CoreService {
-  rpc SendStatus(StatusRequest) returns (StatusResponse);
+service ProcessQueryService {
+  rpc QueryProcesses(QueryRequest) returns (QueryResponse);
+}
+
+message ProcessInstance {
+  uint32 process_id = 1;
+  string internal_id = 2;
+  int64 created_time_ms = 3;
+  int64 last_update_time_ms = 4;
 }
 
 message SpawnRequest {
@@ -18,10 +25,9 @@ message SpawnRequest {
 }
 
 message SpawnResponse {
-  uint32 process_id = 1;
-  string internal_id = 2;
-  bool success = 3;
-  string message = 4;
+  ProcessInstance process = 1;
+  bool success = 2;
+  string message = 3;
 }
 
 message StopRequest {
@@ -34,11 +40,19 @@ message StopResponse {
   string message = 2;
 }
 
-message StatusRequest {
-  string process_id = 1;
-  string status = 2;
+enum ProcessQueryType {
+  All = 0;
+  Running = 1;
+  Stopped = 2;
+  Failed = 3;
 }
 
-message StatusResponse {
-  bool received = 1;
+message QueryRequest {
+  ProcessQueryType query_type = 1;
+}
+
+message QueryResponse {
+  repeated ProcessInstance processes = 1;
+  bool success = 2;
+  string message = 3;
 }

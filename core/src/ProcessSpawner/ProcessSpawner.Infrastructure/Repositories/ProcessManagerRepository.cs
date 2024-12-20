@@ -7,8 +7,8 @@ namespace ProcessSpawner.Infrastructure.Repositories {
     public class ProcessManagerRepository : Shared.Generic.Repositories.Int.GenericRepository<ProcessManager>, IProcessManagerRepository {
         public ProcessManagerRepository(DbContext dbContext) : base(dbContext) { }
 
-        public ProcessManager? GetByName(string name) {
-            return m_dbSet.Where(manager => manager.Name == name).FirstOrDefault();
+        public Task<ProcessManager> GetByNameAsync(string name) {
+            return m_dbSet.Where(manager => manager.Name == name).FirstOrDefaultAsync();
         }
     }
 }

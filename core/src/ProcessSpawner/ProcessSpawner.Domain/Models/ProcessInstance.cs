@@ -13,6 +13,8 @@ namespace ProcessSpawner.Domain.Models {
         public string ProcessType { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public ProcessStatus Status { get; set; }
+        public DateTime CreatedTimeMs { get; set; }
+        public DateTime LastUpdateTimeMs { get; set; }
 
         public ProcessManager ProcessManager { get; set; }
         public int ProcessManagerId { get; set; }

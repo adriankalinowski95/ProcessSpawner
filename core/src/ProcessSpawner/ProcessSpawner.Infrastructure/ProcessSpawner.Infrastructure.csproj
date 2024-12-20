@@ -16,6 +16,7 @@
     <None Remove="Repositories\" />
     <None Remove="Tools\" />
     <None Remove="Mapping\" />
+    <None Remove="Commands\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Api\" />
@@ -23,6 +24,7 @@
     <Folder Include="Repositories\" />
     <Folder Include="Tools\" />
     <Folder Include="Mapping\" />
+    <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProcessSpawner.Application\ProcessSpawner.Application.csproj" />

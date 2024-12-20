@@ -1,8 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProcessSpawner.Application.Commands;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services;
+using ProcessSpawner.Infrastructure.Commands;
 using ProcessSpawner.Infrastructure.Repositories;
 using ProcessSpawner.Infrastructure.Services;
 using ProcessSpawner.Infrastructure.Tools;
@@ -15,7 +17,8 @@ public static class DependencyInjection {
         services.AddScoped<IProcessManagerRepository, ProcessManagerRepository>();
         services.AddScoped<IProcessManagerService, ProcessManagerService>();
         services.AddScoped<IProcessManagerConfigProvider, ProcessManagerConfigProvider>();
-        services.AddScoped<IProcessManagerSpawningCommunication, ProcessManagerSpawningCommunication>();
+        services.AddScoped<IProcessManagerSpawnProcessCommand, ProcessManagerSpawnProcessCommand>();
+        services.AddScoped<IProcessManagerStatusCommand, ProcessManagerStatusCommand>();
 
         services.AddScoped<IProcessInstanceRepository, ProcessInstanceRepository>();
         services.AddScoped<IProcessSpawningService, ProcessSpawningService>();

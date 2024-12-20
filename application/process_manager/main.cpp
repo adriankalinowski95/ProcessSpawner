@@ -7,6 +7,7 @@
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ProcessManagerService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
+#include <process_manager/src/infrastructure/services/ProcessQueryService.h>
 #include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
@@ -58,7 +59,14 @@ int main(int argc, char** argv) {
             childProcessHolderService,
             logger 
         };
+
+        process_manager::infrastructure::services::ProcessQueryService queryService{
+            childProcessHolderService,
+            logger
+        };
+
         builder.RegisterService(&managerService);
+        builder.RegisterService(&queryService);
         // <END> gRPC endpoints
 
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());

@@ -29,8 +29,6 @@ public:
                 throw std::runtime_error("Failed to parse message!");
             }
 
-            m_logger->logInfo("Logger data: " + std::string(body));
-
             auto processInstance = m_childProcessHolderService->getChildProcessByInternalId(message->internalId);
             if (!processInstance) {
                 throw std::runtime_error("Failed to find process instance!");

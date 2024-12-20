@@ -5,6 +5,7 @@ using AutoMapper;
 using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ProcessSpawner.Application.Commands;
 using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services;
@@ -15,7 +16,8 @@ namespace ProcessSpawner.Infrastructure.Services {
     public class ProcessSpawningService : IProcessSpawningService {
         public readonly IConfiguration m_configuration;
         public readonly ILogger<ProcessSpawningService> m_logger;
-        public readonly IProcessManagerSpawningCommunication m_processMangerSpawningCommunication;
+        public readonly IProcessManagerConfigProvider m_processManagerConfigProvider;
+        public readonly IProcessManagerSpawnProcessCommand m_processMangerSpawningCommunication;
         public readonly IUserAuthenticationService m_userAuthenticationService;
         public readonly IProcessInstanceRepository m_processInstanceRepository;
         public readonly IProcessManagerService m_processManagerService;
@@ -23,13 +25,15 @@ namespace ProcessSpawner.Infrastructure.Services {
 
         public ProcessSpawningService(IConfiguration configuration,
             ILogger<ProcessSpawningService> logger,
-            IProcessManagerSpawningCommunication processMangerSpawningCommunication,
+            IProcessManagerConfigProvider processManagerConfigProvider,
+            IProcessManagerSpawnProcessCommand processMangerSpawningCommunication,
             IUserAuthenticationService userAuthenticationService,
             IProcessInstanceRepository processInstanceRepository,
             IProcessManagerService processManagerService,
             IMapper mapper) {
             m_configuration = configuration;
             m_logger = logger;
+            m_processManagerConfigProvider = processManagerConfigProvider;
             m_processMangerSpawningCommunication = processMangerSpawningCommunication;
             m_userAuthenticationService = userAuthenticationService;
             m_processInstanceRepository = processInstanceRepository;
@@ -39,7 +43,7 @@ namespace ProcessSpawner.Infrastructure.Services {
 
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(ProcessSpawnRequestDto obj) {
             // @Todo Validator
-            var spawnProcessResponse = await m_processMangerSpawningCommunication.SpawnProcess(obj);
+            var spawnProcessResponse = await m_processMangerSpawningCommunication.SpawnProcess(m_processManagerConfigProvider.GetConfig(), obj);
             if (!spawnProcessResponse.success) {
                 throw new Exception(spawnProcessResponse.message);
             }
@@ -55,6 +59,8 @@ namespace ProcessSpawner.Infrastructure.Services {
                 ProcessType = obj.process_type,
                 Parameters = obj.parameters,
                 Status = Domain.Enums.ProcessStatus.Started,
+                CreatedTimeMs = DateTimeOffset.FromUnixTimeSeconds(spawnProcessResponse.created_time_ms).UtcDateTime,
+                LastUpdateTimeMs = DateTimeOffset.FromUnixTimeSeconds(spawnProcessResponse.last_update_time_ms).UtcDateTime,
                 ProcessManagerId = processManager.Id
             };
 
