@@ -19,12 +19,12 @@
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
+#include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
 
 // @Todo move to api...
 namespace process_manager::infrastructure::services {
 
 class ProcessManagerService : public Communication::SpawnProcessService::Service {
-    using InitRequestSenderCommand = shared::infrastructure::commands::GenericRequestSenderCommand<shared::domain::models::PingMessage, shared::domain::models::PingMessage>;
 public:
    ProcessManagerService(
         std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> processSpawner,
@@ -60,7 +60,7 @@ public:
             .uniqueNumber = shared::application::utils::RandomValueGenerator{}.generateRandomValue()
         };
 
-        InitRequestSenderCommand::Config config {
+        process_manager::infrastructre::commands::ChildInitRequestCommand::Sender::Config config {
             childConfig.childAddress,
             childConfig.childPort,
             "/init",
@@ -70,8 +70,8 @@ public:
                 return output.uniqueNumber == pingMessage.uniqueNumber + 1;
             }
         };
- 
-        if (!InitRequestSenderCommand{ config }.sendRequest(pingMessage)) {
+
+        if (!process_manager::infrastructre::commands::ChildInitRequestCommand{ config }.sendRequest(pingMessage)) {
             return failedSpawnResponse("Failed to initialize process!", response);
         }
 

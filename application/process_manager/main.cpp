@@ -1,5 +1,6 @@
 #include <iostream>
 #include <exception>
+#include <algorithm>
 #include <grpc/grpc.h> 
 #include <grpcpp/server_builder.h>
 
@@ -17,9 +18,11 @@
 #include <shared/src/infrastructure/services/DefaultLogger.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
 #include <shared/src/infrastructure/services/EndpointService.h>
+#include <shared/src/infrastructure/providers/UnixProcessInfoProvider.h>
 
 int main(int argc, char** argv) {
     try{ 
+        // @Todo make a factory class
         auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
         if (!logger) {
             throw std::runtime_error("Can't create logger or process manager");
@@ -35,11 +38,23 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create process terminator");
         }
 
+        // @Todo move this to separated class / method
+
         // kill all child processes
         processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("child_process"));
 
         // kill all process manager processes
-        processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("process_manager"));
+        auto processManagerProcesses = processEnumerator->enumerateWhereNameEquals("process_manager");
+        if (processManagerProcesses.size() > 1) {
+            const auto currentPid = shared::infrastructure::providers::UnixProcessInfoProvider{}.getPid();
+            const auto end = std::remove_if(processManagerProcesses.begin(), processManagerProcesses.end(), [currentPid](process_manager::domain::models::ProcessInfo& processInfo) {
+                return processInfo.pid == currentPid;
+            });
+
+            processManagerProcesses.erase(end, processManagerProcesses.end());
+
+            processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("process_manager"));
+        }
 
         auto processSpawner = std::make_shared<process_manager::infrastructure::tools::ProcessSpawner>(logger);
         if (!processSpawner) {
