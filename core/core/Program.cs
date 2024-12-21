@@ -45,6 +45,7 @@ var app = builder.Build();
 // @Todo remove this and just repair a dbcontext
 new RuntimeSeed(app).Seed();
 
+app.MapGrpcService<ProcessSpawner.Infrastructure.Api.ProcessManagerInputController>();
 // app.MapGrpcService<CoreGrpcService>();
 
 // Configure the HTTP request pipeline.

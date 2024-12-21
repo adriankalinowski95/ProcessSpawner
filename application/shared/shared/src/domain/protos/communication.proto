@@ -11,11 +11,17 @@ service ProcessQueryService {
   rpc QueryProcesses(QueryRequest) returns (QueryResponse);
 }
 
+service ProcessManagerInputService {
+  rpc GetInput(ProcessManagerInputRequest) returns (ProcessManagerInputResponse);
+}
+
 message ProcessInstance {
   uint32 process_id = 1;
   string internal_id = 2;
-  int64 created_time_ms = 3;
-  int64 last_update_time_ms = 4;
+  string process_type = 3;
+  map<string, string> parameters = 4;
+  int64 created_time_ms = 5;
+  int64 last_update_time_ms = 6;
 }
 
 message SpawnRequest {
@@ -52,6 +58,16 @@ message QueryRequest {
 }
 
 message QueryResponse {
+  repeated ProcessInstance processes = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ProcessManagerInputRequest {
+  string managerName = 1;
+}
+
+message ProcessManagerInputResponse {
   repeated ProcessInstance processes = 1;
   bool success = 2;
   string message = 3;

@@ -5,6 +5,7 @@
 #include <grpcpp/server_builder.h>
 
 #include <process_manager/environments/environments.h>
+#include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ProcessManagerService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
@@ -56,6 +57,16 @@ int main(int argc, char** argv) {
             processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("process_manager"));
         }
 
+        auto childProcessConfigProvider = std::make_shared<process_manager::application::utils::ChildProcessConfigProvider>(
+            environment::child_process::Address.data(), 
+            environment::child_process::Port,
+            environment::parent_process::Address.data(), 
+            environment::parent_process::Port
+        );
+        if (!childProcessConfigProvider) {
+            throw std::runtime_error("Can't create child process config provider");
+        }
+
         auto processSpawner = std::make_shared<process_manager::infrastructure::tools::ProcessSpawner>(logger);
         if (!processSpawner) {
             throw std::runtime_error("Can't create process spawner");
@@ -91,6 +102,7 @@ int main(int argc, char** argv) {
         process_manager::infrastructure::services::ProcessManagerService managerService{
             processSpawner,
             childProcessHolderService,
+            childProcessConfigProvider,
             logger 
         };
 

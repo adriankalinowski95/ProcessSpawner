@@ -40,6 +40,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                     return;
                 }
 
+                processDb.ProcessId = process.ProcessId;
                 if (process.LastUpdateTimeMs < processDb.LastUpdateTimeMs) {
                     processDb.Status = ProcessStatus.NonActive;
                     m_processInstanceRepository.Update(processDb);
@@ -79,4 +80,3 @@ namespace ProcessSpawner.Infrastructure.Services {
         }
     }
 }
-
