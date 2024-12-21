@@ -8,6 +8,9 @@
 #include <process_manager/src/infrastructure/services/ProcessManagerService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/services/ProcessQueryService.h>
+#include <process_manager/src/infrastructure/services/UnixProcessEnumerator.h>
+#include <process_manager/src/infrastructure/services/UnixProcessTerminator.h>
+
 #include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
@@ -21,6 +24,22 @@ int main(int argc, char** argv) {
         if (!logger) {
             throw std::runtime_error("Can't create logger or process manager");
         }
+
+        auto processEnumerator = std::make_shared<process_manager::infrastructure::services::UnixProcessEnumerator>(logger);
+        if (!processEnumerator) {
+            throw std::runtime_error("Can't create process enumerator");
+        }
+
+        auto processTerminator = std::make_shared<process_manager::infrastructure::services::UnixProcessTerminator>(logger);
+        if (!processTerminator) {
+            throw std::runtime_error("Can't create process terminator");
+        }
+
+        // kill all child processes
+        processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("child_process"));
+
+        // kill all process manager processes
+        processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("process_manager"));
 
         auto processSpawner = std::make_shared<process_manager::infrastructure::tools::ProcessSpawner>(logger);
         if (!processSpawner) {

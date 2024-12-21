@@ -67,8 +67,6 @@ private:
 
             const auto result = RequestSenderCommandT{ requestSenderConfig }.sendRequest(pingMessage);
             
-            std::cout << "result: " + std::to_string(result.has_value()) << std::endl;
-
             return result.has_value();
         };
     }
