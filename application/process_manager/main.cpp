@@ -9,9 +9,11 @@
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ProcessManagerService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
+#include <process_manager/src/infrastructure/services/ChildProcessSpawnerService.h>
 #include <process_manager/src/infrastructure/services/ProcessQueryService.h>
 #include <process_manager/src/infrastructure/services/UnixProcessEnumerator.h>
 #include <process_manager/src/infrastructure/services/UnixProcessTerminator.h>
+#include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
 
 #include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
 
@@ -38,8 +40,6 @@ int main(int argc, char** argv) {
         if (!processTerminator) {
             throw std::runtime_error("Can't create process terminator");
         }
-
-        // @Todo move this to separated class / method
 
         // kill all child processes
         processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("child_process"));
@@ -77,6 +77,24 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create child process holder service");
         }
 
+        auto childProcessSpawnerService = std::make_shared<process_manager::infrastructure::services::ChildProcessSpawnerService>(
+            processSpawner,
+            childProcessConfigProvider,
+            logger
+        );
+        if (!childProcessSpawnerService) {
+            throw std::runtime_error("Can't create child process spawner service");
+        }
+
+        process_manager::infrastructre::commands::ProcessManagerInputRequestCommand processManagerInputRequestCommand{ 
+            childProcessHolderService, 
+            childProcessSpawnerService,
+            logger 
+        };
+        if (!processManagerInputRequestCommand.loadInputProcesses(environment::parent_process::Default_Process_Manager_Name.data())) {
+            throw std::runtime_error("Can't load input processes");
+        }
+
         auto restServer = std::make_unique<shared::infrastructure::services::AsyncServerService>(
             environment::parent_process::Address.data(), 
             environment::parent_process::Port, 
@@ -100,9 +118,8 @@ int main(int argc, char** argv) {
 
         // <START> gRPC endpoints 
         process_manager::infrastructure::services::ProcessManagerService managerService{
-            processSpawner,
+            childProcessSpawnerService,
             childProcessHolderService,
-            childProcessConfigProvider,
             logger 
         };
 

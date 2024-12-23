@@ -1,4 +1,4 @@
-const isApiStaticAddress = true;
+const isApiStaticAddress = false;
 
 export const environment = {
     production: true,

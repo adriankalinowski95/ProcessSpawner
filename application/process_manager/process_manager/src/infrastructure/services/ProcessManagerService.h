@@ -21,64 +21,35 @@
 #include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 
+#include <process_manager/src/application/services/IChildProcessSpawnerService.h>
+
 // @Todo move to api...
 namespace process_manager::infrastructure::services {
 
 class ProcessManagerService : public Communication::SpawnProcessService::Service {
 public:
    ProcessManagerService(
-        std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> processSpawner,
-        std::shared_ptr<ChildProcessHolderService> childProcessHolderService,
-        std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> childProcessConfigProvider,
+        std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> processSpawner,
+        std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> processHolderService,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
-            m_childProcessHolderService{ childProcessHolderService },
-            m_configProvider{ childProcessConfigProvider},
+            m_processHolderService{ processHolderService },
             m_logger{ logger }
     {
-        if (!m_logger || !m_processSpawner || !m_childProcessHolderService || !m_configProvider) {
-            throw std::runtime_error("Logger or process spawner or child process holder service or config provider is not initialized!");
+        if (!m_logger || !m_processSpawner || !m_processHolderService) {
+            throw std::runtime_error("Logger or process spawner or child process holder service is not initialized!");
         }
     }
 
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
-        // @Todo push to separated class
-        // spawn process
-        const auto childConfig = m_configProvider->GetNextChildConfig(request->internal_id());
-        const auto childConfigJson = shared::application::utils::ModelsJsonConverter{}.toJson(childConfig);
-
-        const auto pid = m_processSpawner->startProcess(environment::child_process::Process_Path.data(), { childConfigJson });
-        if (!pid) {
-            return failedSpawnResponse("Failed to start process!", response);
+        auto childProcessInstance = m_processSpawner->spawnChildProcess(request->internal_id());
+        if (!childProcessInstance) {
+            return failedSpawnResponse("Failed to spawn process!", response);
         }
 
-        // @Todo move this to separated class / method
-        // send init ping
-        const auto pingMessage = shared::domain::models::PingMessage {
-            .internalId = request->internal_id(),
-            .uniqueNumber = shared::application::utils::RandomValueGenerator{}.generateRandomValue()
-        };
+        m_processHolderService->addChildProcess(*childProcessInstance);
 
-        process_manager::infrastructre::commands::ChildInitRequestCommand::Sender::Config config {
-            childConfig.childAddress,
-            childConfig.childPort,
-            "/init",
-            3,
-            1000,
-            [pingMessage] (const shared::domain::models::PingMessage& output) -> bool {
-                return output.uniqueNumber == pingMessage.uniqueNumber + 1;
-            }
-        };
-
-        if (!process_manager::infrastructre::commands::ChildInitRequestCommand{ config }.sendRequest(pingMessage)) {
-            return failedSpawnResponse("Failed to initialize process!", response);
-        }
-
-        // update process holder
-        const auto processInstance = getProcessInstance(request->internal_id(), *pid, childConfig);
-        m_childProcessHolderService->addChildProcess(processInstance);
-
-        return successSpawnResponse(processInstance, response);
+        return successSpawnResponse(*childProcessInstance, response);
     }
 
     virtual ::grpc::Status StopProcess(::grpc::ServerContext* context, const Communication::StopRequest* request, Communication::StopResponse* response) override {
@@ -88,28 +59,9 @@ public:
     }
     
 private:
-    std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> m_processSpawner;
-    std::shared_ptr<ChildProcessHolderService> m_childProcessHolderService;
-    std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> m_configProvider;
+    std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> m_processSpawner;
+    std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> m_processHolderService;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
-
-    process_manager::domain::models::ProcessInstance getProcessInstance(
-        const std::string& internalId,
-        std::uint32_t pid,
-        const shared::domain::models::ProcessConfig& config) {
-        const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-        return process_manager::domain::models::ProcessInstance {
-            .internalId = internalId,
-            .processType = "child",
-            .parameters = {},
-            .pid = pid,
-            .address = config.childAddress,
-            .port = config.childPort,
-            .createdTimeMs = currentTime,
-            .lastUpdateTimeMs = currentTime
-        };
-    }
 
     grpc::Status failedSpawnResponse(const std::string& message, Communication::SpawnResponse* response) {
         m_logger->logError(message);

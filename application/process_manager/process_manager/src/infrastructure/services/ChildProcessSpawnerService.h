@@ -4,6 +4,8 @@
 #include <optional>
 
 #include <shared/src/application/services/ILogger.h>
+#include <shared/src/application/utils/RandomNumberGenerator.h>
+
 #include <process_manager/src/domain/models/ProcessInstance.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
@@ -18,16 +20,14 @@ class ChildProcessSpawnerService : public process_manager::application::services
 public:
     ChildProcessSpawnerService(
         std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> processSpawner,
-        std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> childProcessHolderService,
         std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> childProcessConfigProvider,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
-            m_childProcessHolderService{ childProcessHolderService },
             m_configProvider{ childProcessConfigProvider},
             m_logger{ logger } 
         {
-            if (!m_logger || !m_processSpawner || !m_childProcessHolderService || !m_configProvider) {
-                throw std::runtime_error("Logger or process spawner or child process holder service or config provider is not initialized!");
+            if (!m_logger || !m_processSpawner || !m_configProvider) {
+                throw std::runtime_error("Logger or process spawner or config provider is not initialized!");
             }
         }
 
@@ -49,30 +49,44 @@ public:
             .uniqueNumber = shared::application::utils::RandomValueGenerator{}.generateRandomValue()
         };
 
+        process_manager::infrastructre::commands::ChildInitRequestCommand::Sender::Config config {
+            childConfig.childAddress,
+            childConfig.childPort,
+            "/init",
+            3,
+            1000,
+            [pingMessage] (const shared::domain::models::PingMessage& output) -> bool {
+                return output.uniqueNumber == pingMessage.uniqueNumber + 1;
+            }
+        };
+
         if (!process_manager::infrastructre::commands::ChildInitRequestCommand{ config }.sendRequest(pingMessage)) {
             return std::nullopt;
         }
 
-        // update process holder
-        const auto processInstance = getProcessInstance(internalId, *pid, childConfig);
-        m_childProcessHolderService->addChildProcess(processInstance);
-
-        return processInstance;
+        return getProcessInstance(internalId, *pid, childConfig);
     }
 
 private:
     std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> m_processSpawner;
-    std::shared_ptr<ChildProcessHolderService> m_childProcessHolderService;
     std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> m_configProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
+    
+    process_manager::domain::models::ProcessInstance getProcessInstance(
+        const std::string& internalId,
+        std::uint32_t pid,
+        const shared::domain::models::ProcessConfig& config) {
+        const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-    process_manager::domain::models::ProcessInstance getProcessInstance(const std::string& internalId, std::uint32_t pid, const shared::domain::models::ProcessConfig& config) {
         return process_manager::domain::models::ProcessInstance {
             .internalId = internalId,
+            .processType = "child",
+            .parameters = {},
             .pid = pid,
-            .createdTimeMs = std::chrono::system_clock::now().time_since_epoch().count(),
-            .lastUpdateTimeMs = std::chrono::system_clock::now().time_since_epoch().count(),
-            .config = config
+            .address = config.childAddress,
+            .port = config.childPort,
+            .createdTimeMs = currentTime,
+            .lastUpdateTimeMs = currentTime
         };
     }
 };

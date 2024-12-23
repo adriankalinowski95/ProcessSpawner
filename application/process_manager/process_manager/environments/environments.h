@@ -21,6 +21,7 @@ namespace environment {
     namespace parent_process {
         constexpr std::string_view Address = "127.0.0.1";
         constexpr std::uint32_t Port = 8080;
+        constexpr std::string_view Default_Process_Manager_Name = "default_process_manager";
     }
 
     namespace child_process {

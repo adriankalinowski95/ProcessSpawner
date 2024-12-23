@@ -13,7 +13,7 @@ namespace ProcessSpawner.Infrastructure.Api {
             m_inputService = inputService;
         }
 
-        public virtual Task<ProcessSpawner.Protobuf.ProcessManagerInputResponse> GetInput(global::ProcessSpawner.Protobuf.ProcessManagerInputRequest request, ServerCallContext context) {
+        public override Task<ProcessSpawner.Protobuf.ProcessManagerInputResponse> GetInput(global::ProcessSpawner.Protobuf.ProcessManagerInputRequest request, ServerCallContext context) {
             return m_inputService.GetInput(request);
         }
     }
