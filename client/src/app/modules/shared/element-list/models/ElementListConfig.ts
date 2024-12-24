@@ -19,12 +19,17 @@ export interface RowTableIcon {
   displayName?: string,
 }
 
+export interface MultiActionButton {
+  actions: RowTableIcon[]
+}
+
 export interface TableConfig {
   dbClickEdit: boolean,
   multiselect: boolean,
   sortable: boolean,
   stickyHeader: boolean
-  rowTableIcons: RowTableIcon[]
+  rowTableIcons: RowTableIcon[],
+  multiActionButton?: MultiActionButton
 }
 
 export interface ContentConfig {

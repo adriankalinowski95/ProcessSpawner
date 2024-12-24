@@ -18,7 +18,7 @@
       </td>
     </ng-container>
 
-    @for (column of displayedColumns.slice(1, displayedColumns.length - config.rowTableIcons.length); track column) {
+    @for (column of displayedColumns.slice(1, this.getGenericColumnsNumber() ); track column) {
       <ng-container *ngIf="config.sortable">
         <ng-container matColumnDef="{{column.name}}">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column.displayName}} </th>
@@ -41,6 +41,34 @@
                                                           (click)="handelElement(iconColumn.actionType, element)"></app-icon>
         </td>
       </ng-container>
+    }
+
+    @if(this.config.multiActionButton) {
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let element"> 
+                <button mat-icon-button [matMenuTriggerFor]="itemMenu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #itemMenu="matMenu">
+                    @for(action of this.config.multiActionButton.actions; track action.name) {
+                        <button mat-menu-item>
+                            <app-icon   [type]="action.type"
+                                        [icon]="action.iconName"
+                                        (click)="handelElement(action.actionType, element)"></app-icon>
+                                <span>{{action.displayName}}</span>
+                            </button>
+                    }
+                </mat-menu>
+            </td>
+          </ng-container>
+    } @else {
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>fasdfas</th>
+            <td mat-cell *matCellDef="let element"> 
+                Fasdfasfaff
+            </td>
+        </ng-container>
     }
 
     <tr mat-header-row *matHeaderRowDef="mapDisplayedColumnsToColumnName(); sticky: config.stickyHeader "></tr>

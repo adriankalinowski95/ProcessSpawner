@@ -95,9 +95,18 @@ export class ElementListContentComponent implements OnInit, AfterViewInit, OnCha
     });
     this.selectionChange.emit(this.selection.selected);
   }
+  getGenericColumnsNumber() {
+    if (this.config.multiActionButton) {
+        return this.displayedColumns.length - this.config.rowTableIcons.length - 1; 
+    }
+
+    return this.displayedColumns.length - this.config.rowTableIcons.length;
+  }
+
   private applyConfiguration() {
     this.multipleSelection();
-    this.configureRowIcons()
+    this.configureRowIcons();
+    this.configureMultiActionButton();
   }
   private multipleSelection() {
     this.selection = new SelectionModel<DataSource>(this.config.multiselect, this.selectedElements);
@@ -107,5 +116,19 @@ export class ElementListContentComponent implements OnInit, AfterViewInit, OnCha
   private configureRowIcons() {
     const iconDisplayColumn: DisplayedColumns = this.config.rowTableIcons.map(icon => { return { name: icon.name, displayName: icon.displayName || '' }});
     this.displayedColumns = [...this.displayedColumns, ...iconDisplayColumn]
+  }
+
+  private configureMultiActionButton() {
+    if(!this.config.multiActionButton) {
+      return;
+    }
+
+    const multiActionButtonColumn = {
+        name: "actions", 
+        displayName: "Actions"
+    };
+
+    this.displayedColumns = [...this.displayedColumns, multiActionButtonColumn];
+    console.log("Xxx");
   }
 }

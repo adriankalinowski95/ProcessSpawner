@@ -26,22 +26,24 @@ namespace ProcessSpawner.Infrastructure.Services {
 
             var response = new ProcessManagerInputResponse();
             response.Success = true;
-            response.Processes.AddRange(processManager.ProcessInstances.Select(process => {
-                var processInstanceProto = new ProcessSpawner.Protobuf.ProcessInstance {
-                    ProcessId = process.ProcessId,
-                    InternalId = process.InternalId,
-                    ProcessType = process.ProcessType,
-                    // @Todo is this works?
-                    CreatedTimeMs = process.CreatedTimeMs.Millisecond,
-                    LastUpdateTimeMs = process.LastUpdateTimeMs.Millisecond
-                };
+            response.Processes.AddRange(processManager.ProcessInstances
+                .Where(process => process.Status == Domain.Enums.ProcessStatus.NonActive || process.Status == Domain.Enums.ProcessStatus.Active || process.Status == Domain.Enums.ProcessStatus.Started)
+                .Select(process => {
+                    var processInstanceProto = new ProcessSpawner.Protobuf.ProcessInstance {
+                        ProcessId = process.ProcessId,
+                        InternalId = process.InternalId,
+                        ProcessType = process.ProcessType,
+                        // @Todo is this works?
+                        CreatedTimeMs = process.CreatedTimeMs.Millisecond,
+                        LastUpdateTimeMs = process.LastUpdateTimeMs.Millisecond
+                    };
 
-                foreach (var kvp in process.Parameters) {
-                    processInstanceProto.Parameters.Add(kvp.Key, kvp.Value);
-                }
+                    foreach (var kvp in process.Parameters) {
+                        processInstanceProto.Parameters.Add(kvp.Key, kvp.Value);
+                    }
 
-                return processInstanceProto;
-            }));
+                    return processInstanceProto;
+                }));
 
             return response;
         }

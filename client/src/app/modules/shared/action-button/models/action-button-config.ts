@@ -10,7 +10,7 @@ export enum ActionType {
   Reload,
   Edit,
   Delete,
-  RunBot
+  SpecialAction1
 }
 
 export interface Config {

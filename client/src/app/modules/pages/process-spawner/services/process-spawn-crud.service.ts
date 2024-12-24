@@ -17,5 +17,9 @@ export class ProcessSpawnCrudService extends BaseCrudService<ProcessInstanceDto>
     spawnProcess(processSpawnRequest: ProcessSpawnRequestDto) : Observable<any> {
         return this.http.post(this.basePath, processSpawnRequest);
     }
+
+    finishProcess(id: number) : Observable<any> {
+        return this.http.delete(this.basePath + '/finish-process/' + id);
+    }
 }
   

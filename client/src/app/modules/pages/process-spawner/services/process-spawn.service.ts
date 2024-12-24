@@ -108,4 +108,36 @@ export class ProcessSpawnService {
                 this.isLoadingSubject.next(false)
             }));
     }
+
+    finishProcess(id: number, responseCallback?: (response: shared.response.Object<any>) => void) {
+        this.isLoadingSubject.next(true);
+
+        return this.processSpawnCrudService.finishProcess(id).pipe(
+            first(),
+            map((response: shared.response.Object<ProcessInstanceDto>) => {
+                if (response.status != shared.enums.BaseResponseStatus.Ok) {
+                    if (!responseCallback) {
+                        return undefined;
+                    }
+
+                    throw new Error(response.errorMessage);
+                }
+
+                return response.object;
+            }),
+            catchError((err) => {
+                if (responseCallback) {
+                    responseCallback({
+                        errorMessage: err.message, 
+                        status: shared.enums.BaseResponseStatus.Error,
+                        object: null
+                    });
+                }
+
+                return of(undefined);
+            }),
+            finalize(() => {
+                this.isLoadingSubject.next(false)
+            }));
+    }
 }

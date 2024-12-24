@@ -61,6 +61,12 @@ export class ProcessListComponent implements OnInit {
             }
 
             this.delete($event.content[0].index);
+        } else if ($event.actionType === ActionType.SpecialAction1) {
+            if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
+                return;
+            }
+
+            this.finishProcess($event.content[0].index);
         }
     }
 
@@ -111,6 +117,21 @@ export class ProcessListComponent implements OnInit {
             tap((processInstance: ProcessInstanceDto | undefined) => {
                 if (shared.isNotNullOrUndefined(processInstance)) {
                     this.processInstancesHolderSerivce.deleteById(processInstance.id);
+                }
+            })
+        ).subscribe();
+    }
+
+    finishProcess(id: number) {
+        const errorHandler = (response: shared.response.Object<any>) => {
+            // this.notificationService.error(response.errorMessage);
+        };
+
+        this.processSpawnService.finishProcess(id, errorHandler).pipe(
+            first(),
+            tap((processInstance: ProcessInstanceDto | undefined) => {
+                if (shared.isNotNullOrUndefined(processInstance)) {
+                    this.processInstancesHolderSerivce.updateById(processInstance);
                 }
             })
         ).subscribe();

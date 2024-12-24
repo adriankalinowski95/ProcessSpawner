@@ -21,6 +21,10 @@ import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {IconModule} from "../icon/icon.module";
 import {MatSortModule} from "@angular/material/sort";
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -38,6 +42,10 @@ import {MatSortModule} from "@angular/material/sort";
     MatTableModule,
     MatCheckboxModule,
     MatSortModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
     IconModule
   ],
   exports: [

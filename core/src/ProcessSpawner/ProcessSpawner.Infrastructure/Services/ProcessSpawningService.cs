@@ -73,6 +73,10 @@ namespace ProcessSpawner.Infrastructure.Services {
             };
         }
 
+        public async Task<ObjectOperationResult<ProcessInstanceDto>> FinishProcess(int id) {
+            throw new NotImplementedException();
+        }
+
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Delete(int id) {
             var processInstance = await m_processInstanceRepository.GetByIdAsync(id);
             if (processInstance == null) {

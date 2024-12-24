@@ -27,6 +27,12 @@ namespace ProcessSpawner.Infrastructure.Api {
             return await m_processSpawningService.Create(spawnProcessRequestDto);
         }
 
+        [HttpPost("finish-process/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ObjectResponse<ProcessInstanceDto>> FinishProcess(int id) {
+            return await m_processSpawningService.FinishProcess(id);
+        }
+
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ObjectsResponse<ProcessInstanceDto>> Get() {
@@ -41,8 +47,8 @@ namespace ProcessSpawner.Infrastructure.Api {
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, [FromBody] ProcessInstanceDto algorithmDto) {
-            return await m_processSpawningService.Put(id, algorithmDto);
+        public async Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, [FromBody] ProcessInstanceDto processInstanceDto) {
+            return await m_processSpawningService.Put(id, processInstanceDto);
         }
 
         [HttpDelete("{id}")]

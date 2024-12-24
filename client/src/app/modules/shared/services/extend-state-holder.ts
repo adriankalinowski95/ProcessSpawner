@@ -33,4 +33,21 @@ export class ExtendStateHolder<T extends { id: any }> extends BaseStateHolder<T>
     
         return true;
     }
+
+    updateById(item: T) : boolean {
+        const items = this.getLastItems();
+        if (items.length == 0) {
+          return false;
+        }
+    
+        const itemIndex = items.findIndex(i => i.id == item.id);
+        if (itemIndex == -1) {
+          return false;
+        }
+    
+        items[itemIndex] = item;
+        this.setItems(items);
+    
+        return true;
+    }
 }

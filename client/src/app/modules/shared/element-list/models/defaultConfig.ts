@@ -11,13 +11,14 @@ export const defaultConfig: MainConfig = {
   contentConfig: {
     tableConfig: {
       multiselect: true,
-      rowTableIcons: [
-        {
-          name: 'edit',
-          displayName: 'Edit',
-          actionType: ActionType.Edit,
-          type: Type.Default,
-          iconName: 'edit-outline'
+      rowTableIcons: [],
+      multiActionButton: {
+        actions: [{
+            name: 'edit',
+            displayName: 'Edit',
+            actionType: ActionType.Edit,
+            type: Type.Default,
+            iconName: 'edit-outline'
         },
         {
           name: 'delete',
@@ -27,13 +28,14 @@ export const defaultConfig: MainConfig = {
           iconName: 'trash-can-outline'
         },
         {
-          name: 'runBot',
-          displayName: 'Pause',
-          actionType: ActionType.RunBot,
+          name: 'finish_process',
+          displayName: 'Finish',
+          actionType: ActionType.SpecialAction1,
           type: Type.Default,
           iconName: 'start'
         }
-      ],
+        ]
+    },
       sortable: true,
       dbClickEdit: true,
       stickyHeader: true,
