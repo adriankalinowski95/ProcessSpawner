@@ -5,6 +5,7 @@ namespace ProcessSpawner.Domain.Enums {
         Started,
         Active,
         NonActive,
-        Failed
+        Failed,
+        Finished
     }
 }

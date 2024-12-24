@@ -15,17 +15,17 @@ namespace ProcessSpawner.Infrastructure.Services {
     public class ProcessStatusScheduler : IJob {
         private static long Offline_Threshold = 1000 * 60 * 5; // 5 min
 
-        public readonly IProcessManagerStatusCommand m_processManagerStatusCommand;
+        public readonly IProcessManagerQueryCommand m_processManagerQueryCommand;
         public IProcessInstanceRepository m_processInstanceRepository;
         public IProcessManagerRepository m_processManagerRepository;
         public readonly ILogger<ProcessStatusScheduler> m_logger;
 
         public ProcessStatusScheduler(
-            IProcessManagerStatusCommand processManagerStatusCommand,
+            IProcessManagerQueryCommand processManagerQueryCommand,
             IProcessInstanceRepository processInstanceRepository,
             IProcessManagerRepository processManagerRepository,
             ILogger<ProcessStatusScheduler> logger) {
-            m_processManagerStatusCommand = processManagerStatusCommand;
+            m_processManagerQueryCommand = processManagerQueryCommand;
             m_processInstanceRepository = processInstanceRepository;
             m_processManagerRepository = processManagerRepository;
             m_logger = logger;
@@ -70,7 +70,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                     await m_processInstanceRepository.DeactiveProccesesForManager(manager.Id);
                     var processManagerConfig = new ProcessManagerConfig(manager.Address, manager.Port);
                     var queryRequestDto = new QueryRequestDto(ProcessQueryType.All);
-                    var processes = await m_processManagerStatusCommand.QueryProcesses(processManagerConfig, queryRequestDto);
+                    var processes = await m_processManagerQueryCommand.QueryProcesses(processManagerConfig, queryRequestDto);
 
                     processes.processes.ForEach(parseProcess);
                 } catch (Exception ex) {

@@ -120,6 +120,7 @@ int main(int argc, char** argv) {
         process_manager::infrastructure::services::ProcessManagerService managerService{
             childProcessSpawnerService,
             childProcessHolderService,
+            processTerminator,
             logger 
         };
 

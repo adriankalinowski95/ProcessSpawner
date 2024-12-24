@@ -10,6 +10,8 @@ using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services;
 using ProcessSpawner.Domain.Models;
+using ProcessSpawner.Infrastructure.Commands;
+using ProcessSpawner.Protobuf;
 using Shared.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Services {
@@ -18,6 +20,7 @@ namespace ProcessSpawner.Infrastructure.Services {
         public readonly ILogger<ProcessSpawningService> m_logger;
         public readonly IProcessManagerConfigProvider m_processManagerConfigProvider;
         public readonly IProcessManagerSpawnProcessCommand m_processMangerSpawningCommunication;
+        public readonly IProcessManagerFinishProcessCommand m_processManagerFinishProcessCommand;
         public readonly IUserAuthenticationService m_userAuthenticationService;
         public readonly IProcessInstanceRepository m_processInstanceRepository;
         public readonly IProcessManagerService m_processManagerService;
@@ -27,6 +30,7 @@ namespace ProcessSpawner.Infrastructure.Services {
             ILogger<ProcessSpawningService> logger,
             IProcessManagerConfigProvider processManagerConfigProvider,
             IProcessManagerSpawnProcessCommand processMangerSpawningCommunication,
+            IProcessManagerFinishProcessCommand processManagerFinishProcessCommand,
             IUserAuthenticationService userAuthenticationService,
             IProcessInstanceRepository processInstanceRepository,
             IProcessManagerService processManagerService,
@@ -35,6 +39,7 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_logger = logger;
             m_processManagerConfigProvider = processManagerConfigProvider;
             m_processMangerSpawningCommunication = processMangerSpawningCommunication;
+            m_processManagerFinishProcessCommand = processManagerFinishProcessCommand;
             m_userAuthenticationService = userAuthenticationService;
             m_processInstanceRepository = processInstanceRepository;
             m_processManagerService = processManagerService;
@@ -53,7 +58,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                 throw new Exception("Process manager doesn't exist!");
             }
 
-            var procesInstance = new ProcessInstance {
+            var procesInstance = new Domain.Models.ProcessInstance {
                 ProcessId = spawnProcessResponse.process_id,
                 InternalId = spawnProcessResponse.internal_id,
                 ProcessType = obj.process_type,
@@ -74,7 +79,24 @@ namespace ProcessSpawner.Infrastructure.Services {
         }
 
         public async Task<ObjectOperationResult<ProcessInstanceDto>> FinishProcess(int id) {
-            throw new NotImplementedException();
+            var processInstance = await m_processInstanceRepository.GetByIdAsync(id);
+            if (processInstance == null) {
+                throw new Exception("Process instance doesn't exist!");
+            }
+
+            var result = await m_processManagerFinishProcessCommand.FinishProcess(m_processManagerConfigProvider.GetConfig(), new FinishProcessRequestDto(processInstance.InternalId));
+            if (!result.success) {
+                throw new Exception(result.message);
+            }
+
+            processInstance.Status = Domain.Enums.ProcessStatus.Finished;
+            m_processInstanceRepository.Update(processInstance);
+
+            return new ObjectOperationResult<ProcessInstanceDto> {
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                Object = m_mapper.Map<ProcessInstanceDto>(processInstance)
+            };
         }
 
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Delete(int id) {

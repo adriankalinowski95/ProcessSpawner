@@ -129,6 +129,5 @@ export class ElementListContentComponent implements OnInit, AfterViewInit, OnCha
     };
 
     this.displayedColumns = [...this.displayedColumns, multiActionButtonColumn];
-    console.log("Xxx");
   }
 }

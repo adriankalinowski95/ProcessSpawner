@@ -18,7 +18,8 @@ public static class DependencyInjection {
         services.AddScoped<IProcessManagerService, ProcessManagerService>();
         services.AddScoped<IProcessManagerConfigProvider, ProcessManagerConfigProvider>();
         services.AddScoped<IProcessManagerSpawnProcessCommand, ProcessManagerSpawnProcessCommand>();
-        services.AddScoped<IProcessManagerStatusCommand, ProcessManagerStatusCommand>();
+        services.AddScoped<IProcessManagerQueryCommand, ProcessManagerQueryCommand>();
+        services.AddScoped<IProcessManagerFinishProcessCommand, ProcessManagerFinishProcessCommand>();
         services.AddScoped<IProcessManagerInputService, ProcessMangerInputService>();
 
         services.AddScoped<IProcessInstanceRepository, ProcessInstanceRepository>();

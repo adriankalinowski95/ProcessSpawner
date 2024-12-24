@@ -3,5 +3,6 @@ export enum ProcessStatus {
     Started,
     Active,
     NonActive,
-    Failed
+    Failed,
+    Finished
 }

@@ -4,7 +4,7 @@ package Communication;
 
 service SpawnProcessService {
   rpc SpawnProcess(SpawnRequest) returns (SpawnResponse);
-  rpc StopProcess(StopRequest) returns (StopResponse);
+  rpc FinishProcess(FinishRequest) returns (FinishResponse);
 }
 
 service ProcessQueryService {
@@ -36,12 +36,11 @@ message SpawnResponse {
   string message = 3;
 }
 
-message StopRequest {
-  uint32 process_id = 1;
-  string internal_id = 2;
+message FinishRequest {
+  string internal_id = 1;
 }
 
-message StopResponse {
+message FinishResponse {
   bool success = 1;
   string message = 2;
 }

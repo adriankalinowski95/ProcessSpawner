@@ -37,6 +37,10 @@ public:
         return m_childProcesses.at(internalId);
     }
 
+    void removeChildProcessByInternalId(const std::string& internalId) {
+        m_childProcesses.erase(internalId);
+    }
+
     void updateChildProcess(const process_manager::domain::models::ProcessInstance& process) {
         m_childProcesses[process.internalId] = process;
     }

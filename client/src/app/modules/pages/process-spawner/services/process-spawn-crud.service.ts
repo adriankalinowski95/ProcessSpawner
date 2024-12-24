@@ -19,7 +19,7 @@ export class ProcessSpawnCrudService extends BaseCrudService<ProcessInstanceDto>
     }
 
     finishProcess(id: number) : Observable<any> {
-        return this.http.delete(this.basePath + '/finish-process/' + id);
+        return this.http.post(this.basePath + '/finish-process/' + id, {});
     }
 }
   

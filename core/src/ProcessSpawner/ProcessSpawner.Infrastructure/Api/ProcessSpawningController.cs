@@ -27,7 +27,7 @@ namespace ProcessSpawner.Infrastructure.Api {
             return await m_processSpawningService.Create(spawnProcessRequestDto);
         }
 
-        [HttpPost("finish-process/{id}")]
+        [HttpPost("finish-process/{id}", Name = "FinishProcess")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ObjectResponse<ProcessInstanceDto>> FinishProcess(int id) {
             return await m_processSpawningService.FinishProcess(id);

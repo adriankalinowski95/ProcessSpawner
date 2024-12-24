@@ -7,10 +7,10 @@ using ProcessSpawner.Application.Services;
 using ProcessSpawner.Domain.Models;
 
 namespace ProcessSpawner.Infrastructure.Commands {
-    public class ProcessManagerStatusCommand : IProcessManagerStatusCommand {
-        public readonly ILogger<ProcessManagerStatusCommand> m_logger;
+    public class ProcessManagerQueryCommand : IProcessManagerQueryCommand {
+        public readonly ILogger<ProcessManagerQueryCommand> m_logger;
 
-        public ProcessManagerStatusCommand(ILogger<ProcessManagerStatusCommand> logger) {
+        public ProcessManagerQueryCommand(ILogger<ProcessManagerQueryCommand> logger) {
             m_logger = logger;
         }
 
