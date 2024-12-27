@@ -10,6 +10,7 @@
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
+#include <process_manager/src/infrastructure/commands/ChildInitRequestCommand2.h>
 
 #include <process_manager/src/application/services/IChildProcessSpawnerService.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
@@ -44,23 +45,20 @@ public:
         }
 
         // send init ping
-        const auto pingMessage = shared::domain::models::PingMessage {
-            .internalId = internalId,
-            .uniqueNumber = shared::application::utils::RandomValueGenerator{}.generateRandomValue()
-        };
+        auto pingMessage = ::child_process_communication::ChildInitRequest{};
+        pingMessage.set_internal_id(internalId.data());
 
-        process_manager::infrastructre::commands::ChildInitRequestCommand::Sender::Config config {
+        process_manager::infrastructre::commands::ChildInitRequestCommand2::Sender::Config config {
             childConfig.childAddress,
             childConfig.childPort,
-            "/init",
             3,
             1000,
-            [pingMessage] (const shared::domain::models::PingMessage& output) -> bool {
-                return output.uniqueNumber == pingMessage.uniqueNumber + 1;
+            [pingMessage] (const ::child_process_communication::ChildInitResponse& output) -> bool {
+                return output.success();
             }
         };
 
-        if (!process_manager::infrastructre::commands::ChildInitRequestCommand{ config }.sendRequest(pingMessage)) {
+        if (!process_manager::infrastructre::commands::ChildInitRequestCommand2{ config }.sendRequest(pingMessage)) {
             return std::nullopt;
         }
 

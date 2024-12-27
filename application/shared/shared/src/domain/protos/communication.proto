@@ -15,10 +15,12 @@ service ProcessManagerInputService {
   rpc GetInput(ProcessManagerInputRequest) returns (ProcessManagerInputResponse);
 }
 
+/*
 service CoreCommunicationService {
   rpc CoreQuery(CoreQueryRequest) returns (CoreQueryResponse);
   rpc CoreCommand(CoreCommandRequst) returns (CoreCommandResponse);
 }
+*/
 
 message ProcessInstance {
   uint32 process_id = 1;
@@ -77,6 +79,7 @@ message ProcessManagerInputResponse {
   string message = 3;
 }
 
+/*
 message ProcessSignature {
   string internal_id = 1;
 }
@@ -99,3 +102,4 @@ message CoreCommandRequst {
 message CoreCommandResponse {
 
 }
+*/

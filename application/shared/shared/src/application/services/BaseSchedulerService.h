@@ -45,9 +45,13 @@ private:
 
     void runThread() {
         while (!m_stopRequest) {
-            // do something
-            const auto result = m_config.periodicFunction();
-            if (!result) {
+            try {
+                // do something
+                const auto result = m_config.periodicFunction();
+                if (!result) {
+                    // @Todo logger???
+                }
+            } catch(...) {
                 // @Todo logger???
             }
 

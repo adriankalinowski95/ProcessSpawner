@@ -7,17 +7,15 @@
 #include <shared/src/application/utils/RandomNumberGenerator.h>
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/application/services/BaseSchedulerService.h>
-#include <shared/src/infrastructure/commands/GenericRequestSenderCommand.h>
 
+#include <child_process/src/infrastructure/commands/ChildPingRequestCommand.h>
 #include <child_process/src/application/services/GlobalConfig.h>
 
 namespace child_process::infrastructure::services {
 
 class PingManagerSchedulerService {
     using SchedulerServiceT = shared::application::services::BaseSchedulerService;
-    using RequestSenderCommandT = shared::infrastructure::commands::GenericRequestSenderCommand<shared::domain::models::PingMessage, shared::domain::models::PingMessage>;
 
-    static constexpr std::string_view Ping_Message_Path = "/ping-message";
     static constexpr std::uint32_t Request_Retires = 5;
     static constexpr std::uint32_t Delay_Between_Retries = 1000; // ms
     static constexpr std::uint32_t Delay_Between_Sheduling = 60 * 1000; // 1 min
@@ -25,6 +23,10 @@ public:
     PingManagerSchedulerService(std::shared_ptr<shared::application::services::ILogger> logger) :
         m_logger{ logger },
         m_scheduler{ GetSchedulerConfig() } {}
+
+    void start() {
+        m_scheduler.start();
+    }
 
     void startAndJoin() {
         m_scheduler.start();
@@ -49,25 +51,22 @@ private:
                 return false;
             }
 
-            const auto pingMessage = shared::domain::models::PingMessage{
-                .internalId = processConfig->internalId,
-                .uniqueNumber = shared::application::utils::RandomValueGenerator{}.generateRandomValue()
-            };
+            auto pingMessage = ::child_process_communication::ChildPingRequest{};
+            pingMessage.set_internal_id(processConfig->internalId.data());
 
-            auto requestSenderConfig = RequestSenderCommandT::Config{
-                .address = processConfig->parentAddress,
-                .port = processConfig->parentPort,
-                .path = Ping_Message_Path.data(),
-                .retries = Request_Retires,
-                .delayBetweenRetries = Delay_Between_Retries,
-                .validationFunction = [pingMessage] (const shared::domain::models::PingMessage& output) -> bool {
-                    return output.uniqueNumber == pingMessage.uniqueNumber + 1;
+            child_process::infrastructre::commands::ChildPingRequestCommand::Sender::Config config {
+                processConfig->childAddress,
+                processConfig->childPort,
+                Request_Retires,
+                Delay_Between_Retries,
+                [pingMessage] (const ::child_process_communication::ChildPingResponse& output) -> bool {
+                    return output.success();
                 }
             };
 
-            const auto result = RequestSenderCommandT{ requestSenderConfig }.sendRequest(pingMessage);
-            
-            return result.has_value();
+            child_process::infrastructre::commands::ChildPingRequestCommand sender{ config };
+        
+            return sender.ping(pingMessage);
         };
     }
 };

@@ -45,6 +45,7 @@ public:
         }
     }
 
+    /*
     PATH("/send-data", sendDataHandler)
     void sendData(boost::asio::ip::tcp::socket& socket, const http::request<http::string_body>& req) {
         try {
@@ -69,6 +70,7 @@ public:
             failedResponse(e.what(), socket, req);
         }
     }
+    */
 
 private:
     std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> m_childProcessHolderService;

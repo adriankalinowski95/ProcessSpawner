@@ -41,6 +41,7 @@ set(PROTO_IMPORT_DIRS "${CMAKE_CURRENT_LIST_DIR}/src/domain/protos")
 
 set(PROTO_FILES
     shared/src/domain/protos/communication.proto
+    shared/src/domain/protos/child_process_communication.proto
 )
 
 get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)

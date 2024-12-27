@@ -4,9 +4,15 @@
 #include <deque>
 #include <boost/asio.hpp>
 
+#include <grpc/grpc.h> 
+#include <grpcpp/server_builder.h>
+
 #include <child_process/src/application/utils/ChildProcessParamsParser.h>
 #include <child_process/src/application/services/GlobalConfig.h>
+
 #include <child_process/src/api/controllers/ProcessManagerCommunicationController.h>
+#include <child_process/src/api/controllers/ChildInitController.h>
+
 #include <child_process/src/infrastructure/services/PingManagerSchedulerService.h>
 
 #include <shared/src/infrastructure/commands/RequestSenderCommand.h>
@@ -17,7 +23,7 @@
 using boost::asio::ip::tcp;
 
 void setTemporaryParams(int* argc, char*** argv) {
-    std::string params = "{\"childAddress\":\"127.0.0.1\",\"childPort\":8085,\"parentAddress\":\"127.0.0.1\",\"parentPort\":8080}";
+    std::string params = "{\"internalId\":\"abcdefg\", \"childAddress\":\"127.0.0.1\",\"childPort\":8085,\"parentAddress\":\"127.0.0.1\",\"parentPort\":8080}";
 
     *argc = 2;
     *argv = new char*[*argc];
@@ -39,6 +45,31 @@ void setTempData(shared::domain::models::ProcessConfig& config) {
     }
 }
 
+void initGrpc(std::shared_ptr<shared::application::services::ILogger> logger) {
+    const auto config = child_process::application::services::GlobalConfig::getInstance().getProcessConfig();
+    
+    grpc::ServerBuilder builder;
+    const auto serverUrl = config->childAddress + ":" + std::to_string(config->childPort);
+    builder.AddListeningPort(serverUrl.data(), grpc::InsecureServerCredentials());
+
+    child_process::api::controllers::ChildInitController childInitController{ logger };
+
+    // <START> gRPC endpoints 
+    builder.RegisterService(&childInitController);
+    // <END> gRPC endpoints
+    
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    if (!server) {
+        throw std::runtime_error("Can't create gRPC server");
+    }
+    
+    if (server) {
+        logger->log("Server started!");
+	    server->Wait();
+    }
+}
+
+
 int main(int argc, char** argv) {
     // setTemporaryParams(&argc, &argv);
     auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
@@ -59,25 +90,11 @@ int main(int argc, char** argv) {
 
         child_process::application::services::GlobalConfig::getInstance().setProcessConfig(*config);
 
-        shared::infrastructure::services::AsyncServerService restServer { 
-            config->childAddress, 
-            config->childPort, 
-            std::make_unique<shared::infrastructure::services::EndpointService>(config->childAddress.data(), logger),
-            logger
-        };
-
-        // <START> rest endpoints
-        child_process::api::controllers::ProcessManagerCommunicationController processManagerCommunicationController{};
-        restServer.registerController(processManagerCommunicationController);
-        // <END> rest endpoints
-
-        restServer.start();
-        
         // Scheduler
         child_process::infrastructure::services::PingManagerSchedulerService pingManagerSchedulerService{ logger };
-        pingManagerSchedulerService.startAndJoin();
+        pingManagerSchedulerService.start();
         
-        restServer.join();
+        initGrpc(logger);
     }
     catch (std::exception& e) {
         logger->logError(e.what());

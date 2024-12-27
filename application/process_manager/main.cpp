@@ -16,6 +16,7 @@
 #include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
 
 #include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
+#include <process_manager/src/api/controllers/ChildPingController.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
 #include <shared/src/infrastructure/services/DefaultLogger.h>
@@ -95,24 +96,6 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't load input processes");
         }
 
-        auto restServer = std::make_unique<shared::infrastructure::services::AsyncServerService>(
-            environment::parent_process::Address.data(), 
-            environment::parent_process::Port, 
-            std::make_unique<shared::infrastructure::services::EndpointService>(
-                environment::parent_process::Address.data(), 
-                logger
-            ),
-            logger
-        );
-        if (!restServer) {
-            throw std::runtime_error("Can't create rest server");
-        }
-
-        // <START> rest endpoints
-        process_manager::api::controllers::ChildProcessCommunicationController childProcessCommunicationController{ childProcessHolderService, logger};
-        restServer->registerController(childProcessCommunicationController);
-        // <END> rest endpoints
-
         grpc::ServerBuilder builder;
         builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
 
@@ -129,8 +112,11 @@ int main(int argc, char** argv) {
             logger
         };
 
+        process_manager::api::controllers::ChildPingController pingController{ childProcessHolderService, logger };
+
         builder.RegisterService(&managerService);
         builder.RegisterService(&queryService);
+        builder.RegisterService(&pingController);
         // <END> gRPC endpoints
 
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
@@ -140,11 +126,11 @@ int main(int argc, char** argv) {
 
         if (server) {
             logger->log("Server started!");
-            restServer->start();
+            // restServer->start();
 	        server->Wait();
         }
 
-        restServer->join();
+        // restServer->join();
     } catch (std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl;
     }
