@@ -5,7 +5,6 @@
 
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/application/services/IEndpointService.h>
-#include <shared/src/infrastructure/services/SessionService.h>
 
 namespace shared::application::services {
 

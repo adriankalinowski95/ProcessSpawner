@@ -25,7 +25,7 @@ public:
             m_childProcessHolderService{ childProcessHolderService },
             m_logger{ logger }
     {
-        if (!m_logger) {
+        if (!m_childProcessHolderService || !m_logger) {
             throw std::runtime_error("Logger is not initialized!");
         }
     }
