@@ -4,7 +4,7 @@
 #include <grpcpp/grpcpp.h>
 #include <shared/src/application/services/ILogger.h>
 
-namespace shared::infrastructure::api::controllers {
+namespace shared::api::controllers {
 
 class BaseGrpController {
 public:

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package core_communication;
+
+import "shared/src/domain/protos/common.proto";
+
+service CoreQueryCommunicationService {
+  rpc Handle(CoreQueryRequest) returns (CoreQueryResponse);
+}
+
+service CoreCommandCommunicationService {
+  rpc Handle(CoreCommandRequst) returns (CoreCommandResponse);
+}
+
+message CoreQueryRequest {
+  common.ProcessInfo process = 1;
+  string query_message = 2;
+}
+
+message CoreQueryResponse {
+  string data = 1;
+  common.Result result = 2;
+}
+
+message CoreCommandRequst {
+  common.ProcessInfo process = 1;
+  string to_save = 2;
+}
+
+message CoreCommandResponse {
+  common.Result result = 1;
+}

@@ -60,8 +60,7 @@ private:
                 std::unique_ptr<typename Service::Stub> stub = Service::NewStub(channel);
                 grpc::ClientContext context{};
                 Response response{};
-                // grpc::Status status = stub->GetInput(&context, request, &response);
-                // grpc::Status status = (stub->*method_)(&context, request, &response);
+                
                 auto status = m_method(stub.get(), &context, &request, &response);
                 if (!status.ok()) {
                     return std::nullopt;

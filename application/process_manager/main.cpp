@@ -16,6 +16,7 @@
 #include <process_manager/src/api/controllers/ProcessQueryController.h>
 #include <process_manager/src/api/controllers/ChildPingController.h>
 #include <process_manager/src/api/controllers/ProcessManagerController.h>
+#include <process_manager/src/api/controllers/GenericControllersFactory.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
 #include <shared/src/infrastructure/services/DefaultLogger.h>
@@ -113,9 +114,12 @@ int main(int argc, char** argv) {
 
         process_manager::api::controllers::ChildPingController pingController{ childProcessHolderService, logger };
 
+        auto coreQueryCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreCommunicationController(logger);
+
         builder.RegisterService(&managerController);
         builder.RegisterService(&queryController);
         builder.RegisterService(&pingController);
+        builder.RegisterService(coreQueryCommunicationController.get());
         // <END> gRPC endpoints
 
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());

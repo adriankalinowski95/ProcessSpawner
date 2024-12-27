@@ -24,7 +24,6 @@
 #include <process_manager/src/application/services/IChildProcessSpawnerService.h>
 #include <process_manager/src/application/services/IProcessTerminator.h>
 
-// @Todo move to api...
 namespace process_manager::api::controllers {
 
 class ProcessManagerController : public Communication::SpawnProcessService::Service {

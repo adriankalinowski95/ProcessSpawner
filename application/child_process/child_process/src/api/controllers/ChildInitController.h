@@ -8,10 +8,10 @@
 
 namespace child_process::api::controllers {
 
-class ChildInitController : public child_process_communication::ChildInitService::Service, public shared::infrastructure::api::controllers::BaseGrpController {
+class ChildInitController : public child_process_communication::ChildInitService::Service, public shared::api::controllers::BaseGrpController {
 public:
     ChildInitController(std::shared_ptr<shared::application::services::ILogger> logger) : 
-        shared::infrastructure::api::controllers::BaseGrpController{ logger } {}
+        shared::api::controllers::BaseGrpController{ logger } {}
 
     virtual ::grpc::Status InitChild(::grpc::ServerContext* context, const ::child_process_communication::ChildInitRequest* request, ::child_process_communication::ChildInitResponse* response) override {
         m_logger->logInfo("InitChild request received");
