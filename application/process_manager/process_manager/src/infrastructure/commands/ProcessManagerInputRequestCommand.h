@@ -36,6 +36,7 @@ public:
         Communication::ProcessManagerInputResponse response{};
 
         request.set_managername(processManagerName);
+
         // @Todo change to Input process config and make a singleton
         auto channel = grpc::CreateChannel(environment::defs::Backend_Url.data(), grpc::InsecureChannelCredentials());
         std::unique_ptr<Communication::ProcessManagerInputService::Stub> stub = Communication::ProcessManagerInputService::NewStub(channel);
@@ -49,6 +50,7 @@ public:
             auto childProcessInstance = m_processSpawner->spawnChildProcess(process.internal_id());
             if (!childProcessInstance) {
                 m_logger->logError("Failed to spawn process with internal id: " + process.internal_id());
+                
                 continue;
             }
 

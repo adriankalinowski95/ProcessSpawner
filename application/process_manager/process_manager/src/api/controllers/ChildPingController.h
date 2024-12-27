@@ -6,7 +6,7 @@
 
 #include <environments/environments.h>
 
-#include <shared/src/infrastructure/api/controllers/BaseGrpController.h>
+#include <shared/src/api/controllers/BaseGrpController.h>
 #include <shared/src/domain/protos/child_process_communication.pb.h>
 #include <shared/src/domain/protos/child_process_communication.grpc.pb.h>
 
