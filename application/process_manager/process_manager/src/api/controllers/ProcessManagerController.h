@@ -25,11 +25,11 @@
 #include <process_manager/src/application/services/IProcessTerminator.h>
 
 // @Todo move to api...
-namespace process_manager::infrastructure::services {
+namespace process_manager::api::controllers {
 
-class ProcessManagerService : public Communication::SpawnProcessService::Service {
+class ProcessManagerController : public Communication::SpawnProcessService::Service {
 public:
-   ProcessManagerService(
+   ProcessManagerController(
         std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> processSpawner,
         std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> processHolderService,
         std::shared_ptr<process_manager::application::services::IProcessTerminator> processTerminator,

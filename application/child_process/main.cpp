@@ -10,7 +10,6 @@
 #include <child_process/src/application/utils/ChildProcessParamsParser.h>
 #include <child_process/src/application/services/GlobalConfig.h>
 
-#include <child_process/src/api/controllers/ProcessManagerCommunicationController.h>
 #include <child_process/src/api/controllers/ChildInitController.h>
 
 #include <child_process/src/infrastructure/services/PingManagerSchedulerService.h>

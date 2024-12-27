@@ -10,7 +10,6 @@
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
-#include <process_manager/src/infrastructure/commands/ChildInitRequestCommand2.h>
 
 #include <process_manager/src/application/services/IChildProcessSpawnerService.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
@@ -48,7 +47,7 @@ public:
         auto pingMessage = ::child_process_communication::ChildInitRequest{};
         pingMessage.set_internal_id(internalId.data());
 
-        process_manager::infrastructre::commands::ChildInitRequestCommand2::Sender::Config config {
+        process_manager::infrastructre::commands::ChildInitRequestCommand::Sender::Config config {
             childConfig.childAddress,
             childConfig.childPort,
             3,
@@ -58,7 +57,7 @@ public:
             }
         };
 
-        if (!process_manager::infrastructre::commands::ChildInitRequestCommand2{ config }.sendRequest(pingMessage)) {
+        if (!process_manager::infrastructre::commands::ChildInitRequestCommand{ config }.sendRequest(pingMessage)) {
             return std::nullopt;
         }
 

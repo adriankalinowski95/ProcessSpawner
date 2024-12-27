@@ -15,14 +15,12 @@
 
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 
-// @Todo move to api...
-namespace process_manager::infrastructure::services {
+namespace process_manager::api::controllers {
 
-class ProcessQueryService : public Communication::ProcessQueryService::Service {
-    // using InitRequestSenderCommand = shared::infrastructure::commands::GenericRequestSenderCommand<shared::domain::models::PingMessage, shared::domain::models::PingMessage>;
+class ProcessQueryController : public Communication::ProcessQueryService::Service {
 public:
-   ProcessQueryService(
-        std::shared_ptr<ChildProcessHolderService> childProcessHolderService,
+   ProcessQueryController(
+        std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> childProcessHolderService,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_childProcessHolderService{ childProcessHolderService },
             m_logger{ logger }
@@ -37,7 +35,7 @@ public:
     }
 
 private:
-    std::shared_ptr<ChildProcessHolderService> m_childProcessHolderService;
+    std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> m_childProcessHolderService;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 
     grpc::Status handleQueryByType(::Communication::ProcessQueryType queryType, ::Communication::QueryResponse* response) {

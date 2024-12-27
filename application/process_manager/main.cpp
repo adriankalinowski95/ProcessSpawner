@@ -7,16 +7,15 @@
 #include <process_manager/environments/environments.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
-#include <process_manager/src/infrastructure/services/ProcessManagerService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessSpawnerService.h>
-#include <process_manager/src/infrastructure/services/ProcessQueryService.h>
 #include <process_manager/src/infrastructure/services/UnixProcessEnumerator.h>
 #include <process_manager/src/infrastructure/services/UnixProcessTerminator.h>
 #include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
 
-#include <process_manager/src/api/controllers/ChildProcessCommunicationController.h>
+#include <process_manager/src/api/controllers/ProcessQueryController.h>
 #include <process_manager/src/api/controllers/ChildPingController.h>
+#include <process_manager/src/api/controllers/ProcessManagerController.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
 #include <shared/src/infrastructure/services/DefaultLogger.h>
@@ -100,22 +99,22 @@ int main(int argc, char** argv) {
         builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
 
         // <START> gRPC endpoints 
-        process_manager::infrastructure::services::ProcessManagerService managerService{
+        process_manager::api::controllers::ProcessManagerController managerController{
             childProcessSpawnerService,
             childProcessHolderService,
             processTerminator,
             logger 
         };
 
-        process_manager::infrastructure::services::ProcessQueryService queryService{
+        process_manager::api::controllers::ProcessQueryController queryController{
             childProcessHolderService,
             logger
         };
 
         process_manager::api::controllers::ChildPingController pingController{ childProcessHolderService, logger };
 
-        builder.RegisterService(&managerService);
-        builder.RegisterService(&queryService);
+        builder.RegisterService(&managerController);
+        builder.RegisterService(&queryController);
         builder.RegisterService(&pingController);
         // <END> gRPC endpoints
 
