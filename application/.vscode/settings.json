@@ -134,7 +134,9 @@
     "functional": "cpp",
     "valarray": "cpp",
     "random": "cpp",
-    "typeindex": "cpp"
+    "typeindex": "cpp",
+    "iterator": "cpp",
+    "memory_resource": "cpp"
 },
 "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
 "C_Cpp.errorSquiggles": "disabled",

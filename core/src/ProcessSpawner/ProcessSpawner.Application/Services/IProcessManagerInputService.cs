@@ -1,6 +1,6 @@
 ﻿using System;
 namespace ProcessSpawner.Application.Services {
     public interface IProcessManagerInputService {
-        Task<ProcessSpawner.Protobuf.ProcessManagerInputResponse> GetInput(Protobuf.ProcessManagerInputRequest request);
+        Task<ProcessSpawner.Protobuf.Communication.ProcessManagerInputResponse> GetInput(Protobuf.Communication.ProcessManagerInputRequest request);
     }
 }

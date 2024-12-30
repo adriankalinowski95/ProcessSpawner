@@ -46,6 +46,8 @@ var app = builder.Build();
 new RuntimeSeed(app).Seed();
 
 app.MapGrpcService<ProcessSpawner.Infrastructure.Api.ProcessManagerInputController>();
+app.MapGrpcService<ProcessSpawner.Infrastructure.Api.CoreCommandCommunicationController>();
+
 // app.MapGrpcService<CoreGrpcService>();
 
 // Configure the HTTP request pipeline.

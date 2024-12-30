@@ -13,6 +13,7 @@
 #include <child_process/src/api/controllers/ChildInitController.h>
 
 #include <child_process/src/infrastructure/services/PingManagerSchedulerService.h>
+#include <child_process/src/infrastructure/services/EventProviderSchedulerService.h>
 
 #include <shared/src/infrastructure/commands/RequestSenderCommand.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
@@ -22,7 +23,7 @@
 using boost::asio::ip::tcp;
 
 void setTemporaryParams(int* argc, char*** argv) {
-    std::string params = "{\"internalId\":\"abcdefg\", \"childAddress\":\"127.0.0.1\",\"childPort\":8085,\"parentAddress\":\"127.0.0.1\",\"parentPort\":8080}";
+    std::string params = "{\"internalId\":\"abcdefg\", \"childAddress\":\"127.0.0.1\",\"childPort\":8085,\"parentAddress\":\"127.0.0.1\",\"parentPort\":50051}";
 
     *argc = 2;
     *argv = new char*[*argc];
@@ -92,6 +93,9 @@ int main(int argc, char** argv) {
         // Scheduler
         child_process::infrastructure::services::PingManagerSchedulerService pingManagerSchedulerService{ logger };
         pingManagerSchedulerService.start();
+
+        child_process::infrastructure::services::EventProviderSchedulerService eventProviderSchedulerService{ logger };
+        eventProviderSchedulerService.start();
         
         initGrpc(logger);
     }

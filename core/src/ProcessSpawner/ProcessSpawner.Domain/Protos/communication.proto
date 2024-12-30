@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "ProcessSpawner.Protobuf";
+option csharp_namespace = "ProcessSpawner.Protobuf.Communication";
 
 package Communication;
 

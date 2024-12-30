@@ -1,6 +1,5 @@
 ﻿using System;
-using ProcessSpawner.Protobuf;
 
 namespace ProcessSpawner.Application.DTOs {
-    public record QueryRequestDto(ProcessQueryType query_type);
+    public record QueryRequestDto(Protobuf.Communication.ProcessQueryType query_type);
 }

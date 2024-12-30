@@ -36,7 +36,8 @@
         "logging": {
           "moduleLoad": false,
           "programOutput": true,
-          "trace": false
+          "trace": false,
+          "exceptions": false
         },
         "showDisplayString": false,
         "args": [],
@@ -47,7 +48,13 @@
         "osx": {
           "MIMode": "lldb"
         },
-        "targetArchitecture": "arm64"
+        "targetArchitecture": "arm64",
+        "setupCommands": [
+        {
+          "description": "Disable break on throw",
+          "text": "catch throw",
+          "ignoreFailures": true
+        }],
       },
     {
       "name": "C++ Launch MacOS debug",

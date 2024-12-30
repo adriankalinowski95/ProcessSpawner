@@ -19,7 +19,13 @@ public:
     ChildPingController(
         std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> childProcessHolderService, 
         std::shared_ptr<shared::application::services::ILogger> logger) : 
-        shared::api::controllers::BaseGrpController{ logger } {}
+        shared::api::controllers::BaseGrpController{ logger },
+        m_childProcessHolderService { childProcessHolderService } 
+        {
+            if (!m_childProcessHolderService) {
+                throw std::runtime_error("Child process holder service is not initialized!");
+            }
+        }
 
     virtual ::grpc::Status Ping(::grpc::ServerContext* context, const ::child_process_communication::ChildPingRequest* request, ::child_process_communication::ChildPingResponse* response) override {
         try {

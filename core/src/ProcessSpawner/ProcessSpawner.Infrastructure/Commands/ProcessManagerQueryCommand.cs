@@ -21,19 +21,19 @@ namespace ProcessSpawner.Infrastructure.Commands {
             }
 
             var channel = Grpc.Net.Client.GrpcChannel.ForAddress(endpoint);
-            var client = new Protobuf.ProcessQueryService.ProcessQueryServiceClient(channel);
+            var client = new Protobuf.Communication.ProcessQueryService.ProcessQueryServiceClient(channel);
             var response = await client.QueryProcessesAsync(GetRequestProto(request));
 
             return GetResponseDto(response);
         }
 
-        private Protobuf.QueryRequest GetRequestProto(QueryRequestDto request) {
-            return new Protobuf.QueryRequest {
+        private Protobuf.Communication.QueryRequest GetRequestProto(QueryRequestDto request) {
+            return new Protobuf.Communication.QueryRequest {
                 QueryType = request.query_type
             };
         }
 
-        private QueryResponseDto GetResponseDto(Protobuf.QueryResponse response) {
+        private QueryResponseDto GetResponseDto(Protobuf.Communication.QueryResponse response) {
             var processes = response.Processes.Select(x => {
                 return new ProcessInstanceDto {
                     ProcessId = x.ProcessId,

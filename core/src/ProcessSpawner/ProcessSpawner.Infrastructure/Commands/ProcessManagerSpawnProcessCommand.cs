@@ -19,14 +19,14 @@ namespace ProcessSpawner.Infrastructure.Commands {
             }
 
             var channel = Grpc.Net.Client.GrpcChannel.ForAddress(endpoint);
-            var client = new Protobuf.SpawnProcessService.SpawnProcessServiceClient(channel);
+            var client = new Protobuf.Communication.SpawnProcessService.SpawnProcessServiceClient(channel);
             var response = await client.SpawnProcessAsync(GetRequestProto(request));
 
             return GetResponseDto(response);
         }
 
-        private Protobuf.SpawnRequest GetRequestProto(ProcessSpawnRequestDto request) {
-            return new Protobuf.SpawnRequest {
+        private Protobuf.Communication.SpawnRequest GetRequestProto(ProcessSpawnRequestDto request) {
+            return new Protobuf.Communication.SpawnRequest {
                 InternalId = Guid.NewGuid().ToString(),
                 ProcessType = request.process_type,
                 Parameters = {
@@ -35,7 +35,7 @@ namespace ProcessSpawner.Infrastructure.Commands {
             };
         }
 
-        private ProcessSpawnResponseDto GetResponseDto(Protobuf.SpawnResponse response) {
+        private ProcessSpawnResponseDto GetResponseDto(Protobuf.Communication.SpawnResponse response) {
             return new ProcessSpawnResponseDto(
                 response.Process.ProcessId,
                 response.Process.InternalId,

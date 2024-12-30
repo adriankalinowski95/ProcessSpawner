@@ -1,8 +1,12 @@
-syntax = "proto3";
+﻿syntax = "proto3";
+
+// option csharp_namespace = "ProcessSpawner.Protobuf.Communication";
+
+option csharp_namespace = "ProcessSpawner.Protobuf.CoreCommunication";
 
 package core_communication;
 
-import "shared/src/domain/protos/common.proto";
+import "protos/common.proto";
 
 service CoreQueryCommunicationService {
   rpc Handle(CoreQueryRequest) returns (CoreQueryResponse);

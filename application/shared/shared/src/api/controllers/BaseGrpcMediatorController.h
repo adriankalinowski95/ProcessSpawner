@@ -22,14 +22,14 @@ public:
 
     virtual ::grpc::Status Handle(::grpc::ServerContext* context, const Request* request, Response* response) override {
        try {
-           auto channel = grpc::CreateChannel((m_config.address + ":" + std::to_string(m_config.port)).data(), grpc::InsecureChannelCredentials());
-           std::unique_ptr<typename Service::Stub> stub = Service::NewStub(channel);
-           grpc::ClientContext context{};
+            auto channel = grpc::CreateChannel((m_config.address + ":" + std::to_string(m_config.port)).data(), grpc::InsecureChannelCredentials());
+            std::unique_ptr<typename Service::Stub> stub = Service::NewStub(channel);
+            grpc::ClientContext localContext{};
 
-           return stub->Handle(&context, *request, response);
-       } catch(...) {
-           return ::grpc::Status::CANCELLED;
-       }
+            return stub->Handle(&localContext, *request, response);
+        } catch(...) {
+            return ::grpc::Status::CANCELLED;
+        }
     }
 
 private:

@@ -9,6 +9,7 @@ using ProcessSpawner.Domain.Models;
 using ProcessSpawner.Infrastructure.Commands;
 using ProcessSpawner.Infrastructure.Repositories;
 using ProcessSpawner.Protobuf;
+using ProcessSpawner.Protobuf.Communication;
 using Quartz;
 
 namespace ProcessSpawner.Infrastructure.Services {

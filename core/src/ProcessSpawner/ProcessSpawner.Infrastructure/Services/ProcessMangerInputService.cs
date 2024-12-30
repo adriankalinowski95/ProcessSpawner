@@ -18,18 +18,18 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_processManagerRepository = processManagerRepository;
         }
 
-        public async Task<ProcessManagerInputResponse> GetInput(ProcessManagerInputRequest request) {
+        public async Task<Protobuf.Communication.ProcessManagerInputResponse> GetInput(Protobuf.Communication.ProcessManagerInputRequest request) {
             var processManager = await m_processManagerRepository.GetByNameAsync(request.ManagerName);
             if (processManager == null) {
                 return fail(request.ManagerName);
             }
 
-            var response = new ProcessManagerInputResponse();
+            var response = new Protobuf.Communication.ProcessManagerInputResponse();
             response.Success = true;
             response.Processes.AddRange(processManager.ProcessInstances
                 .Where(process => process.Status == Domain.Enums.ProcessStatus.NonActive || process.Status == Domain.Enums.ProcessStatus.Active || process.Status == Domain.Enums.ProcessStatus.Started)
                 .Select(process => {
-                    var processInstanceProto = new ProcessSpawner.Protobuf.ProcessInstance {
+                    var processInstanceProto = new ProcessSpawner.Protobuf.Communication.ProcessInstance {
                         ProcessId = process.ProcessId,
                         InternalId = process.InternalId,
                         ProcessType = process.ProcessType,
@@ -48,11 +48,11 @@ namespace ProcessSpawner.Infrastructure.Services {
             return response;
         }
 
-        public ProcessManagerInputResponse fail(string processManagerName) {
+        public Protobuf.Communication.ProcessManagerInputResponse fail(string processManagerName) {
             var message = $"Can't find process manager for name{processManagerName}";
             m_logger.LogError(message);
 
-            var response = new ProcessManagerInputResponse();
+            var response = new Protobuf.Communication.ProcessManagerInputResponse();
             response.Message = message;
             response.Success = false;
 

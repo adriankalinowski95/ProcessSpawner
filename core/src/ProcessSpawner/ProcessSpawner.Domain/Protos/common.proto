@@ -1,0 +1,14 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ProcessSpawner.Protobuf.Common";
+
+package common;
+
+message ProcessInfo {
+  string internal_id = 1;
+}
+
+message Result {
+  string message = 1;
+  bool success = 2;
+}

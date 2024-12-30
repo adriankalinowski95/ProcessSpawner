@@ -17,11 +17,16 @@ public:
         core_communication::CoreQueryCommunicationService
     >;
 
-    static std::shared_ptr<CoreQueryCommunicationController> createCoreCommunicationController(
+    using CoreCommandCommunicationController = shared::api::controllers::BaseGrpcMediatorController<
+        core_communication::CoreCommandRequest,
+        core_communication::CoreCommandResponse,
+        core_communication::CoreCommandCommunicationService
+    >;
+
+    static std::unique_ptr<CoreQueryCommunicationController> createCoreQueryCommunicationController(
         std::shared_ptr<shared::application::services::ILogger> logger) {
         
         const auto serverUrl = environment::defs::Backend_Url;
-        // podziel na adres i port
         const auto colonPosition = serverUrl.find(':');
         if (colonPosition == std::string::npos) {
             throw std::runtime_error("Invalid server url");
@@ -30,9 +35,28 @@ public:
         const auto address = serverUrl.substr(0, colonPosition);
         const auto port = std::stoi(serverUrl.substr(colonPosition + 1).data());
 
-        return std::make_shared<CoreQueryCommunicationController>(
+        return std::make_unique<CoreQueryCommunicationController>(
             CoreQueryCommunicationController::Config {
                 .address = address.data(),
+                .port = (std::uint32_t)port
+            }, logger);
+    }
+
+    static std::unique_ptr<CoreCommandCommunicationController> createCoreCommandCommunicationController(
+        std::shared_ptr<shared::application::services::ILogger> logger) {
+        
+        const auto serverUrl = environment::defs::Backend_Url;
+        const auto colonPosition = serverUrl.find(':');
+        if (colonPosition == std::string::npos) {
+            throw std::runtime_error("Invalid server url");
+        }
+
+        const auto address = std::string(serverUrl.substr(0, colonPosition));
+        const auto port = std::stoi(serverUrl.substr(colonPosition + 1).data());
+
+        return std::make_unique<CoreCommandCommunicationController>(
+            CoreCommandCommunicationController::Config {
+                .address = address,
                 .port = (std::uint32_t)port
             }, logger);
     }

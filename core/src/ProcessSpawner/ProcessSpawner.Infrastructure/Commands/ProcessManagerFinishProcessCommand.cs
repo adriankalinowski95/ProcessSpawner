@@ -19,19 +19,19 @@ namespace ProcessSpawner.Infrastructure.Commands {
             }
 
             var channel = Grpc.Net.Client.GrpcChannel.ForAddress(endpoint);
-            var client = new Protobuf.SpawnProcessService.SpawnProcessServiceClient(channel);
+            var client = new Protobuf.Communication.SpawnProcessService.SpawnProcessServiceClient(channel);
             var response = await client.FinishProcessAsync(GetRequestProto(request));
 
             return GetResponseDto(response);
         }
 
-        private Protobuf.FinishRequest GetRequestProto(FinishProcessRequestDto request) {
-            return new Protobuf.FinishRequest {
+        private Protobuf.Communication.FinishRequest GetRequestProto(FinishProcessRequestDto request) {
+            return new Protobuf.Communication.FinishRequest {
                 InternalId = request.internal_id
             };
         }
 
-        private FinishProcessResponseDto GetResponseDto(Protobuf.FinishResponse response) {
+        private FinishProcessResponseDto GetResponseDto(Protobuf.Communication.FinishResponse response) {
             return new FinishProcessResponseDto(
                 response.Success,
                 response.Message

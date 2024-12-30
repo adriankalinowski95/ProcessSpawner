@@ -10,7 +10,9 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<Protobuf Include="Protos\**\*.proto" GrpcService="Client" ProtoRoot="Protos" />
+		<Protobuf Include="Protos\common.proto" GrpcService="Client" />
+		<Protobuf Include="Protos\core_communication.proto" GrpcService="Client" />
+		<Protobuf Include="Protos\communication.proto" GrpcService="Client" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Protos\" />

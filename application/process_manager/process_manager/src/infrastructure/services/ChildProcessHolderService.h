@@ -9,7 +9,7 @@ namespace process_manager::infrastructure::services {
 
 class ChildProcessHolderService {
 public:
-    ChildProcessHolderService() = default;
+    ChildProcessHolderService() : m_childProcesses{} {}
 
     void addChildProcess(const process_manager::domain::models::ProcessInstance& process) {
         if (m_childProcesses.find(process.internalId) != m_childProcesses.end()) {

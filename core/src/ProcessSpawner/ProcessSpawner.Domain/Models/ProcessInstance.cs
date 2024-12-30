@@ -18,5 +18,7 @@ namespace ProcessSpawner.Domain.Models {
 
         public ProcessManager ProcessManager { get; set; }
         public int ProcessManagerId { get; set; }
+
+        public List<ProcessEvent> ProcessEvents { get; set; } = new List<ProcessEvent>();
     }
 }

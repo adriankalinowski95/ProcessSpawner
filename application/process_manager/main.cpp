@@ -13,6 +13,10 @@
 #include <process_manager/src/infrastructure/services/UnixProcessTerminator.h>
 #include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
 
+#include <process_manager/src/infrastructure/commands/CoreCommandCommunicationCommand.h>
+
+
+
 #include <process_manager/src/api/controllers/ProcessQueryController.h>
 #include <process_manager/src/api/controllers/ChildPingController.h>
 #include <process_manager/src/api/controllers/ProcessManagerController.h>
@@ -24,8 +28,55 @@
 #include <shared/src/infrastructure/services/EndpointService.h>
 #include <shared/src/infrastructure/providers/UnixProcessInfoProvider.h>
 
+bool test() {
+    /*
+    auto request = ::core_communication::CoreCommandRequest{};
+    request.mutable_process()->set_internal_id("Abc");
+    request.set_event_name("temp_name");
+    request.set_event_value("temp_value");
+
+    process_manager::infrastructre::commands::CoreCommandCommunicationCommand::Sender::Config config {
+        std::string("localhost"),
+        5002,
+        1,
+        1000,
+        [] (const ::core_communication::CoreCommandResponse& output) -> bool {
+            return output.result().success();
+        }
+    };
+
+    process_manager::infrastructre::commands::CoreCommandCommunicationCommand sender{ config };
+    auto result = sender.sendRequest(request);
+    if (!result.has_value()) {
+        return false;
+    }
+
+    return result->result().success();
+
+    ::core_communication::CoreCommandRequest,
+        ::core_communication::CoreCommandResponse,
+        ::core_communication::CoreCommandCommunicationService
+
+    */
+
+
+    ::core_communication::CoreCommandRequest request{};
+    ::core_communication::CoreCommandResponse response{};
+    // @Todo change to Input process config and make a singleton
+    auto channel = grpc::CreateChannel(environment::defs::Backend_Url.data(), grpc::InsecureChannelCredentials());
+    std::unique_ptr<::core_communication::CoreCommandCommunicationService::Stub> stub = ::core_communication::CoreCommandCommunicationService::NewStub(channel);
+    grpc::ClientContext context;
+    grpc::Status status = stub->Handle(&context, request, &response);
+    if (!status.ok()) {
+        return false;
+    }
+
+    return true;
+}
+
 int main(int argc, char** argv) {
     try{ 
+        // test();
         // @Todo make a factory class
         auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
         if (!logger) {
@@ -114,12 +165,14 @@ int main(int argc, char** argv) {
 
         process_manager::api::controllers::ChildPingController pingController{ childProcessHolderService, logger };
 
-        auto coreQueryCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreCommunicationController(logger);
+        auto coreQueryCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreQueryCommunicationController(logger);
+        auto coreCommandCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreCommandCommunicationController(logger);
 
         builder.RegisterService(&managerController);
         builder.RegisterService(&queryController);
         builder.RegisterService(&pingController);
         builder.RegisterService(coreQueryCommunicationController.get());
+        builder.RegisterService(coreCommandCommunicationController.get());
         // <END> gRPC endpoints
 
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
@@ -127,13 +180,8 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create gRPC server");
         }
 
-        if (server) {
-            logger->log("Server started!");
-            // restServer->start();
-	        server->Wait();
-        }
-
-        // restServer->join();
+        logger->log("Server started!");
+	    server->Wait();
     } catch (std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl;
     }
