@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services;
+using ProcessSpawner.Infrastructure.Api;
 using Shared.Tools.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +48,7 @@ new RuntimeSeed(app).Seed();
 
 app.MapGrpcService<ProcessSpawner.Infrastructure.Api.ProcessManagerInputController>();
 app.MapGrpcService<ProcessSpawner.Infrastructure.Api.CoreCommandCommunicationController>();
+app.MapGrpcService<ProcessSpawner.Infrastructure.Api.CoreQueryCommunicationController>();
 
 // app.MapGrpcService<CoreGrpcService>();
 

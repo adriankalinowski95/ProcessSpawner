@@ -32,12 +32,12 @@ public:
             throw std::runtime_error("Invalid server url");
         }
 
-        const auto address = serverUrl.substr(0, colonPosition);
+        const auto address = std::string(serverUrl.substr(0, colonPosition));
         const auto port = std::stoi(serverUrl.substr(colonPosition + 1).data());
 
         return std::make_unique<CoreQueryCommunicationController>(
             CoreQueryCommunicationController::Config {
-                .address = address.data(),
+                .address = address,
                 .port = (std::uint32_t)port
             }, logger);
     }

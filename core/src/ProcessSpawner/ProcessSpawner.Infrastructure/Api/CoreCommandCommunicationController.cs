@@ -16,9 +16,5 @@ namespace ProcessSpawner.Infrastructure.Api {
         public override Task<ProcessSpawner.Protobuf.CoreCommunication.CoreCommandResponse> Handle(global::ProcessSpawner.Protobuf.CoreCommunication.CoreCommandRequest request, ServerCallContext context) {
             return m_service.Handle(request);
         }
-
-        //public override Task<ProcessSpawner.Protobuf.CoreCommunication.CoreCommandResponse> Handle(global::ProcessSpawner.Protobuf.CoreCommunication.CoreCommandRequest request, ServerCallContext context) {
-        //    throw new RpcException(new Status(StatusCode.Unimplemented, ""));
-        //}
     }
 }

@@ -14,6 +14,7 @@
 
 #include <child_process/src/infrastructure/services/PingManagerSchedulerService.h>
 #include <child_process/src/infrastructure/services/EventProviderSchedulerService.h>
+#include <child_process/src/infrastructure/services/CoreQueryParamsService.h>
 
 #include <shared/src/infrastructure/commands/RequestSenderCommand.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
@@ -96,7 +97,7 @@ int main(int argc, char** argv) {
 
         child_process::infrastructure::services::EventProviderSchedulerService eventProviderSchedulerService{ logger };
         eventProviderSchedulerService.start();
-        
+
         initGrpc(logger);
     }
     catch (std::exception& e) {

@@ -13,10 +13,6 @@
 #include <process_manager/src/infrastructure/services/UnixProcessTerminator.h>
 #include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
 
-#include <process_manager/src/infrastructure/commands/CoreCommandCommunicationCommand.h>
-
-
-
 #include <process_manager/src/api/controllers/ProcessQueryController.h>
 #include <process_manager/src/api/controllers/ChildPingController.h>
 #include <process_manager/src/api/controllers/ProcessManagerController.h>
@@ -59,7 +55,6 @@ bool test() {
 
     */
 
-
     ::core_communication::CoreCommandRequest request{};
     ::core_communication::CoreCommandResponse response{};
     // @Todo change to Input process config and make a singleton
@@ -76,7 +71,6 @@ bool test() {
 
 int main(int argc, char** argv) {
     try{ 
-        // test();
         // @Todo make a factory class
         auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
         if (!logger) {

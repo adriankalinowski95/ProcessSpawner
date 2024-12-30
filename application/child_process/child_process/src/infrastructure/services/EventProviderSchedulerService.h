@@ -11,6 +11,8 @@
 #include <child_process/src/infrastructure/commands/CoreCommandCommunicationCommand.h>
 #include <child_process/src/application/services/GlobalConfig.h>
 
+#include <child_process/src/infrastructure/services/CoreQueryParamsService.h>
+
 namespace child_process::infrastructure::services {
 
 class EventProviderSchedulerService {
@@ -44,6 +46,11 @@ private:
         };
     }
 
+    void load(std::shared_ptr<shared::application::services::ILogger> logger) {
+        child_process::infrastructure::services::CoreQueryParamsService coreQueryParamsService{ logger };
+        const auto result = coreQueryParamsService.loadParam("param1");
+    }
+
     std::function<bool()> GetPeriodicFunction() {
         return [this]() -> bool {
             const auto processConfig = child_process::application::services::GlobalConfig::getInstance().getProcessConfig();
@@ -74,7 +81,9 @@ private:
                 return false;
             }
 
-            return result->result().success();
+            auto res = result->result().success();
+
+            load(m_logger);
         };
     }
 };
