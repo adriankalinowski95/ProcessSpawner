@@ -6,27 +6,28 @@
 #include <signal.h>
 
 #include <shared/src/application/services/ILogger.h>
-#include <process_manager/src/application/services/IProcessEnumerator.h>
+#include <process_manager/src/application/tools/IProcessEnumerator.h>
 
-namespace process_manager::infrastructure::services {
+namespace process_manager::infrastructure::tools {
 
-using namespace process_manager::domain::models;
-
-class UnixProcessEnumerator : public process_manager::application::services::IProcessEnumerator {
+class UnixProcessEnumerator : public process_manager::application::tools::IProcessEnumerator {
 public:
-    UnixProcessEnumerator(std::shared_ptr<shared::application::services::ILogger> logger) : m_logger{ logger } {
+    UnixProcessEnumerator(std::shared_ptr<shared::application::services::ILogger> logger) : 
+        process_manager::application::tools::IProcessEnumerator{},
+        m_logger{ logger } 
+    {
         if (!m_logger) {
             throw std::runtime_error("Logger is not initialized!");
         }
     }
 
-    std::vector<ProcessInfo> enumerateAll() const override {
+    std::vector<process_manager::domain::models::ProcessInfo> enumerateAll() const override {
         return getAllProcesses();
     }
 
-    std::vector<ProcessInfo> enumerateWhereNameEquals(std::string_view name) const override {
+    std::vector<process_manager::domain::models::ProcessInfo> enumerateWhereNameEquals(std::string_view name) const override {
         auto allProcesses = getAllProcesses();
-        std::vector<ProcessInfo> result;
+        std::vector<process_manager::domain::models::ProcessInfo> result;
         result.reserve(allProcesses.size());
         
         for (auto& proc : allProcesses) {
@@ -37,9 +38,9 @@ public:
         return result;
     }
 
-    std::vector<ProcessInfo> enumerateWhereNameContains(std::string_view substring) const override {
+    std::vector<process_manager::domain::models::ProcessInfo> enumerateWhereNameContains(std::string_view substring) const override {
         auto allProcesses = getAllProcesses();
-        std::vector<ProcessInfo> result;
+        std::vector<process_manager::domain::models::ProcessInfo> result;
         result.reserve(allProcesses.size());
 
         for (auto& proc : allProcesses) {
@@ -53,8 +54,8 @@ public:
 private:
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 
-    std::vector<ProcessInfo> getAllProcesses() const {
-        std::vector<ProcessInfo> processes;
+    std::vector<process_manager::domain::models::ProcessInfo> getAllProcesses() const {
+        std::vector<process_manager::domain::models::ProcessInfo> processes;
         const int maxCount = 1024;
         std::vector<pid_t> pids(maxCount, 0);
 
@@ -76,7 +77,7 @@ private:
             std::memset(nameBuffer, 0, sizeof(nameBuffer));
             const int nameLength = proc_name(pid, nameBuffer, sizeof(nameBuffer));
             if (nameLength > 0) {
-                ProcessInfo info{pid, std::string(nameBuffer)};
+                process_manager::domain::models::ProcessInfo info{pid, std::string(nameBuffer)};
                 processes.push_back(std::move(info));
             }
         }

@@ -7,10 +7,11 @@
 #include <shared/src/application/utils/RandomNumberGenerator.h>
 
 #include <process_manager/src/domain/models/ProcessInstance.h>
-#include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
+
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
 
+#include <process_manager/src/application/tools/IProcessSpawner.h>
 #include <process_manager/src/application/services/IChildProcessSpawnerService.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 
@@ -19,7 +20,7 @@ namespace process_manager::infrastructure::services {
 class ChildProcessSpawnerService : public process_manager::application::services::IChildProcessSpawnerService {
 public:
     ChildProcessSpawnerService(
-        std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> processSpawner,
+        std::shared_ptr<process_manager::application::tools::IProcessSpawner> processSpawner,
         std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> childProcessConfigProvider,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
@@ -65,7 +66,7 @@ public:
     }
 
 private:
-    std::shared_ptr<process_manager::infrastructure::tools::ProcessSpawner> m_processSpawner;
+    std::shared_ptr<process_manager::application::tools::IProcessSpawner> m_processSpawner;
     std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> m_configProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     

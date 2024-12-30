@@ -3,7 +3,7 @@
 #include <vector>
 #include <process_manager/src/domain/models/ProcessInfo.h>
 
-namespace process_manager::application::services {
+namespace process_manager::application::tools {
 
 class IProcessEnumerator {
 public:

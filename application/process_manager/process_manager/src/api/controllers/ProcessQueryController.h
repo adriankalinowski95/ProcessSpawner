@@ -8,6 +8,7 @@
 
 #include <environments/environments.h>
 
+#include <shared/src/api/controllers/BaseGrpController.h>
 #include <shared/src/domain/protos/communication.pb.h>
 #include <shared/src/domain/protos/communication.grpc.pb.h>
 #include <shared/src/application/services/ILogger.h>
@@ -17,29 +18,33 @@
 
 namespace process_manager::api::controllers {
 
-class ProcessQueryController : public Communication::ProcessQueryService::Service {
+class ProcessQueryController : public Communication::ProcessQueryService::Service, public shared::api::controllers::BaseGrpController {
 public:
    ProcessQueryController(
         std::shared_ptr<process_manager::application::services::IChildProcessHolderService> childProcessHolderService,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
-            m_childProcessHolderService{ childProcessHolderService },
-            m_logger{ logger }
+            shared::api::controllers::BaseGrpController{ logger },
+            m_childProcessHolderService{ childProcessHolderService }
     {
-        if (!m_childProcessHolderService || !m_logger) {
+        if (!m_childProcessHolderService) {
             throw std::runtime_error("Logger is not initialized!");
         }
     }
 
     virtual ::grpc::Status QueryProcesses(::grpc::ServerContext* context, const ::Communication::QueryRequest* request, ::Communication::QueryResponse* response) override {
-        return handleQueryByType(request->query_type(), response);
+        try {
+            return parse(request, response);
+        } catch (std::exception e) {
+            return failed(e.what(), response);
+        }
     }
 
 private:
     std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_childProcessHolderService;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 
-    grpc::Status handleQueryByType(::Communication::ProcessQueryType queryType, ::Communication::QueryResponse* response) {
-        switch(queryType) {
+    grpc::Status parse(const ::Communication::QueryRequest* request, ::Communication::QueryResponse* response) {
+        switch(request->query_type()) {
             case ::Communication::ProcessQueryType::All:
                 return handleQueryAll(response);
             case ::Communication::ProcessQueryType::Running:
@@ -48,15 +53,6 @@ private:
             default:
                 return failed("Unknown query type!", response);
         }
-    }
-
-    grpc::Status failed(const std::string& message, ::Communication::QueryResponse* response) {
-        m_logger->logError(message);
-
-        response->set_success(false);
-        response->set_message(message);
-
-        return grpc::Status::CANCELLED;
     }
 
     grpc::Status handleQueryAll(::Communication::QueryResponse* response) {
@@ -69,11 +65,7 @@ private:
             processProto->set_last_update_time_ms(process.lastUpdateTimeMs);
         }
 
-        response->set_success(true);
-        response->set_message("OK");
-
-        // @Todo implement
-        return grpc::Status::OK;
+        return success(response);
     }
 
     grpc::Status handleQueryRunning(::Communication::QueryResponse* response) {

@@ -1,26 +1,19 @@
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <string>
-#include <optional>
-
 #include <spawn.h>
-#include <boost/asio.hpp>
 
 #include <shared/src/application/services/ILogger.h>
+#include <process_manager/src/application/tools/IProcessSpawner.h>
 
 namespace process_manager::infrastructure::tools {
 
-using boost::asio::ip::tcp;
-
-class ProcessSpawner {
+class UnixProcessSpawner : public process_manager::application::tools::IProcessSpawner {
 public:
-    ProcessSpawner(std::shared_ptr<shared::application::services::ILogger> logger) :
+    UnixProcessSpawner(std::shared_ptr<shared::application::services::ILogger> logger) :
+        process_manager::application::tools::IProcessSpawner{},
         m_logger{ logger } {}
 
-    std::optional<std::uint32_t> startProcess(const std::string& program, const std::vector<std::string>& args) {
+    [[nodiscard]] std::optional<std::uint32_t> startProcess(const std::string& program, const std::vector<std::string>& args) override {
         std::vector<char*> cargs{};
         cargs.reserve(args.size() + 2);
 

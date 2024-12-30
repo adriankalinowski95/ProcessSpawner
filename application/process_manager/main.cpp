@@ -6,11 +6,13 @@
 
 #include <process_manager/environments/environments.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
-#include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
+
+#include <process_manager/src/infrastructure/tools/UnixProcessSpawner.h>
+#include <process_manager/src/infrastructure/tools/UnixProcessEnumerator.h>
+#include <process_manager/src/infrastructure/tools/UnixProcessTerminator.h>
+
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessSpawnerService.h>
-#include <process_manager/src/infrastructure/services/UnixProcessEnumerator.h>
-#include <process_manager/src/infrastructure/services/UnixProcessTerminator.h>
 #include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
 
 #include <process_manager/src/api/controllers/ProcessQueryController.h>
@@ -32,12 +34,12 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create logger or process manager");
         }
 
-        auto processEnumerator = std::make_shared<process_manager::infrastructure::services::UnixProcessEnumerator>(logger);
+        auto processEnumerator = std::make_shared<process_manager::infrastructure::tools::UnixProcessEnumerator>(logger);
         if (!processEnumerator) {
             throw std::runtime_error("Can't create process enumerator");
         }
 
-        auto processTerminator = std::make_shared<process_manager::infrastructure::services::UnixProcessTerminator>(logger);
+        auto processTerminator = std::make_shared<process_manager::infrastructure::tools::UnixProcessTerminator>(logger);
         if (!processTerminator) {
             throw std::runtime_error("Can't create process terminator");
         }
@@ -68,7 +70,7 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't create child process config provider");
         }
 
-        auto processSpawner = std::make_shared<process_manager::infrastructure::tools::ProcessSpawner>(logger);
+        auto processSpawner = std::make_shared<process_manager::infrastructure::tools::UnixProcessSpawner>(logger);
         if (!processSpawner) {
             throw std::runtime_error("Can't create process spawner");
         }
