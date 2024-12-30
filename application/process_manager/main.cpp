@@ -24,51 +24,6 @@
 #include <shared/src/infrastructure/services/EndpointService.h>
 #include <shared/src/infrastructure/providers/UnixProcessInfoProvider.h>
 
-bool test() {
-    /*
-    auto request = ::core_communication::CoreCommandRequest{};
-    request.mutable_process()->set_internal_id("Abc");
-    request.set_event_name("temp_name");
-    request.set_event_value("temp_value");
-
-    process_manager::infrastructre::commands::CoreCommandCommunicationCommand::Sender::Config config {
-        std::string("localhost"),
-        5002,
-        1,
-        1000,
-        [] (const ::core_communication::CoreCommandResponse& output) -> bool {
-            return output.result().success();
-        }
-    };
-
-    process_manager::infrastructre::commands::CoreCommandCommunicationCommand sender{ config };
-    auto result = sender.sendRequest(request);
-    if (!result.has_value()) {
-        return false;
-    }
-
-    return result->result().success();
-
-    ::core_communication::CoreCommandRequest,
-        ::core_communication::CoreCommandResponse,
-        ::core_communication::CoreCommandCommunicationService
-
-    */
-
-    ::core_communication::CoreCommandRequest request{};
-    ::core_communication::CoreCommandResponse response{};
-    // @Todo change to Input process config and make a singleton
-    auto channel = grpc::CreateChannel(environment::defs::Backend_Url.data(), grpc::InsecureChannelCredentials());
-    std::unique_ptr<::core_communication::CoreCommandCommunicationService::Stub> stub = ::core_communication::CoreCommandCommunicationService::NewStub(channel);
-    grpc::ClientContext context;
-    grpc::Status status = stub->Handle(&context, request, &response);
-    if (!status.ok()) {
-        return false;
-    }
-
-    return true;
-}
-
 int main(int argc, char** argv) {
     try{ 
         // @Todo make a factory class
@@ -157,7 +112,10 @@ int main(int argc, char** argv) {
             logger
         };
 
-        process_manager::api::controllers::ChildPingController pingController{ childProcessHolderService, logger };
+        process_manager::api::controllers::ChildPingController pingController{ 
+            childProcessHolderService, 
+            logger 
+        };
 
         auto coreQueryCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreQueryCommunicationController(logger);
         auto coreCommandCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreCommandCommunicationController(logger);

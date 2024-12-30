@@ -1,26 +1,30 @@
 #pragma once
 
+#include <map>
 #include <vector>
 #include <exception>
-#include <map>
-#include <process_manager/src/domain/models/ProcessInstance.h>
+
+#include <process_manager/src/application/services/IChildProcessHolderService.h>
 
 namespace process_manager::infrastructure::services {
 
-class ChildProcessHolderService {
+class ChildProcessHolderService : public process_manager::application::services::IChildProcessHolderService {
 public:
-    ChildProcessHolderService() : m_childProcesses{} {}
+    ChildProcessHolderService() : 
+        process_manager::application::services::IChildProcessHolderService{},
+        m_childProcesses{} {}
 
-    void addChildProcess(const process_manager::domain::models::ProcessInstance& process) {
-        if (m_childProcesses.find(process.internalId) != m_childProcesses.end()) {
+    void add(const process_manager::domain::models::ProcessInstance& item) override {
+        // @Todo Mutex
+        if (m_childProcesses.find(item.internalId) != m_childProcesses.end()) {
             throw std::runtime_error("Process with this internalId already exists");
         }
 
-        m_childProcesses[process.internalId] = process;
+        m_childProcesses[item.internalId] = item;
     }
-
-    [[nodiscard]] std::vector<process_manager::domain::models::ProcessInstance> getChildProcesses() const {
-        // @Todo Mutex
+    
+    [[nodiscard]] std::vector<process_manager::domain::models::ProcessInstance> getAll() const override {
+        // @Todo Mutex, Change to ranges
         std::vector<process_manager::domain::models::ProcessInstance> result{};
         for (const auto& process : m_childProcesses) {
             result.push_back(process.second);
@@ -29,24 +33,28 @@ public:
         return result;
     }
 
-    [[nodiscard]] std::optional<process_manager::domain::models::ProcessInstance> getChildProcessByInternalId(const std::string& internalId) const {
-        if (m_childProcesses.find(internalId) == m_childProcesses.end()) {
+    void update(const process_manager::domain::models::ProcessInstance& item) override {
+        // @Todo Mutex
+        m_childProcesses[item.internalId] = item;
+    }
+
+    void clear() override {
+        // @Todo Mutex
+        m_childProcesses.clear();
+    }
+    
+    [[nodiscard]] std::optional<process_manager::domain::models::ProcessInstance> getById(const std::string& id) const override {
+        // @Todo Mutex
+        if (m_childProcesses.find(id) == m_childProcesses.end()) {
             return std::nullopt;
         }
 
-        return m_childProcesses.at(internalId);
+        return m_childProcesses.at(id);
     }
 
-    void removeChildProcessByInternalId(const std::string& internalId) {
-        m_childProcesses.erase(internalId);
-    }
-
-    void updateChildProcess(const process_manager::domain::models::ProcessInstance& process) {
-        m_childProcesses[process.internalId] = process;
-    }
-
-    void clearChildProcesses() {
-        m_childProcesses.clear();
+    void removeById(const std::string& id) override {
+        // @Todo Mutex
+        m_childProcesses.erase(id);
     }
 
 private:

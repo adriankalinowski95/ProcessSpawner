@@ -17,7 +17,7 @@
 
 #include <process_manager/src/domain/models/ProcessInstance.h>
 #include <process_manager/src/infrastructure/tools/ProcessSpawner.h>
-#include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
+#include <process_manager/src/application/services/IChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 
@@ -30,7 +30,7 @@ class ProcessManagerController : public Communication::SpawnProcessService::Serv
 public:
    ProcessManagerController(
         std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> processSpawner,
-        std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> processHolderService,
+        std::shared_ptr<process_manager::application::services::IChildProcessHolderService> processHolderService,
         std::shared_ptr<process_manager::application::services::IProcessTerminator> processTerminator,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
@@ -49,13 +49,13 @@ public:
             return failedSpawnResponse("Failed to spawn process!", response);
         }
 
-        m_processHolderService->addChildProcess(*childProcessInstance);
+        m_processHolderService->add(*childProcessInstance);
 
         return successSpawnResponse(*childProcessInstance, response);
     }
 
     virtual ::grpc::Status FinishProcess(::grpc::ServerContext* context, const Communication::FinishRequest* request, Communication::FinishResponse* response) override {
-        const auto internalProcess = m_processHolderService->getChildProcessByInternalId(request->internal_id());
+        const auto internalProcess = m_processHolderService->getById(request->internal_id());
         if (!internalProcess) {
             return failedFinishingResponse("Failed to find process with internal id: " + request->internal_id(), response);
         }
@@ -67,7 +67,7 @@ public:
             return failedFinishingResponse("Failed to terminate process with internal id: " + request->internal_id(), response);
         }
 
-        m_processHolderService->removeChildProcessByInternalId(request->internal_id());
+        m_processHolderService->removeById(request->internal_id());
 
         response->set_success(true);
         response->set_message("OK");
@@ -77,7 +77,7 @@ public:
     
 private:
     std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> m_processSpawner;
-    std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> m_processHolderService;
+    std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_processHolderService;
     std::shared_ptr<process_manager::application::services::IProcessTerminator> m_processTerminator;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 

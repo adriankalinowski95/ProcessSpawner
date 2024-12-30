@@ -13,14 +13,14 @@
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/infrastructure/commands/GenericRequestSenderCommand.h>
 
-#include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
+#include <process_manager/src/application/services/IChildProcessHolderService.h>
 
 namespace process_manager::api::controllers {
 
 class ProcessQueryController : public Communication::ProcessQueryService::Service {
 public:
    ProcessQueryController(
-        std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> childProcessHolderService,
+        std::shared_ptr<process_manager::application::services::IChildProcessHolderService> childProcessHolderService,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_childProcessHolderService{ childProcessHolderService },
             m_logger{ logger }
@@ -35,7 +35,7 @@ public:
     }
 
 private:
-    std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> m_childProcessHolderService;
+    std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_childProcessHolderService;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 
     grpc::Status handleQueryByType(::Communication::ProcessQueryType queryType, ::Communication::QueryResponse* response) {
@@ -60,7 +60,7 @@ private:
     }
 
     grpc::Status handleQueryAll(::Communication::QueryResponse* response) {
-        auto processes = m_childProcessHolderService->getChildProcesses();
+        auto processes = m_childProcessHolderService->getAll();
         for (const auto& process : processes) {
             auto processProto = response->add_processes();
             processProto->set_internal_id(process.internalId);

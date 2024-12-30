@@ -11,16 +11,16 @@
 #include <environments/environments.h>
 
 #include <shared/src/application/services/ILogger.h>
-#include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
-#include <process_manager/src/infrastructure/services/ChildProcessSpawnerService.h>
+#include <process_manager/src/application/services/IChildProcessHolderService.h>
+#include <process_manager/src/application/services/IChildProcessSpawnerService.h>
 
 namespace process_manager::infrastructre::commands {
 
 class ProcessManagerInputRequestCommand {
 public:
     ProcessManagerInputRequestCommand(
-        std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> processHolderService,
-        std::shared_ptr<process_manager::infrastructure::services::ChildProcessSpawnerService> processSpawner,
+        std::shared_ptr<process_manager::application::services::IChildProcessHolderService> processHolderService,
+        std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> processSpawner,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processHolderService{ processHolderService },
             m_processSpawner{ processSpawner },
@@ -54,15 +54,15 @@ public:
                 continue;
             }
 
-            m_processHolderService->addChildProcess(*childProcessInstance);
+            m_processHolderService->add(*childProcessInstance);
         }
 
         return response.success();
     }
 
 private:
-    std::shared_ptr<process_manager::infrastructure::services::ChildProcessHolderService> m_processHolderService;
-    std::shared_ptr<process_manager::infrastructure::services::ChildProcessSpawnerService> m_processSpawner;
+    std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_processHolderService;
+    std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> m_processSpawner;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 };
 
