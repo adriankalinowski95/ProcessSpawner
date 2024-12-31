@@ -81,9 +81,7 @@ private:
                 return false;
             }
 
-            auto res = result->result().success();
-
-            load(m_logger);
+            return result->result().success();
         };
     }
 };

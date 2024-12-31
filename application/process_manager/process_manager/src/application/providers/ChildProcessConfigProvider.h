@@ -6,7 +6,7 @@
 #include <shared/src/application/utils/ModelsJsonConverter.h>
 #include <shared/src/application/utils/RandomNumberGenerator.h>
 
-namespace process_manager::application::utils {
+namespace process_manager::application::providers {
 
 class ChildProcessConfigProvider {
 public:

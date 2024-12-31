@@ -19,10 +19,12 @@ class PingManagerSchedulerService {
     static constexpr std::uint32_t Request_Retires = 5;
     static constexpr std::uint32_t Delay_Between_Retries = 1000; // ms
     static constexpr std::uint32_t Delay_Between_Sheduling = 60 * 1000; // 1 min
+    static constexpr std::uint32_t Failures_To_Exit = 5;
 public:
     PingManagerSchedulerService(std::shared_ptr<shared::application::services::ILogger> logger) :
         m_logger{ logger },
-        m_scheduler{ GetSchedulerConfig() } {}
+        m_scheduler{ GetSchedulerConfig() },
+        m_failruesInRow{} {}
 
     void start() {
         m_scheduler.start();
@@ -36,6 +38,7 @@ public:
 private:
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     SchedulerServiceT m_scheduler;
+    std::uint32_t m_failruesInRow;
 
     SchedulerServiceT::Config GetSchedulerConfig() {
         return SchedulerServiceT::Config {
@@ -69,6 +72,15 @@ private:
             auto result = sender.ping(pingMessage);
             if (!result) {
                 m_logger->logError("Failed to send ping message");
+                m_failruesInRow++;
+            } else {
+                m_failruesInRow = 0;
+            }
+
+            if (m_failruesInRow >= Failures_To_Exit) {
+                m_logger->logError("Too many failures in a row. Exiting...");
+                
+                std::exit(EXIT_FAILURE);
             }
 
             return result;

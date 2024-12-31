@@ -5,6 +5,7 @@
 #include <grpcpp/server_builder.h>
 
 #include <process_manager/environments/environments.h>
+#include <shared/src/infrastructure/services/DefaultLogger.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
 
 #include <process_manager/src/infrastructure/tools/UnixProcessSpawner.h>
@@ -21,7 +22,6 @@
 #include <process_manager/src/api/controllers/GenericControllersFactory.h>
 
 #include <shared/src/domain/protos/communication.pb.h>
-#include <shared/src/infrastructure/services/DefaultLogger.h>
 #include <shared/src/infrastructure/services/AsyncServerService.h>
 #include <shared/src/infrastructure/services/EndpointService.h>
 #include <shared/src/infrastructure/providers/UnixProcessInfoProvider.h>
@@ -46,7 +46,8 @@ int main(int argc, char** argv) {
 
         // kill all child processes
         processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("child_process"));
-
+        
+        // @Todo move this to other class
         // kill all process manager processes
         auto processManagerProcesses = processEnumerator->enumerateWhereNameEquals("process_manager");
         if (processManagerProcesses.size() > 1) {
@@ -60,7 +61,7 @@ int main(int argc, char** argv) {
             processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("process_manager"));
         }
 
-        auto childProcessConfigProvider = std::make_shared<process_manager::application::utils::ChildProcessConfigProvider>(
+        auto childProcessConfigProvider = std::make_shared<process_manager::application::providers::ChildProcessConfigProvider>(
             environment::child_process::Address.data(), 
             environment::child_process::Port,
             environment::parent_process::Address.data(), 
@@ -98,8 +99,10 @@ int main(int argc, char** argv) {
             throw std::runtime_error("Can't load input processes");
         }
 
+        auto globalConfig = process_manager::application::services::ApplicationSingleton::GetInstance().GetGlobalConfigProvider();
+
         grpc::ServerBuilder builder;
-        builder.AddListeningPort(environment::defs::Server_Url.data(), grpc::InsecureServerCredentials());
+        builder.AddListeningPort(globalConfig->GetProcessManagerConfig().endpoint.GetAddress(), grpc::InsecureServerCredentials());
 
         // <START> gRPC endpoints 
         process_manager::api::controllers::ProcessManagerController managerController{

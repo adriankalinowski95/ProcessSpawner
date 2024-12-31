@@ -21,7 +21,7 @@ class ChildProcessSpawnerService : public process_manager::application::services
 public:
     ChildProcessSpawnerService(
         std::shared_ptr<process_manager::application::tools::IProcessSpawner> processSpawner,
-        std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> childProcessConfigProvider,
+        std::shared_ptr<process_manager::application::providers::ChildProcessConfigProvider> childProcessConfigProvider,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
             m_configProvider{ childProcessConfigProvider},
@@ -67,7 +67,7 @@ public:
 
 private:
     std::shared_ptr<process_manager::application::tools::IProcessSpawner> m_processSpawner;
-    std::shared_ptr<process_manager::application::utils::ChildProcessConfigProvider> m_configProvider;
+    std::shared_ptr<process_manager::application::providers::ChildProcessConfigProvider> m_configProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     
     process_manager::domain::models::ProcessInstance getProcessInstance(

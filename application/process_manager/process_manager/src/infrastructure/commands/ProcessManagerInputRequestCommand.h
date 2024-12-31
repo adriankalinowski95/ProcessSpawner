@@ -9,6 +9,7 @@
 #include <shared/src/domain/protos/communication.grpc.pb.h>
 
 #include <environments/environments.h>
+#include <process_manager/src/infrastructure/services/ApplicationSingleton.h>
 
 #include <shared/src/application/services/ILogger.h>
 #include <process_manager/src/application/services/IChildProcessHolderService.h>
@@ -37,8 +38,9 @@ public:
 
         request.set_managername(processManagerName);
 
+        auto globalConfig = process_manager::application::services::ApplicationSingleton::GetInstance().GetGlobalConfigProvider();
         // @Todo change to Input process config and make a singleton
-        auto channel = grpc::CreateChannel(environment::defs::Backend_Url.data(), grpc::InsecureChannelCredentials());
+        auto channel = grpc::CreateChannel(globalConfig->GetCoreServerConfig().endpoint.GetAddress(), grpc::InsecureChannelCredentials());
         std::unique_ptr<Communication::ProcessManagerInputService::Stub> stub = Communication::ProcessManagerInputService::NewStub(channel);
         grpc::ClientContext context;
         grpc::Status status = stub->GetInput(&context, request, &response);
