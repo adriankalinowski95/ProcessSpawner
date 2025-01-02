@@ -34,7 +34,7 @@ public:
     virtual ::grpc::Status QueryProcesses(::grpc::ServerContext* context, const ::Communication::QueryRequest* request, ::Communication::QueryResponse* response) override {
         try {
             return parse(request, response);
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             return failed(e.what(), response);
         }
     }

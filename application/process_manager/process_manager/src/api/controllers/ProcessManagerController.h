@@ -41,7 +41,7 @@ public:
     virtual ::grpc::Status SpawnProcess(::grpc::ServerContext* context, const Communication::SpawnRequest* request, Communication::SpawnResponse* response) override {
         try {
             return parseSpawnProcess(request, response);
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             return failed(e.what(), response);
         }
     }
@@ -49,7 +49,7 @@ public:
     virtual ::grpc::Status FinishProcess(::grpc::ServerContext* context, const Communication::FinishRequest* request, Communication::FinishResponse* response) override {
         try {
             return parseFinishProcess(request, response);
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             return failed(e.what(), response);
         }
     }

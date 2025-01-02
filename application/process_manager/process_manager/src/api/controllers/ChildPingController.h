@@ -30,7 +30,7 @@ public:
     virtual ::grpc::Status Ping(::grpc::ServerContext* context, const ::child_process_communication::ChildPingRequest* request, ::child_process_communication::ChildPingResponse* response) override {
         try {
             return parse(request, response);
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             return failed(e.what(), response);
         }
     }

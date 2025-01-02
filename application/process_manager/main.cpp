@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
         process_manager::infrastructre::commands::ProcessManagerInputRequestCommand processManagerInputRequestCommand{ 
             application.GetChildProcessHolderService(), 
             application.GetChildProcessSpawnerService(),
+            application.GetGlobalConfigProvider(),
             application.GetLogger(), 
         };
         if (!processManagerInputRequestCommand.loadInputProcesses(application.GetGlobalConfigProvider()->GetProcessManagerConfig().coreSideName)) {

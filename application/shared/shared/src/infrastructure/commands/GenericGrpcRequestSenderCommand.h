@@ -6,8 +6,10 @@
 #include <string>
 #include <functional>
 #include <optional>
+
 #include <grpc/grpc.h>
 #include <grpcpp/create_channel.h>
+#include <grpcpp/client_context.h>
 
 namespace shared::infrastructure::commands {
 
