@@ -2,18 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 
 set(TARGET_NAME "shared")
 
-# if(NOT EXISTS "${CMAKE_BINARY_DIR}/shared/cmakedeps_macros.cmake")
-#     message(STATUS "Uruchamianie Conan" ${CMAKE_BINARY_DIR} "   " ${CMAKE_CURRENT_SOURCE_DIR})
-#     execute_process(COMMAND conan install ${CMAKE_CURRENT_SOURCE_DIR} --build missing -of=${CMAKE_BINARY_DIR}/shared
-#                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/shared
-#                     RESULT_VARIABLE result)
-#     if(result)
-#         message(FATAL_ERROR "Błąd podczas uruchamiania Conan. Kod błędu: ${result}")
-#     endif()
-# endif()
-
-# include(FindProtobuf)
-
 set(absl_DIR ${PROTOBUF}/lib/cmake/absl)
 set(utf8_range_DIR ${PROTOBUF}/lib/cmake/utf8_range)
 
@@ -82,9 +70,7 @@ target_link_libraries(${TARGET_NAME}
         nlohmann_json::nlohmann_json
 )
 
-# Funkcja do wypisywania plików
 function(print_included_files target)
-    # Pobranie katalogów include
     get_target_property(include_dirs ${target} INTERFACE_INCLUDE_DIRECTORIES)
     if(NOT include_dirs)
         message(WARNING "No include directories found for target ${target}")
@@ -93,7 +79,6 @@ function(print_included_files target)
 
     message("Include directories for target ${target}: ${include_dirs}")
 
-    # Iteracja po katalogach i wypisanie plików
     foreach(dir ${include_dirs})
         if(EXISTS ${dir})
             message("Checking directory: ${dir}")
@@ -107,9 +92,8 @@ function(print_included_files target)
     endforeach()
 endfunction()
 
-# Wywołanie funkcji dla danego targetu
-# print_included_files(${TARGET_NAME})
 
+# print_included_files(${TARGET_NAME})
 
 protobuf_generate(
     TARGET ${TARGET_NAME} 

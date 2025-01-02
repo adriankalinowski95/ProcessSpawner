@@ -22,6 +22,7 @@ public:
         std::uint32_t retries = 3;
         std::uint32_t delayBetweenRetries = 1000;
         std::function<bool(Response)> validationFunction = nullptr;
+        std::uint32_t requestTimeout = 5000;
     };
 
     GenericGrpcRequestSenderCommand(const Config& config, std::function<grpc::Status(typename Service::Stub*, grpc::ClientContext*, Request*, Response*)> method) : 
@@ -60,8 +61,11 @@ private:
                 auto channel = grpc::CreateChannel((m_config.address + ":" + std::to_string(m_config.port)).data(), grpc::InsecureChannelCredentials());
                 std::unique_ptr<typename Service::Stub> stub = Service::NewStub(channel);
                 grpc::ClientContext context{};
+
+                auto deadline = std::chrono::system_clock::now() + std::chrono::milliseconds(m_config.requestTimeout);
+                context.set_deadline(deadline);
+
                 Response response{};
-                
                 auto status = m_method(stub.get(), &context, &request, &response);
                 if (!status.ok()) {
                     return std::nullopt;
