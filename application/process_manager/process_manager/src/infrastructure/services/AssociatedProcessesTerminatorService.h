@@ -22,7 +22,12 @@ public:
         std::shared_ptr<process_manager::application::tools::IProcessTerminator> processTerminator,
         std::shared_ptr<shared::application::providers::ICurrentProcessInfoProvider> currentProcessInfoProvider,
         std::shared_ptr<process_manager::application::providers::GlobalConfigProvider> globalConfig,
-        std::shared_ptr<shared::application::services::ILogger> logger) 
+        std::shared_ptr<shared::application::services::ILogger> logger) :
+            m_processEnumerator{ processEnumerator },
+            m_processTerminator{ processTerminator },
+            m_currentProcessInfoProvider{ currentProcessInfoProvider },
+            m_globalConfig{ globalConfig },
+            m_logger{ logger }
     {
         if (!processEnumerator || !processTerminator  || !currentProcessInfoProvider || !globalConfig ||!logger) {
             throw std::runtime_error("Process enumerator or process terminator or currentProcessInfoProvider or globalConfig or logger is not initialized!");

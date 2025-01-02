@@ -8,6 +8,8 @@
 #include <deque>
 #include <thread>
 
+// UNUSED!
+
 namespace shared::infrastructure::utils {
 
 using boost::asio::ip::tcp;

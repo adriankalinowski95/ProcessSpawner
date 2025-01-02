@@ -6,6 +6,8 @@
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/application/services/IEndpointService.h>
 
+// UNUSED!
+
 namespace shared::application::services {
 
 namespace beast = boost::beast;         

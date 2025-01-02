@@ -6,6 +6,8 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
+// UNUSED!
+
 namespace http = boost::beast::http;
 
 class BaseController;

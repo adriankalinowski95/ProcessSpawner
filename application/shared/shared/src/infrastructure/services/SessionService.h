@@ -4,6 +4,8 @@
 #include <ranges>
 #include <boost/asio.hpp>
 
+// UNUSED!
+
 namespace shared::infrastructure::services {
 
 using boost::asio::ip::tcp;

@@ -1,144 +1,38 @@
+#include <future>
+#include <chrono>
 #include <iostream>
 #include <exception>
-#include <algorithm>
-#include <grpc/grpc.h> 
-#include <grpcpp/server_builder.h>
 
-#include <process_manager/environments/environments.h>
-#include <shared/src/infrastructure/services/DefaultLogger.h>
-#include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
-
-#include <process_manager/src/infrastructure/tools/UnixProcessSpawner.h>
-#include <process_manager/src/infrastructure/tools/UnixProcessEnumerator.h>
-#include <process_manager/src/infrastructure/tools/UnixProcessTerminator.h>
-
-#include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
-#include <process_manager/src/infrastructure/services/ChildProcessSpawnerService.h>
+#include <process_manager/src/infrastructure/services/ApplicationSingleton.h>
 #include <process_manager/src/infrastructure/commands/ProcessManagerInputRequestCommand.h>
+#include <process_manager/src/api/server/ProcessManagerServer.h>
 
-#include <process_manager/src/api/controllers/ProcessQueryController.h>
-#include <process_manager/src/api/controllers/ChildPingController.h>
-#include <process_manager/src/api/controllers/ProcessManagerController.h>
-#include <process_manager/src/api/controllers/GenericControllersFactory.h>
-
-#include <shared/src/domain/protos/communication.pb.h>
-#include <shared/src/infrastructure/services/AsyncServerService.h>
-#include <shared/src/infrastructure/services/EndpointService.h>
-#include <shared/src/infrastructure/providers/UnixProcessInfoProvider.h>
+static constexpr std::uint32_t Max_Wait_For_Server_Start = 5;
 
 int main(int argc, char** argv) {
-    try{ 
-        // @Todo make a factory class
-        auto logger = std::make_shared<shared::infrastructure::services::DefaultLogger>();
-        if (!logger) {
-            throw std::runtime_error("Can't create logger or process manager");
+    try{
+        // Shutdown old processes 
+        auto application = process_manager::application::services::ApplicationSingleton::GetInstance();
+        application.GetAssociatedProcessesTerminatorService()->terminate();
+
+        // Start server thread
+        process_manager::api::server::ProcessManagerServer server{};
+        server.run();
+
+        const auto isServerStatusReady = server.getServerStaredStatus().wait_for(std::chrono::seconds(Max_Wait_For_Server_Start)) == std::future_status::ready;
+        if (!isServerStatusReady) {
+            throw std::runtime_error("Server didn't start in time!");
         }
 
-        auto processEnumerator = std::make_shared<process_manager::infrastructure::tools::UnixProcessEnumerator>(logger);
-        if (!processEnumerator) {
-            throw std::runtime_error("Can't create process enumerator");
-        }
-
-        auto processTerminator = std::make_shared<process_manager::infrastructure::tools::UnixProcessTerminator>(logger);
-        if (!processTerminator) {
-            throw std::runtime_error("Can't create process terminator");
-        }
-
-        // kill all child processes
-        processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("child_process"));
-        
-        // @Todo move this to other class
-        // kill all process manager processes
-        auto processManagerProcesses = processEnumerator->enumerateWhereNameEquals("process_manager");
-        if (processManagerProcesses.size() > 1) {
-            const auto currentPid = shared::infrastructure::providers::UnixProcessInfoProvider{}.getPid();
-            const auto end = std::remove_if(processManagerProcesses.begin(), processManagerProcesses.end(), [currentPid](process_manager::domain::models::ProcessInfo& processInfo) {
-                return processInfo.pid == currentPid;
-            });
-
-            processManagerProcesses.erase(end, processManagerProcesses.end());
-
-            processTerminator->terminateAll(processEnumerator->enumerateWhereNameEquals("process_manager"));
-        }
-
-        auto childProcessConfigProvider = std::make_shared<process_manager::application::providers::ChildProcessConfigProvider>(
-            environment::child_process::Address.data(), 
-            environment::child_process::Port,
-            environment::parent_process::Address.data(), 
-            environment::parent_process::Port
-        );
-        if (!childProcessConfigProvider) {
-            throw std::runtime_error("Can't create child process config provider");
-        }
-
-        auto processSpawner = std::make_shared<process_manager::infrastructure::tools::UnixProcessSpawner>(logger);
-        if (!processSpawner) {
-            throw std::runtime_error("Can't create process spawner");
-        }
-
-        auto childProcessHolderService = std::make_shared<process_manager::infrastructure::services::ChildProcessHolderService>();
-        if (!childProcessHolderService) {
-            throw std::runtime_error("Can't create child process holder service");
-        }
-
-        auto childProcessSpawnerService = std::make_shared<process_manager::infrastructure::services::ChildProcessSpawnerService>(
-            processSpawner,
-            childProcessConfigProvider,
-            logger
-        );
-        if (!childProcessSpawnerService) {
-            throw std::runtime_error("Can't create child process spawner service");
-        }
-
+        // Load input processes
         process_manager::infrastructre::commands::ProcessManagerInputRequestCommand processManagerInputRequestCommand{ 
-            childProcessHolderService, 
-            childProcessSpawnerService,
-            logger 
+            application.GetChildProcessHolderService(), 
+            application.GetChildProcessSpawnerService(),
+            application.GetLogger(), 
         };
-        if (!processManagerInputRequestCommand.loadInputProcesses(environment::parent_process::Core_Side_Process_Manager_Name.data())) {
+        if (!processManagerInputRequestCommand.loadInputProcesses(application.GetGlobalConfigProvider()->GetProcessManagerConfig().coreSideName)) {
             throw std::runtime_error("Can't load input processes");
         }
-
-        auto globalConfig = process_manager::application::services::ApplicationSingleton::GetInstance().GetGlobalConfigProvider();
-
-        grpc::ServerBuilder builder;
-        builder.AddListeningPort(globalConfig->GetProcessManagerConfig().endpoint.GetAddress(), grpc::InsecureServerCredentials());
-
-        // <START> gRPC endpoints 
-        process_manager::api::controllers::ProcessManagerController managerController{
-            childProcessSpawnerService,
-            childProcessHolderService,
-            processTerminator,
-            logger 
-        };
-
-        process_manager::api::controllers::ProcessQueryController queryController{
-            childProcessHolderService,
-            logger
-        };
-
-        process_manager::api::controllers::ChildPingController pingController{ 
-            childProcessHolderService, 
-            logger 
-        };
-
-        auto coreQueryCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreQueryCommunicationController(logger);
-        auto coreCommandCommunicationController = process_manager::api::controllers::GenericControllersFactory::createCoreCommandCommunicationController(logger);
-
-        builder.RegisterService(&managerController);
-        builder.RegisterService(&queryController);
-        builder.RegisterService(&pingController);
-        builder.RegisterService(coreQueryCommunicationController.get());
-        builder.RegisterService(coreCommandCommunicationController.get());
-        // <END> gRPC endpoints
-
-        std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-        if (!server) {
-            throw std::runtime_error("Can't create gRPC server");
-        }
-
-        logger->log("Server started!");
-	    server->Wait();
     } catch (std::exception& e) {
         std::cout << "Exception: " << e.what() << std::endl;
     }

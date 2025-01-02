@@ -11,6 +11,8 @@
 #include <shared/src/application/services/IEndpointService.h>
 #include <shared/src/application/services/ILogger.h>
 
+// UNUSED!
+
 namespace shared::infrastructure::services {
 
 class AsyncServerService {

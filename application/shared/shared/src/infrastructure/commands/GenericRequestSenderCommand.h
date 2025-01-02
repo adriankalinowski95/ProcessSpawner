@@ -8,6 +8,8 @@
 #include <shared/src/infrastructure/commands/RequestSenderCommand.h>
 #include <shared/src/application/utils/ModelsJsonConverter.h>
 
+// UNUSED!
+
 namespace shared::infrastructure::commands {
 
 template <typename Input, typename Output>
@@ -24,7 +26,7 @@ public:
 
     GenericRequestSenderCommand(const Config& config) : m_config{ config } {}
 
-    // @Todo traist to check that input/output have defined a json converter.
+    // @Todo make a requires to check that input/output have defined a json converter.
     std::optional<Output> sendRequest(Input inputObj) {
         const auto requestFunction = getRequestFunction();
         for (auto i = 0; i < m_config.retries; i++) {

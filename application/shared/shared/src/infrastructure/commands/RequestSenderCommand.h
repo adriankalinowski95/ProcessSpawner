@@ -14,6 +14,7 @@ namespace http = beast::http;
 namespace net = boost::asio;
 using tcp = net::ip::tcp;
 
+// UNUSED!
 // @Todo could be changed to builder pattern
 class RequestSenderCommand {
 public:

@@ -5,6 +5,8 @@
 #include <exception>
 #include <boost/asio.hpp>
 
+// UNUSED!
+
 namespace shared::infrastructure::providers {
 
 using namespace boost::asio;

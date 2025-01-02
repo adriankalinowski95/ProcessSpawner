@@ -26,7 +26,6 @@ public:
         m_config{ config }, 
         m_method{ method }  {}
 
-    // @Todo traist to check that input/output have defined a json converter.
     std::optional<Response> sendRequest(Request request) {
         const auto requestFunction = getRequestFunction();
         for (auto i = 0; i < m_config.retries; i++) {

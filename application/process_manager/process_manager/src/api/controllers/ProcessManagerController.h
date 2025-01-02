@@ -33,8 +33,8 @@ public:
             m_processHolderService{ processHolderService },
             m_processTerminator{ processTerminator }
     {
-        if (!m_processSpawner || !m_processHolderService) {
-            throw std::runtime_error("Logger or process spawner or child process holder service is not initialized!");
+        if (!m_processSpawner || !m_processHolderService || !m_processTerminator) {
+            throw std::runtime_error("Process spawner or process holder service or process terminator is not initialized!");
         }
     }
 

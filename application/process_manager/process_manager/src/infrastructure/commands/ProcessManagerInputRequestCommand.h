@@ -22,13 +22,15 @@ public:
     ProcessManagerInputRequestCommand(
         std::shared_ptr<process_manager::application::services::IChildProcessHolderService> processHolderService,
         std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> processSpawner,
+        std::shared_ptr<process_manager::application::providers::GlobalConfigProvider> globalConfigProvider,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processHolderService{ processHolderService },
             m_processSpawner{ processSpawner },
+            m_globalConfigProvider{ globalConfigProvider },
             m_logger{ logger } 
     {
-        if (!m_logger || !m_processHolderService || !m_processSpawner) {
-            throw std::runtime_error("Logger or process holder or process spawner is not initialized!");
+        if (!m_logger || !m_processHolderService || !m_globalConfigProvider || !m_processSpawner) {
+            throw std::runtime_error("Logger or processHolderService or globalConfigProvider or processSpawner is not initialized!");
         }
     }
 
@@ -38,9 +40,7 @@ public:
 
         request.set_managername(processManagerName);
 
-        auto globalConfig = process_manager::application::services::ApplicationSingleton::GetInstance().GetGlobalConfigProvider();
-        // @Todo change to Input process config and make a singleton
-        auto channel = grpc::CreateChannel(globalConfig->GetCoreServerConfig().endpoint.GetAddress(), grpc::InsecureChannelCredentials());
+        auto channel = grpc::CreateChannel(m_globalConfigProvider->GetCoreServerConfig().endpoint.GetAddress(), grpc::InsecureChannelCredentials());
         std::unique_ptr<Communication::ProcessManagerInputService::Stub> stub = Communication::ProcessManagerInputService::NewStub(channel);
         grpc::ClientContext context;
         grpc::Status status = stub->GetInput(&context, request, &response);
@@ -65,6 +65,7 @@ public:
 private:
     std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_processHolderService;
     std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> m_processSpawner;
+    std::shared_ptr<process_manager::application::providers::GlobalConfigProvider> m_globalConfigProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 };
 
