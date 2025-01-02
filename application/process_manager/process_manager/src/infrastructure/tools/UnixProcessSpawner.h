@@ -11,7 +11,12 @@ class UnixProcessSpawner : public process_manager::application::tools::IProcessS
 public:
     UnixProcessSpawner(std::shared_ptr<shared::application::services::ILogger> logger) :
         process_manager::application::tools::IProcessSpawner{},
-        m_logger{ logger } {}
+        m_logger{ logger } 
+    {
+        if (!m_logger) {
+            throw std::runtime_error("Logger is not initialized!");
+        }
+    }
 
     [[nodiscard]] std::optional<std::uint32_t> startProcess(const std::string& program, const std::vector<std::string>& args) override {
         std::vector<char*> cargs{};

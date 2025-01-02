@@ -16,7 +16,9 @@ namespace process_manager::infrastructure::tools {
     
 class UnixProcessTerminator : public process_manager::application::tools::IProcessTerminator {
 public:
-    UnixProcessTerminator(std::shared_ptr<shared::application::services::ILogger> logger) : m_logger{ logger } {
+    UnixProcessTerminator(std::shared_ptr<shared::application::services::ILogger> logger) : 
+        m_logger{ logger } 
+    {
         if (!m_logger) {
             throw std::runtime_error("Logger is not initialized!");
         }

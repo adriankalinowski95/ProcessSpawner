@@ -3,18 +3,12 @@
 #include <optional>
 #include <shared/src/domain/models/ProcessConfig.h>
 
-namespace child_process::application::services {
+namespace child_process::application::providers {
 
-class GlobalConfig {
+class GlobalConfigProvider {
 public:
-    GlobalConfig() : 
+    GlobalConfigProvider() : 
         m_processConfig{ std::nullopt } {}
-    
-    [[nodiscard]] static GlobalConfig& getInstance() {
-        static GlobalConfig instance{};
-
-        return instance;
-    }
 
     [[nodiscard]] std::optional<shared::domain::models::ProcessConfig> getProcessConfig() const {
         return m_processConfig;

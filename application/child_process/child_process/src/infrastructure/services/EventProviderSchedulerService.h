@@ -1,43 +1,68 @@
 #pragma once
 
+#include <mutex>
 #include <memory>
+#include <exception>
 #include <string_view>
 
-#include <shared/src/domain/models/PingMessage.h>
-#include <shared/src/application/utils/RandomNumberGenerator.h>
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/application/services/BaseSchedulerService.h>
 
+#include <child_process/src/application/services/ISchedulerService.h>
+#include <child_process/src/application/providers/GlobalConfigProvider.h>
 #include <child_process/src/infrastructure/commands/CoreCommandCommunicationCommand.h>
-#include <child_process/src/application/services/GlobalConfig.h>
-
 #include <child_process/src/infrastructure/services/CoreQueryParamsService.h>
 
 namespace child_process::infrastructure::services {
 
-class EventProviderSchedulerService {
+class EventProviderSchedulerService : public child_process::application::services::ISchedulerService {
     using SchedulerServiceT = shared::application::services::BaseSchedulerService;
 
     static constexpr std::uint32_t Request_Retires = 2;
     static constexpr std::uint32_t Delay_Between_Retries = 10000; // ms
     static constexpr std::uint32_t Delay_Between_Sheduling = 10 * 1000; // 1 min
 public:
-    EventProviderSchedulerService(std::shared_ptr<shared::application::services::ILogger> logger) :
-        m_logger{ logger },
-        m_scheduler{ GetSchedulerConfig() } {}
+    EventProviderSchedulerService(
+        std::shared_ptr<child_process::application::providers::GlobalConfigProvider> globalConfigProvider,
+        std::shared_ptr<shared::application::services::ILogger> logger) :
+            m_globalConfigProvider{ globalConfigProvider },
+            m_logger{ logger },
+            m_scheduler{ GetSchedulerConfig() },
+            m_mutex{}
+    {
+        if (!m_globalConfigProvider || !m_logger) {
+            throw std::runtime_error("Global config provider or logger is not initialized!");
+        }
+    }
 
-    void start() {
+    void start() override {
+        std::scoped_lock lock(m_mutex);
+        if (m_scheduler.isRunning()) {
+            throw std::runtime_error("Scheduler is already running!");
+        }
+
         m_scheduler.start();
     }
 
-    void startAndJoin() {
+    void startAndJoin() override {
+        std::scoped_lock lock(m_mutex);
+        if (m_scheduler.isRunning()) {
+            throw std::runtime_error("Scheduler is already running!");
+        }
+
         m_scheduler.start();
         m_scheduler.join();
     }
 
+    [[nodiscard]] bool isRunning() override {
+        return m_scheduler.isRunning();
+    }
+
 private:
+    std::shared_ptr<child_process::application::providers::GlobalConfigProvider> m_globalConfigProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     SchedulerServiceT m_scheduler;
+    std::mutex m_mutex;
 
     SchedulerServiceT::Config GetSchedulerConfig() {
         return SchedulerServiceT::Config {
@@ -46,18 +71,24 @@ private:
         };
     }
 
-    void load(std::shared_ptr<shared::application::services::ILogger> logger) {
-        child_process::infrastructure::services::CoreQueryParamsService coreQueryParamsService{ logger };
+    // @Todo - remove this function
+    // Its only for test!
+    void load() {
+        child_process::infrastructure::services::CoreQueryParamsService coreQueryParamsService{ 
+            m_globalConfigProvider,
+            m_logger
+        };
         const auto result = coreQueryParamsService.loadParam("param1");
     }
 
     std::function<bool()> GetPeriodicFunction() {
         return [this]() -> bool {
-            const auto processConfig = child_process::application::services::GlobalConfig::getInstance().getProcessConfig();
+            const auto processConfig = m_globalConfigProvider->getProcessConfig();
             if (!processConfig) {
                 return false;
             }
 
+            // EXAMPLE
             auto request = ::core_communication::CoreCommandRequest{};
             request.mutable_process()->set_internal_id(processConfig->internalId.data());
             request.set_event_name("temp_name");

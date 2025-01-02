@@ -29,6 +29,12 @@ public:
         m_thread = std::thread(&ProcessManagerServer::threadFun, this);
     }
 
+    void join() {
+        if (m_thread.joinable()) {
+            m_thread.join();
+        }
+    }
+
     std::future<bool>& getServerStaredStatus() {
         return m_future;
     }

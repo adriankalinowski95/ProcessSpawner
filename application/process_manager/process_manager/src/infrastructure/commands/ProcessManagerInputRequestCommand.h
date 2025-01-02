@@ -40,10 +40,12 @@ public:
 
         request.set_managername(processManagerName);
 
+        // @Todo use GenericGrpcRequestSenderCommand
         auto channel = grpc::CreateChannel(m_globalConfigProvider->GetCoreServerConfig().endpoint.GetAddress(), grpc::InsecureChannelCredentials());
         std::unique_ptr<Communication::ProcessManagerInputService::Stub> stub = Communication::ProcessManagerInputService::NewStub(channel);
         grpc::ClientContext context;
         grpc::Status status = stub->GetInput(&context, request, &response);
+
         if (!status.ok()) {
             return false;
         }

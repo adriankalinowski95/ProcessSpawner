@@ -26,11 +26,11 @@ public:
             m_processSpawner{ processSpawner },
             m_configProvider{ childProcessConfigProvider},
             m_logger{ logger } 
-        {
-            if (!m_logger || !m_processSpawner || !m_configProvider) {
-                throw std::runtime_error("Logger or process spawner or config provider is not initialized!");
-            }
+    {
+        if (!m_logger || !m_processSpawner || !m_configProvider) {
+            throw std::runtime_error("Logger or process spawner or config provider is not initialized!");
         }
+    }
 
     virtual ~ChildProcessSpawnerService() = default;
 

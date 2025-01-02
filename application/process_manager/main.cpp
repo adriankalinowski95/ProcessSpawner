@@ -10,12 +10,13 @@
 static constexpr std::uint32_t Max_Wait_For_Server_Start = 5;
 
 int main(int argc, char** argv) {
-    try{
+    auto application = process_manager::application::services::ApplicationSingleton::GetInstance();
+    auto logger = application.GetLogger();
+    try {
         // Shutdown old processes 
-        auto application = process_manager::application::services::ApplicationSingleton::GetInstance();
         application.GetAssociatedProcessesTerminatorService()->terminate();
 
-        // Start server thread
+        // Run server thread
         process_manager::api::server::ProcessManagerServer server{};
         server.run();
 
@@ -34,8 +35,16 @@ int main(int argc, char** argv) {
         if (!processManagerInputRequestCommand.loadInputProcesses(application.GetGlobalConfigProvider()->GetProcessManagerConfig().coreSideName)) {
             throw std::runtime_error("Can't load input processes");
         }
+
+        // <CUSTOM_CODE_START>
+        // <CUSTOM_CODE_END>
+
+        server.join();
     } catch (std::exception& e) {
-        std::cout << "Exception: " << e.what() << std::endl;
+        logger->logError(e.what());
+
+        // Shutdown processes 
+        application.GetAssociatedProcessesTerminatorService()->terminate();
     }
 
     return 0;

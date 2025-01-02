@@ -15,7 +15,6 @@ namespace environment {
     namespace parent_process {
         constexpr std::string_view Address = "192.168.1.190";
         constexpr std::uint32_t Port = 50051;
-        
         // The name of the process after launching the application
         constexpr std::string_view Process_Name = "process_manager";
         // The name for identification on the core side
