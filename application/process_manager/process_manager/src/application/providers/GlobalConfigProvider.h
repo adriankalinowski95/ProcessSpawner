@@ -23,12 +23,14 @@ public:
 
     struct ProcessManagerConfig {
         EndpointConfig endpoint;
-        std::string Name;
+        std::string processName;
+        std::string coreSideName;
     };
 
     struct ChildProcessConfig {
         EndpointConfig endpoint;
-        std::string Process_Application_Path;
+        std::string processName;
+        std::string processApplicationPath;
     };
 
     GlobalConfigProvider() :
@@ -58,7 +60,7 @@ private:
     ProcessManagerConfig m_processManagerConfig;
     ChildProcessConfig m_childProcessConfig;
 
-    static CoreServerConfig GetDefaultCoreServerConfig() {
+    [[nodiscard]] static CoreServerConfig GetDefaultCoreServerConfig() {
         return CoreServerConfig {
             .endpoint = {
                 .ip = environment::core_server::Address.data(),
@@ -67,23 +69,25 @@ private:
         };
     }
 
-    static ProcessManagerConfig GetDefaultProcessManagerConfig() {
+    [[nodiscard]] static ProcessManagerConfig GetDefaultProcessManagerConfig() {
         return ProcessManagerConfig {
             .endpoint = {
                 .ip = environment::parent_process::Address.data(),
                 .port = environment::parent_process::Port
             },
-            .Name = environment::parent_process::Default_Process_Manager_Name.data()
+            .processName = environment::parent_process::Process_Name.data(),
+            .coreSideName = environment::parent_process::Core_Side_Process_Manager_Name.data()
         };
     } 
 
-    static ChildProcessConfig GetDefaultChildProcessConfig() {
+    [[nodiscard]] static ChildProcessConfig GetDefaultChildProcessConfig() {
         return ChildProcessConfig {
             .endpoint = {
                 .ip = environment::child_process::Address.data(),
                 .port = environment::child_process::Port
             },
-            .Process_Application_Path = environment::child_process::Process_Path.data()
+            .processName = environment::child_process::Process_Name.data(),
+            .processApplicationPath = environment::child_process::Process_Path.data()
         };
     }
 };

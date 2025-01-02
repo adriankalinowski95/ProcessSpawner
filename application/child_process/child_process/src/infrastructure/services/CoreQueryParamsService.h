@@ -50,7 +50,7 @@ public:
             return false;
         }
 
-        m_logger->logInfo(std::string("Query param value: ") + result->param_value());
+        // m_logger->logInfo(std::string("Query param value: ") + result->param_value());
 
         return true;
     }

@@ -74,6 +74,7 @@ private:
                 m_logger->logError("Failed to send ping message");
                 m_failruesInRow++;
             } else {
+                m_logger->logInfo(processConfig->internalId + " pinged successfully");
                 m_failruesInRow = 0;
             }
 

@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
             childProcessSpawnerService,
             logger 
         };
-        if (!processManagerInputRequestCommand.loadInputProcesses(environment::parent_process::Default_Process_Manager_Name.data())) {
+        if (!processManagerInputRequestCommand.loadInputProcesses(environment::parent_process::Core_Side_Process_Manager_Name.data())) {
             throw std::runtime_error("Can't load input processes");
         }
 
