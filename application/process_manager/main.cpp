@@ -26,13 +26,8 @@ int main(int argc, char** argv) {
         }
 
         // Load input processes
-        process_manager::infrastructre::commands::ProcessManagerInputRequestCommand processManagerInputRequestCommand{ 
-            application.GetChildProcessHolderService(), 
-            application.GetChildProcessSpawnerService(),
-            application.GetGlobalConfigProvider(),
-            application.GetLogger(), 
-        };
-        if (!processManagerInputRequestCommand.loadInputProcesses(application.GetGlobalConfigProvider()->GetProcessManagerConfig().coreSideName)) {
+        auto processManagerInputRequestCommand = application.GetProcessManagerCommandFactory()->createProcessManagerInputRequestCommand();
+        if (!processManagerInputRequestCommand->loadInputProcesses(application.GetGlobalConfigProvider()->GetProcessManagerConfig().coreSideName)) {
             throw std::runtime_error("Can't load input processes");
         }
 

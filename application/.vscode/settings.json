@@ -139,6 +139,5 @@
     "memory_resource": "cpp"
 },
 "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-"C_Cpp.errorSquiggles": "disabled",
 "Project_Name": "process_manager"
 }

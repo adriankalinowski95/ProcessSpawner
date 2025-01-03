@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <mutex>
 #include <vector>
 #include <exception>
 
@@ -15,7 +16,7 @@ public:
         m_childProcesses{} {}
 
     void add(const process_manager::domain::models::ProcessInstance& item) override {
-        // @Todo Mutex
+        std::scoped_lock lock(m_mutex);
         if (m_childProcesses.find(item.internalId) != m_childProcesses.end()) {
             throw std::runtime_error("Process with this internalId already exists");
         }
@@ -24,7 +25,7 @@ public:
     }
     
     [[nodiscard]] std::vector<process_manager::domain::models::ProcessInstance> getAll() const override {
-        // @Todo Mutex, Change to ranges
+        std::scoped_lock lock(m_mutex);
         std::vector<process_manager::domain::models::ProcessInstance> result{};
         for (const auto& process : m_childProcesses) {
             result.push_back(process.second);
@@ -34,17 +35,17 @@ public:
     }
 
     void update(const process_manager::domain::models::ProcessInstance& item) override {
-        // @Todo Mutex
+        std::scoped_lock lock(m_mutex);
         m_childProcesses[item.internalId] = item;
     }
 
     void clear() override {
-        // @Todo Mutex
+        std::scoped_lock lock(m_mutex);
         m_childProcesses.clear();
     }
     
     [[nodiscard]] std::optional<process_manager::domain::models::ProcessInstance> getById(const std::string& id) const override {
-        // @Todo Mutex
+        std::scoped_lock lock(m_mutex);
         if (m_childProcesses.find(id) == m_childProcesses.end()) {
             return std::nullopt;
         }
@@ -53,12 +54,13 @@ public:
     }
 
     void removeById(const std::string& id) override {
-        // @Todo Mutex
+        std::scoped_lock lock(m_mutex);
         m_childProcesses.erase(id);
     }
 
 private:
     std::map<std::string, process_manager::domain::models::ProcessInstance> m_childProcesses;
+    mutable std::mutex m_mutex;
 };
 
 }

@@ -14,6 +14,7 @@
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
 #include <process_manager/src/infrastructure/services/ChildProcessSpawnerService.h>
 #include <process_manager/src/infrastructure/services/AssociatedProcessesTerminatorService.h>
+#include <process_manager/src/infrastructure/commands/ProcessManagerCommandFactory.h>
 
 namespace process_manager::application::services {
 
@@ -35,10 +36,19 @@ public:
             )
         },
         m_childProcessHolderService{ std::make_shared<process_manager::infrastructure::services::ChildProcessHolderService>() },
+        m_processManagerCommandFactory{
+            std::make_shared<process_manager::infrastructure::commands::ProcessManagerCommandFactory>(
+                m_childProcessHolderService,
+                m_childProcessSpawnerService,
+                m_globalConfigProvider,
+                m_logger
+            )
+        },
         m_childProcessSpawnerService{ 
             std::make_shared<process_manager::infrastructure::services::ChildProcessSpawnerService>(
                 m_processSpawner,
                 m_childProcessConfigProvider,
+                m_processManagerCommandFactory,
                 m_logger
             )
         },
@@ -90,6 +100,10 @@ public:
         return m_childProcessHolderService;
     }
 
+    [[nodiscard]] std::shared_ptr<process_manager::infrastructure::commands::ProcessManagerCommandFactory> GetProcessManagerCommandFactory() const {
+        return m_processManagerCommandFactory;
+    }
+
     [[nodiscard]] std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> GetChildProcessSpawnerService() const {
         return m_childProcessSpawnerService;
     }
@@ -108,6 +122,7 @@ private:
     std::shared_ptr<process_manager::application::providers::ChildProcessConfigProvider> m_childProcessConfigProvider;
     std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_childProcessHolderService;
     std::shared_ptr<process_manager::application::services::IChildProcessSpawnerService> m_childProcessSpawnerService;
+    std::shared_ptr<process_manager::infrastructure::commands::ProcessManagerCommandFactory> m_processManagerCommandFactory;
     std::shared_ptr<process_manager::application::services::IAssociatedProcessesTerminatorService> m_associatedProcessesTerminatorService;
 };
 

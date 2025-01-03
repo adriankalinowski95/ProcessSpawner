@@ -9,11 +9,12 @@
 #include <process_manager/src/domain/models/ProcessInstance.h>
 
 #include <process_manager/src/infrastructure/services/ChildProcessHolderService.h>
-#include <process_manager/src/infrastructure/commands/ChildInitRequestCommand.h>
 
 #include <process_manager/src/application/tools/IProcessSpawner.h>
 #include <process_manager/src/application/services/IChildProcessSpawnerService.h>
 #include <process_manager/src/application/providers/ChildProcessConfigProvider.h>
+
+#include <process_manager/src/infrastructure/commands/ProcessManagerCommandFactory.h>
 
 namespace process_manager::infrastructure::services {
 
@@ -22,9 +23,11 @@ public:
     ChildProcessSpawnerService(
         std::shared_ptr<process_manager::application::tools::IProcessSpawner> processSpawner,
         std::shared_ptr<process_manager::application::providers::ChildProcessConfigProvider> childProcessConfigProvider,
+        std::shared_ptr<process_manager::infrastructure::commands::ProcessManagerCommandFactory> commandFactory,
         std::shared_ptr<shared::application::services::ILogger> logger) : 
             m_processSpawner{ processSpawner },
             m_configProvider{ childProcessConfigProvider},
+            m_commandFactory{ commandFactory },
             m_logger{ logger } 
     {
         if (!m_logger || !m_processSpawner || !m_configProvider) {
@@ -48,17 +51,7 @@ public:
         auto pingMessage = ::child_process_communication::ChildInitRequest{};
         pingMessage.set_internal_id(internalId.data());
 
-        process_manager::infrastructre::commands::ChildInitRequestCommand::Sender::Config config {
-            childConfig.childAddress,
-            childConfig.childPort,
-            3,
-            1000,
-            [pingMessage] (const ::child_process_communication::ChildInitResponse& output) -> bool {
-                return output.success();
-            }
-        };
-
-        if (!process_manager::infrastructre::commands::ChildInitRequestCommand{ config }.sendRequest(pingMessage)) {
+        if (!m_commandFactory->createChildInitRequestCommand(childConfig)->sendRequest(pingMessage)) {
             return std::nullopt;
         }
 
@@ -68,6 +61,7 @@ public:
 private:
     std::shared_ptr<process_manager::application::tools::IProcessSpawner> m_processSpawner;
     std::shared_ptr<process_manager::application::providers::ChildProcessConfigProvider> m_configProvider;
+    std::shared_ptr<process_manager::infrastructure::commands::ProcessManagerCommandFactory> m_commandFactory;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     
     process_manager::domain::models::ProcessInstance getProcessInstance(

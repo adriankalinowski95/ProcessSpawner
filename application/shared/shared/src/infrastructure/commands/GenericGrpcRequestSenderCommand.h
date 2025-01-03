@@ -16,6 +16,7 @@ namespace shared::infrastructure::commands {
 template <typename Request, typename Response, typename Service>
 class GenericGrpcRequestSenderCommand {
 public:
+    // @Todo make a builder for this
     struct Config {
         std::string address;
         std::uint32_t port;
