@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shared.Tools.Logging.Models;
+using Shared.Types.Db;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace Shared.Tools.Logging.Repositories {
     public class LoggerRepository : ILoggerRepository {
-        protected DbContext m_context;
+        protected DatabaseContext m_context;
         // protected readonly DbSet<Log> m_dbSet;
 
-        public LoggerRepository(DbContext context) {
+        public LoggerRepository(DatabaseContext context) {
             m_context = context;
             // m_context.ChangeTracker.
             // m_dbSet = m_context.Set<T>();

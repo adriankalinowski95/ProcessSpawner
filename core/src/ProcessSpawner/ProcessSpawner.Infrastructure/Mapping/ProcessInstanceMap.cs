@@ -24,9 +24,10 @@ namespace ProcessSpawner.Infrastructure.Mapping {
             builder.Navigation(u => u.ProcessManager)
                   .AutoInclude();
 
+            /*
             builder.Navigation(u => u.ProcessEvents)
                   .AutoInclude();
-            /*
+            
             builder.HasOne(u => u.ProcessManager)
                    .WithMany(u => u.ProcessInstances)
                    .HasForeignKey(u => u.ProcessManagerId);

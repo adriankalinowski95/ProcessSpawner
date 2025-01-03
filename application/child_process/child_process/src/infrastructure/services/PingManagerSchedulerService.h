@@ -29,7 +29,7 @@ public:
             m_failruesInRow{},
             m_mutex{}
     {
-        if (!m_globalConfigProvider || !m_logger) {
+        if (!m_commandsFactory || !m_globalConfigProvider || !m_logger) {
             throw std::runtime_error("Global config provider or logger is not initialized!");
         }
     }
@@ -109,7 +109,7 @@ private:
                 
                 std::exit(EXIT_FAILURE);
             }
-
+            
             return result;
         };
     }

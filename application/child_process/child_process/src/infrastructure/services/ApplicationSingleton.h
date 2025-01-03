@@ -53,10 +53,10 @@ public:
 private:
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     std::shared_ptr<child_process::application::providers::GlobalConfigProvider> m_globalConfigProvider;
+    std::shared_ptr<child_process::infrastructure::commands::ChildProcessCommandsFactory> m_childProcessCommandsFactory;
     std::shared_ptr<child_process::infrastructure::services::CoreQueryParamsService> m_coreQueryParamsService;
     std::shared_ptr<child_process::application::services::ISchedulerService> m_eventProviderSchedulerService;
     std::shared_ptr<child_process::application::services::ISchedulerService> m_pingManagerSchedulerService;
-    std::shared_ptr<child_process::infrastructure::commands::ChildProcessCommandsFactory> m_childProcessCommandsFactory;
 };
 
 }

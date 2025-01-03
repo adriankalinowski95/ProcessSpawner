@@ -6,8 +6,8 @@ using ProcessSpawner.Domain.Models;
 namespace ProcessSpawner.Infrastructure.Mapping {
     public class ProcessEventMap : IEntityTypeConfiguration<ProcessEvent> {
         public void Configure(EntityTypeBuilder<ProcessEvent> builder) {
-            builder.Navigation(u => u.ProcessInstance)
-                  .AutoInclude();
+            //builder.Navigation(u => u.ProcessInstance)
+            //      .AutoInclude();
         }
     }
 }

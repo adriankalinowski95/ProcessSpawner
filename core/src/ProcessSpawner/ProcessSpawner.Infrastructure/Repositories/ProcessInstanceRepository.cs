@@ -4,10 +4,11 @@ using Authorization.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Domain.Models;
+using Shared.Types.Db;
 
 namespace ProcessSpawner.Infrastructure.Repositories {
     public class ProcessInstanceRepository : Shared.Generic.Repositories.Int.GenericRepository<ProcessInstance>, IProcessInstanceRepository {
-        public ProcessInstanceRepository(DbContext dbContext) : base(dbContext) { }
+        public ProcessInstanceRepository(DatabaseContext dbContext) : base(dbContext) { }
 
         public async Task<Domain.Models.ProcessInstance> GetByInternalIdAsync(string internalId) {
             return await m_dbSet.Where(process => process.InternalId == internalId).FirstOrDefaultAsync();

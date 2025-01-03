@@ -2,10 +2,11 @@
 using System.Security.Claims;
 using Authorization.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.Types.Db;
 
 namespace Authorization.Infrastructure.Repositories {
     public class UserRepository : Shared.Generic.Repositories.Int.GenericRepository<User>, Application.Services.IUserRepository {
-        public UserRepository(DbContext dbContext) : base(dbContext) {
+        public UserRepository(DatabaseContext dbContext) : base(dbContext) {
 
         }
 

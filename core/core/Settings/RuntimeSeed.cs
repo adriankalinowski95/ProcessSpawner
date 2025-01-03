@@ -35,7 +35,6 @@ namespace core.Settings {
 
                 processManagerRepository.AddAsync(defaultProcessManager);
             }
-
         }
     }
 }

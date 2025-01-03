@@ -34,7 +34,7 @@ public static class DependencyInjection {
         var jwtKey = configuration.GetSection("Jwt:Key").Get<string>();
 
         services.Configure<MvcOptions>(options => {
-            options.InputFormatters.Insert(0, new TextPlainInputFormatter());
+            options.InputFormatters.Insert(0, new core.Settings.TextPlainInputFormatter());
         });
 
         services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -43,8 +43,10 @@ public static class DependencyInjection {
 
         services.AddInfrastructureForAuthorization(configuration);
 
-        services.AddDbContext<DatabaseContext>();
-        services.AddTransient<DbContext, DatabaseContext>();
+        services.AddScoped<Shared.Types.Db.ICustomService, CustomService>();
+        services.AddDbContext<Shared.Types.Db.DatabaseContext>();
+
+        //services.AddTransient<DbContext, DatabaseContext>();
 
         services.AddSingleton<IServiceCollection>(provider => {
             return services;

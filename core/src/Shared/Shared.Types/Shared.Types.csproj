@@ -18,6 +18,7 @@
 		<None Remove="Generic\Repositories\" />
 		<None Remove="BaseClasses\" />
 		<None Remove="Enums\" />
+		<None Remove="Db\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Interfaces\" />
@@ -28,9 +29,13 @@
 		<Folder Include="Generic\Repositories\" />
 		<Folder Include="BaseClasses\" />
 		<Folder Include="Enums\" />
+		<Folder Include="Db\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-		<PackageReference Include="FluentValidation" Version="11.10.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.0" />
 	</ItemGroup>
 </Project>

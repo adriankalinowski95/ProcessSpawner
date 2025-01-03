@@ -22,7 +22,7 @@ public:
             m_globalConfigProvider{ globalConfigProvider },
             m_logger{ logger }
     {
-        if (!m_globalConfigProvider || !m_logger) {
+        if (!m_commandsFactory || !m_globalConfigProvider || !m_logger) {
             throw std::runtime_error("Global config provider or logger is not initialized!");
         }
     }
