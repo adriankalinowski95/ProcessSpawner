@@ -87,28 +87,33 @@ private:
 
     std::function<bool()> GetPeriodicFunction() {
         return [this]() -> bool {
-            auto request = createRequest();
-            if (!request.has_value()) {
-                m_logger->logError("Failed to create event provider request");
+            try {
+                auto request = createRequest();
+                if (!request.has_value()) {
+                    throw std::runtime_error("Failed to create request");
+                }
+
+                auto sender = m_commandsFactory->createCoreCommandCommunicationCommand();
+                if (!sender) {
+                    throw std::runtime_error("Failed to create sender");
+                }     
+
+                auto result = sender->sendRequest(*request);
+                if (!result.has_value()) {
+                    throw std::runtime_error("Failed to send request");
+                } 
+
+                return result->result().success();
+             }
+            catch (std::exception& e) {
+                m_logger->log(
+                    shared::application::services::ILogger::LogLevel::Error,
+                    "EVENT_PROVIDER_SCHEDULER_SERVICE",
+                    e.what()
+                );
 
                 return false;
             }
-
-            auto sender = m_commandsFactory->createCoreCommandCommunicationCommand();
-            if (!sender) {
-                m_logger->logError("Failed to create core command communication command");
-
-                return false;
-            }
-
-            auto result = sender->sendRequest(*request);
-            if (!result.has_value()) {
-                m_logger->logError("Failed to send event provider request");
-
-                return false;
-            }
-
-            return result->result().success();
         };
     }
 

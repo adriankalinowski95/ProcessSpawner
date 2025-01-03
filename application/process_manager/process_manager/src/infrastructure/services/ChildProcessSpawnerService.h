@@ -44,6 +44,12 @@ public:
 
         const auto pid = m_processSpawner->startProcess(environment::child_process::Process_Path.data(), { childConfigJson });
         if (!pid) {
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error, 
+                "CHILD_PROCESS_SPAWNER_SERVICE",
+                "Failed to spawn child process"
+            );
+
             return std::nullopt;
         }
 
@@ -52,6 +58,12 @@ public:
         pingMessage.set_internal_id(internalId.data());
 
         if (!m_commandFactory->createChildInitRequestCommand(childConfig)->sendRequest(pingMessage)) {
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error, 
+                "CHILD_PROCESS_SPAWNER_SERVICE",
+                "Failed to send init ping"
+            );
+
             return std::nullopt;
         }
 

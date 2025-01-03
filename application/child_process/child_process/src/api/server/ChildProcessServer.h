@@ -69,7 +69,11 @@ private:
     
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
         if (!server) {
-            logger->logError("Can't create gRPC server");
+            logger->log(
+                shared::application::services::ILogger::LogLevel::Error,
+                "CHILD_PROCESS_SERVER", 
+                "Can't create gRPC server"
+            );
             m_promise.set_value(false);
 
             return;
@@ -77,7 +81,12 @@ private:
 
         m_promise.set_value(true);
 
-        logger->logInfo("gRPC server started on " + processConfig->GetChildAddress());
+        logger->log(
+            shared::application::services::ILogger::LogLevel::Info,
+            "CHILD_PROCESS_SERVER", 
+            "gRPC server started on " + processConfig->GetChildAddress()
+        );
+
 	    server->Wait();
     }
 };

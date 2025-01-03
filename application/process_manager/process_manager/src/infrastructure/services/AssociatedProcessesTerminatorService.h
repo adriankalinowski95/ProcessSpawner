@@ -40,7 +40,11 @@ public:
     
         // kill all child processes
         if (!m_processTerminator->terminateAll(m_processEnumerator->enumerateWhereNameEquals(childProcessConfig.processName))) {
-            m_logger->logError("Failed to terminate child processes");
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error, 
+                "ASSOCIATED_PROCESSES_TERMINATOR_SERVICE",
+                "Failed to terminate child processes"
+            );
 
             return;
         }
@@ -60,7 +64,11 @@ public:
         processManagerProcesses.erase(end.begin(), end.end());
 
         if (!m_processTerminator->terminateAll(processManagerProcesses)) {
-            m_logger->logError("Failed to terminate process manager processes");
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error, 
+                "ASSOCIATED_PROCESSES_TERMINATOR_SERVICE",
+                "Failed to terminate process manager processes"
+            );
         }
     }
 

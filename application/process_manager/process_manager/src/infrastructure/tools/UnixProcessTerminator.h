@@ -38,12 +38,20 @@ private:
 
     bool terminateByPid(pid_t pid) const {
         if (kill(pid, SIGTERM) != 0) {
-            m_logger->logError("Failed to terminate process PID: " + std::to_string(pid) + " Error: " + std::strerror(errno));
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error, 
+                "UNIX_PROCESS_TERMINATOR", 
+                "Failed to terminate process PID: " + std::to_string(pid) + " Error: " + std::strerror(errno)
+            );
 
             return false;
         }
 
-        m_logger->log("Process PID: " + std::to_string(pid) + " terminated");
+        m_logger->log(
+            shared::application::services::ILogger::LogLevel::Debug,
+            "UNIX_PROCESS_TERMINATOR",
+            "Process PID: " + std::to_string(pid) + " terminated"
+        );
 
         return true;
     }

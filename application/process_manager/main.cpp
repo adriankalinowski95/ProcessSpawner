@@ -36,11 +36,11 @@ int main(int argc, char** argv) {
 
         server.join();
     } catch (std::exception& e) {
-        logger->logError(e.what());
-
-        // Shutdown processes 
-        application.GetAssociatedProcessesTerminatorService()->terminate();
+        logger->log(shared::application::services::ILogger::LogLevel::Error, e.what());
     }
+    
+    // Shutdown processes 
+    application.GetAssociatedProcessesTerminatorService()->terminate();
 
     return 0;
 }

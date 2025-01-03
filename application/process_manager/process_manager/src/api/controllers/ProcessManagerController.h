@@ -62,7 +62,7 @@ private:
     ::grpc::Status parseSpawnProcess(const Communication::SpawnRequest* request, Communication::SpawnResponse* response) {
         auto childProcessInstance = m_processSpawner->spawnChildProcess(request->internal_id());
         if (!childProcessInstance) {
-            return failed("Failed to spawn process!", response);
+            return failed("[PROCESS_MANAGER_CONTROLLER] Failed to spawn process!", response);
         }
 
         m_processHolderService->add(*childProcessInstance);
@@ -77,14 +77,14 @@ private:
     ::grpc::Status parseFinishProcess(const Communication::FinishRequest* request, Communication::FinishResponse* response) {
         const auto internalProcess = m_processHolderService->getById(request->internal_id());
         if (!internalProcess) {
-            return failed("Failed to find process with internal id: " + request->internal_id(), response);
+            return failed("[PROCESS_MANAGER_CONTROLLER] Failed to find process with internal id: " + request->internal_id(), response);
         }
 
         if (!m_processTerminator->terminateAll({process_manager::domain::models::ProcessInfo { 
             .pid = static_cast<int>(internalProcess->pid),
             .name = "child_process"
         }})) {
-            return failed("Failed to terminate process with internal id: " + request->internal_id(), response);
+            return failed("[PROCESS_MANAGER_CONTROLLER] Failed to terminate process with internal id: " + request->internal_id(), response);
         }
 
         m_processHolderService->removeById(request->internal_id());

@@ -51,7 +51,11 @@ public:
 
         auto response = sender.sendRequest(request);
         if (!response || !response->success()) {
-            m_logger->logError("Failed to send request to core server");
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error, 
+                "PROCESS_MANAGER_INPUT_REQUEST_COMMAND",
+                "Failed to send request to core server"
+            );
 
             return false;
         }
@@ -59,7 +63,11 @@ public:
         for (const auto& process : response->processes()) {
             auto childProcessInstance = m_processSpawner->spawnChildProcess(process.internal_id());
             if (!childProcessInstance) {
-                m_logger->logError("Failed to spawn process with internal id: " + process.internal_id());
+                m_logger->log(
+                    shared::application::services::ILogger::LogLevel::Error, 
+                    "PROCESS_MANAGER_INPUT_REQUEST_COMMAND",
+                    "Failed to spawn process with internal id: " + process.internal_id()
+                );
                 
                 continue;
             }

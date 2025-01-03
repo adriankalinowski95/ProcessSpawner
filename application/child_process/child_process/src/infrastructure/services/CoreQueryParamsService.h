@@ -28,35 +28,39 @@ public:
     }
 
     bool loadParam(std::string paramName) {
-        auto request = createRequest(paramName);
-        if (!request) {
+        try {
+            auto request = createRequest(paramName);
+            if (!request) {
+                throw std::runtime_error("Failed to create request");
+            }
+
+            auto sender = m_commandsFactory->createCoreQueryCommunicationCommand();
+            if (!sender) {
+                throw std::runtime_error("Failed to create sender");
+            }
+
+            auto result = sender->sendRequest(*request);
+            if (!result.has_value()) {
+                throw std::runtime_error("Failed to send request");
+            }
+
+            if (!result->result().success()) {
+                throw std::runtime_error("Failed to query param");
+            }
+
+            // @Todo for testing!
+            // m_logger->logInfo(std::string("Query param value: ") + result->param_value());
+
+            return true;
+        } catch (std::exception& e) {
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error,
+                "CORE_QUERY_PARAMS_SERVICE",
+                e.what()
+            );
+
             return false;
         }
-
-        auto sender = m_commandsFactory->createCoreQueryCommunicationCommand();
-        if (!sender) {
-            m_logger->logError("Failed to create core query communication command");
-
-            return false;
-        }
-
-        auto result = sender->sendRequest(*request);
-        if (!result.has_value()) {
-            m_logger->logError("Failed to query param request");
-
-            return false;
-        }
-
-        if (!result->result().success()) {
-            m_logger->logError("Failed to query param request");
-            
-            return false;
-        }
-
-        // @Todo for testing!
-        // m_logger->logInfo(std::string("Query param value: ") + result->param_value());
-
-        return true;
     }
 
 private:

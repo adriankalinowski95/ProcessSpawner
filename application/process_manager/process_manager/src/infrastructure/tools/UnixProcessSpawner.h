@@ -22,6 +22,7 @@ public:
         std::vector<char*> cargs{};
         cargs.reserve(args.size() + 2);
 
+        // @Todo change this - old code
         cargs.push_back(const_cast<char*>(program.c_str()));
         for (auto &arg : args) {
             cargs.push_back(const_cast<char*>(arg.c_str()));
@@ -30,8 +31,20 @@ public:
 
         pid_t pid{};
         if (posix_spawn(&pid, program.data(), NULL, NULL, cargs.data(), NULL) == 0) {
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Info,
+                "UNIX_PROCESS_SPAWNER", 
+                "Process was spawned correctly! Pid: " + std::to_string(pid)
+            );
+
             return pid;
         }
+
+        m_logger->log(
+            shared::application::services::ILogger::LogLevel::Error,
+            "UNIX_PROCESS_SPAWNER",
+            "Can't spawn process" + program
+        );
 
         return std::nullopt;
     }

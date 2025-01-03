@@ -51,7 +51,7 @@ private:
                 return handleQueryRunning(response);
             // @Todo add by id itp.
             default:
-                return failed("Unknown query type!", response);
+                return failed("[PROCESS_QUERY_CONTROLLER] Unknown query type!", response);
         }
     }
 

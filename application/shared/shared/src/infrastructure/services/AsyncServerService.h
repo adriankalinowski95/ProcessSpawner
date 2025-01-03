@@ -74,7 +74,7 @@ private:
             }
         } catch(std::exception& e) {
             if (m_logger) {
-                m_logger->logError(e.what());
+                m_logger->log(shared::application::services::ILogger::LogLevel::ERROR, e.what());
             }
         }
     }

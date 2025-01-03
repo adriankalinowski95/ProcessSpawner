@@ -40,8 +40,12 @@ private:
         // Start schedulers!
         m_pingManagerSchedulerService->start();
         m_eventProviderSchedulerService->start();
-        
-        m_logger->logInfo(request->internal_id() + " initialized!");
+    
+        m_logger->log(
+            shared::application::services::ILogger::LogLevel::Info,
+            "CHILD_INIT_CONTROLLER", 
+            request->internal_id() + " initialized!"
+        );
     
         return success(response);
     }

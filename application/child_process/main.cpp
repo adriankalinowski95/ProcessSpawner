@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
         server.join();
     }
     catch (std::exception& e) {
-        logger->logError(e.what());
+        logger->log(shared::application::services::ILogger::LogLevel::Error, e.what());
     }
 
     return 0;

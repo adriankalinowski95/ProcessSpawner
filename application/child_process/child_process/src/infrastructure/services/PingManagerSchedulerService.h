@@ -74,43 +74,57 @@ private:
 
     std::function<bool()> GetPeriodicFunction() {
         return [this]() -> bool {
-            const auto processConfig = m_globalConfigProvider->getProcessConfig();
-            if (!processConfig) {
-                m_logger->logError("Failed to get process config");
+            try {
+                const auto processConfig = m_globalConfigProvider->getProcessConfig();
+                if (!processConfig) {
+                    throw std::runtime_error("Failed to get process config");
+                }
+
+                auto request = createRequest();
+                if (!request) {
+                    throw std::runtime_error("Failed to create request");
+                }
+
+                auto sender = m_commandsFactory->createChildPingRequestCommand();
+                if (!sender) {
+                    throw std::runtime_error("Failed to create sender");
+                }
+
+                auto result = sender->ping(*request);
+                if (!result) {
+                    m_failruesInRow++;
+
+                    throw std::runtime_error("Failed to ping");
+                } else {
+                    m_logger->log(
+                        shared::application::services::ILogger::LogLevel::Info,
+                        "PING_MANAGER_SCHEDULER_SERVICE",
+                        processConfig->internalId + " pinged successfully"
+                    );
+
+                    m_failruesInRow = 0;
+                }
+
+                if (m_failruesInRow >= Failures_To_Exit) {
+                    m_logger->log(
+                        shared::application::services::ILogger::LogLevel::Error, 
+                        "PING_MANAGER_SCHEDULER_SERVICE",
+                        "Too many failures in a row. Exiting..."
+                    );
+
+                    std::exit(EXIT_FAILURE);
+                }
+
+                return result;
+            } catch(const std::exception& e) {
+                m_logger->log(
+                    shared::application::services::ILogger::LogLevel::Error,
+                    "PING_MANAGER_SCHEDULER_SERVICE",
+                    e.what()
+                );
 
                 return false;
             }
-
-            auto request = createRequest();
-            if (!request) {
-                m_logger->logError("Failed to create request");
-
-                return false;
-            }
-
-            auto sender = m_commandsFactory->createChildPingRequestCommand();
-            if (!sender) {
-                m_logger->logError("Failed to create child ping request command");
-
-                return false;
-            }
-
-            auto result = sender->ping(*request);
-            if (!result) {
-                m_logger->logError("Failed to send ping message");
-                m_failruesInRow++;
-            } else {
-                m_logger->logInfo(processConfig->internalId + " pinged successfully");
-                m_failruesInRow = 0;
-            }
-
-            if (m_failruesInRow >= Failures_To_Exit) {
-                m_logger->logError("Too many failures in a row. Exiting...");
-                
-                std::exit(EXIT_FAILURE);
-            }
-            
-            return result;
         };
     }
 

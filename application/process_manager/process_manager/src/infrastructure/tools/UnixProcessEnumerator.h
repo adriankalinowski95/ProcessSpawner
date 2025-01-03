@@ -61,7 +61,11 @@ private:
 
         const int pidCount = proc_listpids(PROC_ALL_PIDS, 0, pids.data(), static_cast<int>(pids.size() * sizeof(pid_t)));
         if (pidCount <= 0) {
-            m_logger->logError("Error listing processes: " + std::string(std::strerror(errno)));
+            m_logger->log(
+                shared::application::services::ILogger::LogLevel::Error,
+                "UNIX_PROCESS_ENUMERATOR",
+                "Error listing processes: " + std::string(std::strerror(errno))
+            );
 
             return processes;
         }

@@ -16,7 +16,7 @@ public:
 
     template <typename T>
     grpc::Status failed(const std::string& message, T* response) {
-        m_logger->logError(message);
+        m_logger->log(shared::application::services::ILogger::LogLevel::Error, message);
 
         response->set_success(false);
         response->set_message(message);

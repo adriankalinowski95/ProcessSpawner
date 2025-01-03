@@ -82,7 +82,12 @@ private:
 
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
         if (!server) {
-            application.GetLogger()->logError("Can't create gRPC server");
+            application.GetLogger()->log(
+                shared::application::services::ILogger::Error,
+                "[PROCESS_MANAGER_SERVER]" 
+                "Can't create gRPC server"
+            );
+
             m_promise.set_value(false);
 
             return;
@@ -90,7 +95,12 @@ private:
 
         m_promise.set_value(true);
 
-        application.GetLogger()->logInfo("gRPC server started on " + globalConfig->GetProcessManagerConfig().endpoint.GetAddress());
+        application.GetLogger()->log(
+            shared::application::services::ILogger::Info,
+            "PROCESS_MANAGER_SERVER",
+            "gRPC server started on " + globalConfig->GetProcessManagerConfig().endpoint.GetAddress()
+        );
+
 	    server->Wait();
     }
 };

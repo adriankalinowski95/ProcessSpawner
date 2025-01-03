@@ -32,7 +32,7 @@ public:
             if (m_handlers.find(path) != m_handlers.end()) {
                 m_handlers[path](socket, request);
             } else {
-                m_logger->log("No handler for path: " + path);
+                m_logger->log(shared::application::services::ILogger::LogLevel::ERROR, "No handler for path: " + path);
             }
         } catch (std::exception& e) {
             m_logger->logError(e.what());
