@@ -9,8 +9,8 @@ namespace ProcessSpawner.Infrastructure.Repositories {
     public class ProcessInstanceRepository : Shared.Generic.Repositories.Int.GenericRepository<ProcessInstance>, IProcessInstanceRepository {
         public ProcessInstanceRepository(DbContext dbContext) : base(dbContext) { }
 
-        public Task<Domain.Models.ProcessInstance> GetByInternalIdAsync(string internalId) {
-            return m_dbSet.Where(process => process.InternalId == internalId).FirstOrDefaultAsync();
+        public async Task<Domain.Models.ProcessInstance> GetByInternalIdAsync(string internalId) {
+            return await m_dbSet.Where(process => process.InternalId == internalId).FirstOrDefaultAsync();
         }
 
         public async Task<int> DeactiveProccesesForManager(int managerId) {

@@ -7,11 +7,10 @@
 
 #include <shared/src/application/services/ILogger.h>
 #include <shared/src/application/services/BaseSchedulerService.h>
-
 #include <child_process/src/application/services/ISchedulerService.h>
 #include <child_process/src/application/providers/GlobalConfigProvider.h>
-#include <child_process/src/infrastructure/commands/CoreCommandCommunicationCommand.h>
 #include <child_process/src/infrastructure/services/CoreQueryParamsService.h>
+#include <child_process/src/infrastructure/commands/ChildProcessCommandsFactory.h>
 
 namespace child_process::infrastructure::services {
 
@@ -23,8 +22,10 @@ class EventProviderSchedulerService : public child_process::application::service
     static constexpr std::uint32_t Delay_Between_Sheduling = 10 * 1000; // 1 min
 public:
     EventProviderSchedulerService(
+        std::shared_ptr<child_process::infrastructure::commands::ChildProcessCommandsFactory> commandsFactory,
         std::shared_ptr<child_process::application::providers::GlobalConfigProvider> globalConfigProvider,
         std::shared_ptr<shared::application::services::ILogger> logger) :
+            m_commandsFactory{ commandsFactory },
             m_globalConfigProvider{ globalConfigProvider },
             m_logger{ logger },
             m_scheduler{ GetSchedulerConfig() },
@@ -59,6 +60,7 @@ public:
     }
 
 private:
+    std::shared_ptr<child_process::infrastructure::commands::ChildProcessCommandsFactory> m_commandsFactory;
     std::shared_ptr<child_process::application::providers::GlobalConfigProvider> m_globalConfigProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
     SchedulerServiceT m_scheduler;
@@ -74,38 +76,32 @@ private:
     // @Todo - remove this function
     // Its only for test!
     void load() {
+        /*
         child_process::infrastructure::services::CoreQueryParamsService coreQueryParamsService{ 
             m_globalConfigProvider,
             m_logger
         };
         const auto result = coreQueryParamsService.loadParam("param1");
+        */
     }
 
     std::function<bool()> GetPeriodicFunction() {
         return [this]() -> bool {
-            const auto processConfig = m_globalConfigProvider->getProcessConfig();
-            if (!processConfig) {
+            auto request = createRequest();
+            if (!request.has_value()) {
+                m_logger->logError("Failed to create event provider request");
+
                 return false;
             }
 
-            // EXAMPLE
-            auto request = ::core_communication::CoreCommandRequest{};
-            request.mutable_process()->set_internal_id(processConfig->internalId.data());
-            request.set_event_name("temp_name");
-            request.set_event_value("temp_value");
+            auto sender = m_commandsFactory->createCoreCommandCommunicationCommand();
+            if (!sender) {
+                m_logger->logError("Failed to create core command communication command");
 
-            child_process::infrastructre::commands::CoreCommandCommunicationCommand::Sender::Config config {
-                processConfig->parentAddress,
-                processConfig->parentPort,
-                Request_Retires,
-                Delay_Between_Retries,
-                [] (const ::core_communication::CoreCommandResponse& output) -> bool {
-                    return output.result().success();
-                }
-            };
+                return false;
+            }
 
-            child_process::infrastructre::commands::CoreCommandCommunicationCommand sender{ config };
-            auto result = sender.sendRequest(request);
+            auto result = sender->sendRequest(*request);
             if (!result.has_value()) {
                 m_logger->logError("Failed to send event provider request");
 
@@ -114,6 +110,21 @@ private:
 
             return result->result().success();
         };
+    }
+
+    std::optional<::core_communication::CoreCommandRequest> createRequest() {
+        const auto processConfig = m_globalConfigProvider->getProcessConfig();
+        if (!processConfig) {
+            return std::nullopt;
+        }
+
+        // EXAMPLE
+        auto request = ::core_communication::CoreCommandRequest{};
+        request.mutable_process()->set_internal_id(processConfig->internalId.data());
+        request.set_event_name("temp_name");
+        request.set_event_value("temp_value");
+
+        return request;
     }
 };
 

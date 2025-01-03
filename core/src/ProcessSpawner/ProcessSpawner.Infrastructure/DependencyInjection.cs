@@ -33,6 +33,7 @@ public static class DependencyInjection {
 
         services.AddAutoMapper(typeof(AutoMapperProfile));
 
+        /*
         services.AddQuartz(configure => {
             configure.UseMicrosoftDependencyInjectionJobFactory();
 
@@ -48,6 +49,7 @@ public static class DependencyInjection {
         services.AddQuartzHostedService(options => {
             options.WaitForJobsToComplete = true;
         });
+        */
 
         return services;
     }

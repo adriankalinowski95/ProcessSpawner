@@ -3,9 +3,10 @@
 #include <memory>
 #include <cstdint>
 #include <exception>
+
 #include <shared/src/application/services/ILogger.h>
-#include <child_process/src/infrastructure/commands/CoreQueryCommunicationCommand.h>
 #include <child_process/src/application/providers/GlobalConfigProvider.h>
+#include <child_process/src/infrastructure/commands/ChildProcessCommandsFactory.h>
 
 namespace child_process::infrastructure::services {
 
@@ -14,8 +15,10 @@ class CoreQueryParamsService {
     static constexpr std::uint32_t Delay_Between_Retries = 1000; // ms
 public:
     CoreQueryParamsService(
+        std::shared_ptr<child_process::infrastructure::commands::ChildProcessCommandsFactory> commandsFactory,
         std::shared_ptr<child_process::application::providers::GlobalConfigProvider> globalConfigProvider,
         std::shared_ptr<shared::application::services::ILogger> logger) :
+            m_commandsFactory{ commandsFactory },
             m_globalConfigProvider{ globalConfigProvider },
             m_logger{ logger }
     {
@@ -30,23 +33,14 @@ public:
             return false;
         }
 
-        const auto processConfig = m_globalConfigProvider->getProcessConfig();
-        if (!processConfig) {
+        auto sender = m_commandsFactory->createCoreQueryCommunicationCommand();
+        if (!sender) {
+            m_logger->logError("Failed to create core query communication command");
+
             return false;
         }
 
-        child_process::infrastructre::commands::CoreQueryCommunicationCommand::Sender::Config config {
-            processConfig->parentAddress,
-            processConfig->parentPort,
-            Request_Retires,
-            Delay_Between_Retries,
-            [] (const ::core_communication::CoreQueryResponse& output) -> bool {
-                return output.result().success();
-            }
-        };
-
-        child_process::infrastructre::commands::CoreQueryCommunicationCommand sender{ config };
-        auto result = sender.sendRequest(*request);
+        auto result = sender->sendRequest(*request);
         if (!result.has_value()) {
             m_logger->logError("Failed to query param request");
 
@@ -66,6 +60,7 @@ public:
     }
 
 private:
+    std::shared_ptr<child_process::infrastructure::commands::ChildProcessCommandsFactory> m_commandsFactory;
     std::shared_ptr<child_process::application::providers::GlobalConfigProvider> m_globalConfigProvider;
     std::shared_ptr<shared::application::services::ILogger> m_logger;
 
