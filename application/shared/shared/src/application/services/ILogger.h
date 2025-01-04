@@ -17,6 +17,8 @@ public:
 
     virtual ~ILogger() = default;
 
+    virtual void start() = 0;
+    virtual void stop() = 0;
     virtual void log(LogLevel level, const std::string& message) = 0;
     virtual void log(LogLevel level, const std::string& tag, const std::string& message) = 0;
 };

@@ -12,6 +12,8 @@ static constexpr std::uint32_t Max_Wait_For_Server_Start = 5;
 int main(int argc, char** argv) {
     auto application = process_manager::application::services::ApplicationSingleton::GetInstance();
     auto logger = application.GetLogger();
+    logger->start();
+
     try {
         // Shutdown old processes 
         application.GetAssociatedProcessesTerminatorService()->terminate();
@@ -39,6 +41,8 @@ int main(int argc, char** argv) {
         logger->log(shared::application::services::ILogger::LogLevel::Error, e.what());
     }
     
+    logger->stop();
+
     // Shutdown processes 
     application.GetAssociatedProcessesTerminatorService()->terminate();
 

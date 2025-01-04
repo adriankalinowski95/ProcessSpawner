@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
 
     auto application = child_process::application::services::ApplicationSingleton::GetInstance();
     auto logger = application.GetLogger();
+    logger->start();
     try {
         const auto params = child_process::application::utils::ChildProcessParamsParser::GetParams(argc, argv);
         if (params.empty()) {
@@ -71,5 +72,7 @@ int main(int argc, char** argv) {
         logger->log(shared::application::services::ILogger::LogLevel::Error, e.what());
     }
 
+    logger->stop();
+    
     return 0;
 }

@@ -42,7 +42,7 @@ public:
             throw std::runtime_error("Scheduler is already running!");
         }
 
-        m_scheduler.start();
+        m_scheduler.run();
     }
 
     void startAndJoin() override {
@@ -51,7 +51,7 @@ public:
             throw std::runtime_error("Scheduler is already running!");
         }
 
-        m_scheduler.start();
+        m_scheduler.run();
         m_scheduler.join();
     }
 

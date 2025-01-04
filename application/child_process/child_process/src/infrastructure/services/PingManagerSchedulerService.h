@@ -40,7 +40,7 @@ public:
             throw std::runtime_error("Scheduler is already running!");
         }
 
-        m_scheduler.start();
+        m_scheduler.run();
     }
 
     void startAndJoin() override {
@@ -49,7 +49,7 @@ public:
             throw std::runtime_error("Scheduler is already running!");
         }
 
-        m_scheduler.start();
+        m_scheduler.run();
         m_scheduler.join();
     }
 
@@ -97,7 +97,7 @@ private:
                     throw std::runtime_error("Failed to ping");
                 } else {
                     m_logger->log(
-                        shared::application::services::ILogger::LogLevel::Info,
+                        shared::application::services::ILogger::LogLevel::Debug,
                         "PING_MANAGER_SCHEDULER_SERVICE",
                         processConfig->internalId + " pinged successfully"
                     );

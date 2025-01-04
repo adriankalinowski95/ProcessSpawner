@@ -33,8 +33,8 @@ public:
         }
     }
 
-    void start() {
-        m_schedulerThread = std::thread(&BaseSchedulerService::runThread, this);
+    void run() {
+        m_schedulerThread = std::thread(&BaseSchedulerService::threadFun, this);
     }
 
     void stop() {
@@ -56,7 +56,7 @@ private:
     std::atomic<bool> m_stopRequest;
     std::atomic<bool> m_isRunning;
 
-    void runThread() {
+    void threadFun() {
         m_isRunning.store(true);
 
         while (!m_stopRequest) {

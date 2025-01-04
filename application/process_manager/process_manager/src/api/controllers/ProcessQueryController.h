@@ -41,13 +41,24 @@ public:
 
 private:
     std::shared_ptr<process_manager::application::services::IChildProcessHolderService> m_childProcessHolderService;
-    std::shared_ptr<shared::application::services::ILogger> m_logger;
 
     grpc::Status parse(const ::Communication::QueryRequest* request, ::Communication::QueryResponse* response) {
         switch(request->query_type()) {
             case ::Communication::ProcessQueryType::All:
+                m_logger->log(
+                    shared::application::services::ILogger::LogLevel::Debug, 
+                    "PROCESS_QUERY_CONTROLLER", 
+                    "Query all processes"
+                );
+
                 return handleQueryAll(response);
             case ::Communication::ProcessQueryType::Running:
+                m_logger->log(
+                    shared::application::services::ILogger::LogLevel::Debug, 
+                    "PROCESS_QUERY_CONTROLLER", 
+                    "Query running process"
+                );
+
                 return handleQueryRunning(response);
             // @Todo add by id itp.
             default:
