@@ -3,7 +3,7 @@ using ProcessSpawner.Application.DTOs;
 using Shared.Generic.RestApi;
 using Shared.Generic.Services.Int;
 
-namespace ProcessSpawner.Application.Services {
+namespace ProcessSpawner.Application.Services.REST {
     public interface IProcessSpawningService {
         Task<ObjectOperationResult<ProcessInstanceDto>> Get(int id);
         Task<ObjectsResponse<ProcessInstanceDto>> GetAll();

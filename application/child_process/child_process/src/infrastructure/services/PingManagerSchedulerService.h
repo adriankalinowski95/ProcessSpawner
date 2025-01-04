@@ -93,8 +93,12 @@ private:
                 auto result = sender->ping(*request);
                 if (!result) {
                     m_failruesInRow++;
-
-                    throw std::runtime_error("Failed to ping");
+                    
+                    m_logger->log(
+                        shared::application::services::ILogger::LogLevel::Debug,
+                        "PING_MANAGER_SCHEDULER_SERVICE",
+                        processConfig->internalId + " failed to ping"
+                    );
                 } else {
                     m_logger->log(
                         shared::application::services::ILogger::LogLevel::Debug,

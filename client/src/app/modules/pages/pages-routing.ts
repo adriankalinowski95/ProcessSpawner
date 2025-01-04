@@ -10,6 +10,10 @@ const PagesRouting: Routes = [
         loadChildren: () => import('./process-spawner/process-spawner.module').then((m) => m.ProcessSpawnerModule),
     },
     {
+        path: 'process-manager',
+        loadChildren: () => import('./process-manager/process-manager.module').then((m) => m.ProcessManagerModule),
+    },
+    {
         path: '',
         redirectTo: '/dashboard',
         pathMatch: 'full',

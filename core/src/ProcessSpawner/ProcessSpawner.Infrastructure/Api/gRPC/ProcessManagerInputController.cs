@@ -1,9 +1,9 @@
 ﻿using System;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.gRPC;
 
-namespace ProcessSpawner.Infrastructure.Api {
+namespace ProcessSpawner.Infrastructure.Api.gRPC {
     public class ProcessManagerInputController : ProcessSpawner.Protobuf.Communication.ProcessManagerInputService.ProcessManagerInputServiceBase {
         readonly ILogger<ProcessManagerInputController> m_logger;
         readonly IProcessManagerInputService m_inputService;

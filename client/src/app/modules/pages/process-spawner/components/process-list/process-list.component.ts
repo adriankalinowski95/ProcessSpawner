@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MainConfig } from '../../../../shared/element-list/models/ElementListConfig';
 import { DataSource } from '../../../../shared/element-list/models/data-source';
 import { DisplayedColumns } from '../../../../shared/element-list/models/displayed-columns';
-import { defaultColumns, defaultConfig, ELEMENT_DATA } from '../../../../shared/element-list/models/defaultConfig';
 import { HandelContentEvent } from '../../../../shared/element-list/models/HandelContentEvent';
-import { SpawnProcessCrudService } from '../../services/process-spawn-commuincation.service';
-import { ActionType } from '../../../../shared/action-button/models/action-button-config';
+import { ActionType, Type } from '../../../../shared/action-button/models/action-button-config';
 import { ProcessSpawnRequestDto } from '../../models/process-spawn-request-dto';
 import { catchError, first, of, tap } from 'rxjs';
 import { shared } from '../../../../shared/shared';
-import { ProcessSpawnResponseDto } from '../../models/process-spawn-response-dto';
 import { ProcessSpawnService } from '../../services/process-spawn.service';
 import { ProcessInstanceDto } from '../../models/process-instance-dto';
 import { ProcessInstancesHolderService } from '../../services/process-instances-holder.service';
@@ -22,6 +19,69 @@ import { ProcessStatus } from '../../enums/process-status.enum';
   styleUrl: './process-list.component.scss',
 })
 export class ProcessListComponent implements OnInit {
+    tableConfig: MainConfig = {
+      useFilters: false,
+      filterConfig: {},
+      contentConfig: {
+        tableConfig: {
+          multiselect: true,
+          rowTableIcons: [],
+          multiActionButton: {
+            actions: [{
+                name: 'edit',
+                displayName: 'Edit',
+                actionType: ActionType.Edit,
+                type: Type.Default,
+                iconName: 'edit-outline'
+            },
+            {
+              name: 'delete',
+              displayName: 'Del',
+              actionType: ActionType.Delete,
+              type: Type.Error,
+              iconName: 'trash-can-outline'
+            },
+            {
+              name: 'finish_process',
+              displayName: 'Finish',
+              actionType: ActionType.SpecialAction1,
+              type: Type.Default,
+              iconName: 'start'
+            }
+            ]
+        },
+          sortable: true,
+          dbClickEdit: true,
+          stickyHeader: true,
+        },
+        usePagination: false,
+        paginationConfig: {},
+        useContentHandler: true,
+        contentHandlerConfig: { buttons: [{
+            text: 'Create',
+            disabled: false,
+            type: Type.Default,
+            actionType: ActionType.Create
+          }, {
+            text: 'Edit',
+            disabled: false,
+            type: Type.Info,
+            actionType: ActionType.Edit
+          }, {
+            text: 'Reload',
+            disabled: true,
+            type: Type.Warn,
+            actionType: ActionType.Reload
+          }, {
+            text: 'Delete',
+            disabled: false,
+            type: Type.Error,
+            actionType: ActionType.Delete
+          }]
+        }
+      }
+    };
+
     columns: DisplayedColumns = [
         { name: 'index', displayName: 'No.' },
         { name: 'processType', displayName: 'Type' },
@@ -29,7 +89,7 @@ export class ProcessListComponent implements OnInit {
         { name: 'status', displayName: 'Process Status' }
     ];
 
-    config: MainConfig = defaultConfig;
+    config: MainConfig = this.tableConfig;
     dataSource: DataSource[] = new Array<DataSource>;
     
     constructor(
@@ -54,7 +114,7 @@ export class ProcessListComponent implements OnInit {
 
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
-            this.createProcess();
+            this.spawnProcess();
         } else if ($event.actionType === ActionType.Delete) {
             if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
                 return;
@@ -70,7 +130,7 @@ export class ProcessListComponent implements OnInit {
         }
     }
 
-    createProcess() {
+    spawnProcess() {
         const errorHandler = (response: shared.response.Object<any>) => {
             // this.notificationService.error(response.errorMessage);
         };
@@ -82,7 +142,7 @@ export class ProcessListComponent implements OnInit {
             ])
         };
 
-        this.processSpawnService.create(spawnProcessRequest, errorHandler).pipe(
+        this.processSpawnService.spawnProcess(spawnProcessRequest, errorHandler).pipe(
             first(),
             tap((spawnProcessResponse: ProcessInstanceDto | undefined) => {
                 if (shared.isNotNullOrUndefined(spawnProcessResponse)) {

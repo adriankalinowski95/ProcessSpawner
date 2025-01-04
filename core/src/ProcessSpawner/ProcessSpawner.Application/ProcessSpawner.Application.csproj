@@ -20,6 +20,10 @@
     <None Remove="Repositories\" />
     <None Remove="Commands\" />
     <None Remove="Queries\" />
+    <None Remove="Services\gRPC\" />
+    <None Remove="Services\Example\" />
+    <None Remove="Services\REST\" />
+    <None Remove="Services\Common\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -27,5 +31,9 @@
     <Folder Include="Repositories\" />
     <Folder Include="Commands\" />
     <Folder Include="Queries\" />
+    <Folder Include="Services\gRPC\" />
+    <Folder Include="Services\Example\" />
+    <Folder Include="Services\REST\" />
+    <Folder Include="Services\Common\" />
   </ItemGroup>
 </Project>

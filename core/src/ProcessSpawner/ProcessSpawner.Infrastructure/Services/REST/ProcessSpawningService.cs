@@ -8,10 +8,8 @@ using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.Commands;
 using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Repositories;
-using ProcessSpawner.Application.Services;
-using ProcessSpawner.Domain.Models;
-using ProcessSpawner.Infrastructure.Commands;
-using ProcessSpawner.Protobuf;
+using ProcessSpawner.Application.Services.Common;
+using ProcessSpawner.Application.Services.REST;
 using Shared.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Services {
@@ -23,7 +21,7 @@ namespace ProcessSpawner.Infrastructure.Services {
         public readonly IProcessManagerFinishProcessCommand m_processManagerFinishProcessCommand;
         public readonly IUserAuthenticationService m_userAuthenticationService;
         public readonly IProcessInstanceRepository m_processInstanceRepository;
-        public readonly IProcessManagerService m_processManagerService;
+        public readonly IProcessManagerUtilsService m_processManagerUtilsService;
         private readonly IMapper m_mapper;
 
         public ProcessSpawningService(IConfiguration configuration,
@@ -33,7 +31,7 @@ namespace ProcessSpawner.Infrastructure.Services {
             IProcessManagerFinishProcessCommand processManagerFinishProcessCommand,
             IUserAuthenticationService userAuthenticationService,
             IProcessInstanceRepository processInstanceRepository,
-            IProcessManagerService processManagerService,
+            IProcessManagerUtilsService processManagerUtilsService,
             IMapper mapper) {
             m_configuration = configuration;
             m_logger = logger;
@@ -42,10 +40,11 @@ namespace ProcessSpawner.Infrastructure.Services {
             m_processManagerFinishProcessCommand = processManagerFinishProcessCommand;
             m_userAuthenticationService = userAuthenticationService;
             m_processInstanceRepository = processInstanceRepository;
-            m_processManagerService = processManagerService;
+            m_processManagerUtilsService = processManagerUtilsService;
             m_mapper = mapper;
         }
 
+        // @Todo separate this
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(ProcessSpawnRequestDto obj) {
             // @Todo Validator
             var spawnProcessResponse = await m_processMangerSpawningCommunication.SpawnProcess(m_processManagerConfigProvider.GetConfig(), obj);
@@ -53,7 +52,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                 throw new Exception(spawnProcessResponse.message);
             }
 
-            var processManager = await m_processManagerService.GetAvailableProcessManager();
+            var processManager = await m_processManagerUtilsService.GetAvailableProcessManager();
             if (processManager == null) {
                 throw new Exception("Process manager doesn't exist!");
             }

@@ -12,7 +12,7 @@ using ProcessSpawner.Protobuf;
 using ProcessSpawner.Protobuf.Communication;
 using Quartz;
 
-namespace ProcessSpawner.Infrastructure.Services {
+namespace ProcessSpawner.Infrastructure.Services.gRPC {
     public class ProcessStatusScheduler : IJob {
         private static long Offline_Threshold = 1000 * 60 * 5; // 5 min
 

@@ -18,8 +18,13 @@ export class SidenavComponent {
         },
         {
             label: 'Process Spawner',
-            icon: 'dns icon',
+            icon: 'rocket_launch',
             route: '/process-spawner'
+        },
+        {
+            label: 'Process Manager',
+            icon: 'manage_accounts',
+            route: '/process-manager'
         }
     ];
 

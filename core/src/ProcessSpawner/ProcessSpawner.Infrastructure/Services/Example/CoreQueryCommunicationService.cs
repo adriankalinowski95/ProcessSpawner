@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.Repositories;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.Example;
 using ProcessSpawner.Domain.Models;
 using ProcessSpawner.Infrastructure.Repositories;
 using ProcessSpawner.Protobuf.CoreCommunication;
 
-namespace ProcessSpawner.Infrastructure.Services {
+namespace ProcessSpawner.Infrastructure.Services.Example {
+    // Its example code for sending a command from process manager to core!
     public class CoreQueryCommunicationService : ICoreQueryCommunicationService {
         readonly ILogger<CoreQueryCommunicationService> m_logger;
         readonly IProcessInstanceRepository m_processInstanceRepository;

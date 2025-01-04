@@ -2,11 +2,11 @@
 using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.Repositories;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.gRPC;
 using ProcessSpawner.Infrastructure.Api;
 using ProcessSpawner.Protobuf;
 
-namespace ProcessSpawner.Infrastructure.Services {
+namespace ProcessSpawner.Infrastructure.Services.gRPC {
     public class ProcessMangerInputService : IProcessManagerInputService {
         readonly ILogger<ProcessMangerInputService> m_logger;
         readonly IProcessInstanceRepository m_processInstanceRepository;

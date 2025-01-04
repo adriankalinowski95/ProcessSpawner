@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.Common;
 using ProcessSpawner.Domain.Models;
 
-namespace ProcessSpawner.Infrastructure.Services {
+namespace ProcessSpawner.Infrastructure.Services.Common {
     public class ProcessManagerConfigProvider : IProcessManagerConfigProvider {
         public readonly IConfiguration m_configuration;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using ProcessSpawner.Application.Repositories;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.Common;
 using ProcessSpawner.Domain.Models;
 
 namespace core.Settings {

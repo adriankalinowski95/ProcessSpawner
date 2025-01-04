@@ -46,9 +46,9 @@ var app = builder.Build();
 // @Todo remove this and just repair a dbcontext
 new RuntimeSeed(app).Seed();
 
-app.MapGrpcService<ProcessSpawner.Infrastructure.Api.ProcessManagerInputController>();
-app.MapGrpcService<ProcessSpawner.Infrastructure.Api.CoreCommandCommunicationController>();
-app.MapGrpcService<ProcessSpawner.Infrastructure.Api.CoreQueryCommunicationController>();
+app.MapGrpcService<ProcessSpawner.Infrastructure.Api.gRPC.ProcessManagerInputController>();
+app.MapGrpcService<ProcessSpawner.Infrastructure.Api.Example.CoreCommandCommunicationController>();
+app.MapGrpcService<ProcessSpawner.Infrastructure.Api.Example.CoreQueryCommunicationController>();
 
 // app.MapGrpcService<CoreGrpcService>();
 

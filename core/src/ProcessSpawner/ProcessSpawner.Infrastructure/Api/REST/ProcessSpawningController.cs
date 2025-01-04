@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.DTOs;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.REST;
 using Shared.Generic.RestApi;
 
-namespace ProcessSpawner.Infrastructure.Api {
+namespace ProcessSpawner.Infrastructure.Api.REST {
     [Route("api/[controller]")]
     [ApiController]
     public class ProcessSpawningController : ControllerBase {

@@ -1,9 +1,9 @@
 ﻿using System;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using ProcessSpawner.Application.Services;
+using ProcessSpawner.Application.Services.Example;
 
-namespace ProcessSpawner.Infrastructure.Api {
+namespace ProcessSpawner.Infrastructure.Api.Example {
     public class CoreCommandCommunicationController : ProcessSpawner.Protobuf.CoreCommunication.CoreCommandCommunicationService.CoreCommandCommunicationServiceBase {
         readonly ILogger<CoreCommandCommunicationController> m_logger;
         readonly ICoreCommandCommunicationService m_service;

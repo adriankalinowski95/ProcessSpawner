@@ -62,7 +62,6 @@
             </td>
           </ng-container>
     }
-
     <tr mat-header-row *matHeaderRowDef="mapDisplayedColumnsToColumnName(); sticky: config.stickyHeader "></tr>
     <tr mat-row *matRowDef="let row; columns: mapDisplayedColumnsToColumnName();" (dblclick)="handelElement(actionType.Edit, row, true)"></tr>
   </table>

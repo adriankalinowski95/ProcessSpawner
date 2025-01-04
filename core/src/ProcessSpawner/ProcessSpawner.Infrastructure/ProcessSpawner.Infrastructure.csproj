@@ -17,6 +17,13 @@
     <None Remove="Tools\" />
     <None Remove="Mapping\" />
     <None Remove="Commands\" />
+    <None Remove="Services\Example\" />
+    <None Remove="Services\gRPC\" />
+    <None Remove="Services\REST\" />
+    <None Remove="Services\Common\" />
+    <None Remove="Api\Example\" />
+    <None Remove="Api\REST\" />
+    <None Remove="Api\gRPC\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Api\" />
@@ -25,6 +32,13 @@
     <Folder Include="Tools\" />
     <Folder Include="Mapping\" />
     <Folder Include="Commands\" />
+    <Folder Include="Services\Example\" />
+    <Folder Include="Services\gRPC\" />
+    <Folder Include="Services\REST\" />
+    <Folder Include="Services\Common\" />
+    <Folder Include="Api\Example\" />
+    <Folder Include="Api\REST\" />
+    <Folder Include="Api\gRPC\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProcessSpawner.Application\ProcessSpawner.Application.csproj" />

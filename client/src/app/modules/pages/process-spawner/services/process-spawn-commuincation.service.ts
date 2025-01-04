@@ -7,12 +7,16 @@ import { Observable } from "rxjs";
 @Injectable({
     providedIn: 'root'
 })
-export class SpawnProcessCrudService {
+export class SpawnProcessCommunicationService {
     private PROCESS_SPAWNING_BASE_PATH = environment.apiUrl + '/api/ProcessSpawning';
 
     constructor(private http: HttpClient) { }
+    
+    spawnProcess(processSpawnRequest: ProcessSpawnRequestDto) : Observable<any> {
+        return this.http.post(this.PROCESS_SPAWNING_BASE_PATH, processSpawnRequest);
+    }
 
-    spawnProcess(spawnProcessRequest: ProcessSpawnRequestDto): Observable<any> {
-        return this.http.post(this.PROCESS_SPAWNING_BASE_PATH + '/SpawnProcess', spawnProcessRequest);
+    finishProcess(id: number) : Observable<any> {
+        return this.http.post(this.PROCESS_SPAWNING_BASE_PATH + '/finish-process/' + id, {});
     }
 }
