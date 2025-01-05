@@ -1,17 +1,14 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../../../../environments/environment.prod";
-import { HttpClient } from "@angular/common/http";
 import { BaseCrudService } from "../../../shared/request/base-crud-service";
 import { ProcessInstanceDto } from "../models/process-instance-dto";
-import { ProcessSpawnRequestDto } from "../models/process-spawn-request-dto";
-import { Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
     providedIn: 'root'
 })
-export class ProcessSpawnCrudService extends BaseCrudService<ProcessInstanceDto> { 
+export class ProcessInstanceCrudService extends BaseCrudService<ProcessInstanceDto> { 
     constructor(http: HttpClient) {
-        super(http, environment.apiUrl + '/api/ProcessSpawning');
+        super(http, environment.apiUrl + '/api/ProcessInstance');
     }
 }
-  

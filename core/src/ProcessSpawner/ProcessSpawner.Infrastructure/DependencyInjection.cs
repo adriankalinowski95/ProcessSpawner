@@ -36,6 +36,7 @@ public static class DependencyInjection {
         services.AddScoped<ICoreQueryCommunicationService, CoreQueryCommunicationService>();
 
         services.AddScoped<IProcessInstanceRepository, ProcessInstanceRepository>();
+        services.AddScoped<IProcessInstanceService, ProcessInstanceService>();
         services.AddScoped<IProcessSpawningService, ProcessSpawningService>();
         services.AddGrpc();
 

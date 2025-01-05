@@ -45,7 +45,7 @@ namespace ProcessSpawner.Infrastructure.Services {
         }
 
         // @Todo separate this
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Create(ProcessSpawnRequestDto obj) {
+        public async Task<ObjectOperationResult<ProcessInstanceDto>> SpawnProcess(ProcessSpawnRequestDto obj) {
             // @Todo Validator
             var spawnProcessResponse = await m_processMangerSpawningCommunication.SpawnProcess(m_processManagerConfigProvider.GetConfig(), obj);
             if (!spawnProcessResponse.success) {
@@ -57,6 +57,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                 throw new Exception("Process manager doesn't exist!");
             }
 
+            // @Todo ADd user id
             var procesInstance = new Domain.Models.ProcessInstance {
                 ProcessId = spawnProcessResponse.process_id,
                 InternalId = spawnProcessResponse.internal_id,
@@ -96,56 +97,6 @@ namespace ProcessSpawner.Infrastructure.Services {
                 ErrorMessage = string.Empty,
                 Object = m_mapper.Map<ProcessInstanceDto>(processInstance)
             };
-        }
-
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Delete(int id) {
-            var processInstance = await m_processInstanceRepository.GetByIdAsync(id);
-            if (processInstance == null) {
-                throw new KeyNotFoundException("Can't find process instace for id: " + id);
-            }
-
-            m_processInstanceRepository.Remove(processInstance);
-
-            return new ObjectOperationResult<ProcessInstanceDto> {
-                Status = BaseResponseStatus.Ok,
-                ErrorMessage = string.Empty,
-                Object = m_mapper.Map<ProcessInstanceDto>(processInstance),
-            };
-        }
-
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Get(int id) {
-            var processInstance = await m_processInstanceRepository.GetByIdAsync(id);
-            if (processInstance == null) {
-                throw new KeyNotFoundException("Can't find process instace for id: " + id);
-            }
-
-            return new ObjectOperationResult<ProcessInstanceDto> {
-                Status = BaseResponseStatus.Ok,
-                ErrorMessage = string.Empty,
-                Object = m_mapper.Map<ProcessInstanceDto>(processInstance),
-            };
-        }
-
-        public async Task<ObjectsResponse<ProcessInstanceDto>> GetAll() {
-            // @Todo Return per user, not whole
-            var user = m_userAuthenticationService.GetCurrentUser();
-
-            var processesInstances = await m_processInstanceRepository.GetAllAsync();
-            if (processesInstances == null) {
-                throw new Exception("Can't get processes");
-            }
-
-            return new ObjectsResponse<ProcessInstanceDto> {
-                Status = BaseResponseStatus.Ok,
-                ErrorMessage = string.Empty,
-                Objects = processesInstances.Select(processInstance => m_mapper.Map<ProcessInstanceDto>(processInstance)).ToList()
-            };
-        }
-
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, ProcessInstanceDto obj) {
-            // @Todo Validator
-
-            throw new NotImplementedException();
         }
     }
 }

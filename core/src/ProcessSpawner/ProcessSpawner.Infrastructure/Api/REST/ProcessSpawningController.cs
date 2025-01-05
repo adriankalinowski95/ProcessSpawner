@@ -21,40 +21,16 @@ namespace ProcessSpawner.Infrastructure.Api.REST {
             m_processSpawningService = processSpawningService;
         }
 
-        [HttpPost]
+        [HttpPost("spawn-process", Name = "SpawnProcess")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectResponse<ProcessInstanceDto>> Create([FromBody] ProcessSpawnRequestDto spawnProcessRequestDto) {
-            return await m_processSpawningService.Create(spawnProcessRequestDto);
+        public async Task<ObjectResponse<ProcessInstanceDto>> SpawnProcess([FromBody] ProcessSpawnRequestDto spawnProcessRequestDto) {
+            return await m_processSpawningService.SpawnProcess(spawnProcessRequestDto);
         }
 
         [HttpPost("finish-process/{id}", Name = "FinishProcess")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ObjectResponse<ProcessInstanceDto>> FinishProcess(int id) {
             return await m_processSpawningService.FinishProcess(id);
-        }
-
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectsResponse<ProcessInstanceDto>> Get() {
-            return await m_processSpawningService.GetAll();
-        }
-
-        [HttpGet("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Get(int id) {
-            return await m_processSpawningService.Get(id);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, [FromBody] ProcessInstanceDto processInstanceDto) {
-            return await m_processSpawningService.Put(id, processInstanceDto);
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Delete(int id) {
-            return await m_processSpawningService.Delete(id);
         }
     }
 }
