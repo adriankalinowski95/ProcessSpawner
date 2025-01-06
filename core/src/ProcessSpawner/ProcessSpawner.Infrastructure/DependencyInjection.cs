@@ -31,12 +31,14 @@ public static class DependencyInjection {
         services.AddScoped<IProcessManagerService, ProcessManagerService>();
 
         services.AddScoped<ICoreCommandCommunicationService, CoreCommandCommunicationService>();
-        services.AddScoped<IProcessEventRepository, ProcessEventRepository>();
-
         services.AddScoped<ICoreQueryCommunicationService, CoreQueryCommunicationService>();
+
+        services.AddScoped<IProcessEventRepository, ProcessEventRepository>();
+        services.AddScoped<IProcessEventService, ProcessEventService>();
 
         services.AddScoped<IProcessInstanceRepository, ProcessInstanceRepository>();
         services.AddScoped<IProcessInstanceService, ProcessInstanceService>();
+
         services.AddScoped<IProcessSpawningService, ProcessSpawningService>();
         services.AddGrpc();
 

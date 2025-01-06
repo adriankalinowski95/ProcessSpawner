@@ -14,6 +14,10 @@ const PagesRouting: Routes = [
         loadChildren: () => import('./process-manager/process-manager.module').then((m) => m.ProcessManagerModule),
     },
     {
+        path: 'process-event',
+        loadChildren: () => import('./process-event/process-event.module').then((m) => m.ProcessEventModule),
+    },
+    {
         path: '',
         redirectTo: '/dashboard',
         pathMatch: 'full',

@@ -31,7 +31,6 @@ export class SidenavComponent {
     ];
 
     constructor(public authService: AuthService) {
-        
         let processSpawnerMenuItem = this.getProcessSpawnerMenuItem();
         if (shared.isNotNullOrUndefined(processSpawnerMenuItem)) {
             const user = this.authService.getAuthFromLocalStorage()?.user;

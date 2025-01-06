@@ -31,7 +31,15 @@ export class ProcessListComponent implements OnInit {
       contentConfig: {
         tableConfig: {
           multiselect: true,
-          rowTableIcons: [],
+          rowTableIcons: [
+            {
+                name: 'Show',
+                displayName: 'Events',
+                actionType: ActionType.SpecialAction2,
+                type: Type.Default,
+                iconName: 'preview'
+            }
+          ],
           multiActionButton: {
             actions: [{
                 name: 'edit',
@@ -101,7 +109,6 @@ export class ProcessListComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private authService: AuthService,
         private processSpawnService: ProcessSpawnService, 
         private processInstancesHolderSerivce: ProcessInstancesHolderService) {
     }
@@ -200,7 +207,18 @@ export class ProcessListComponent implements OnInit {
             }
 
             this.finishProcess($event.content[0].index);
+        } else if ($event.actionType === ActionType.SpecialAction2) {
+            const content = $event.content;
+            if (content.length != 1) {
+                return;
+            }
+
+            this.goProcessEvents(content[0].index);
         }
+    }
+
+    goProcessEvents(processId: number) {
+        this.router.navigate(['/process-event/process/' + processId]);
     }
 
     spawnProcess() {

@@ -7,6 +7,9 @@ namespace ProcessSpawner.Infrastructure.Tools {
 
             CreateMap<Domain.Models.ProcessManager, Application.DTOs.ProcessManagerDto>();
             CreateMap<Application.DTOs.ProcessManagerDto, Domain.Models.ProcessManager>();
+
+            CreateMap<Domain.Models.ProcessEvent, Application.DTOs.ProcessEventDto>();
+            CreateMap<Application.DTOs.ProcessEventDto, Domain.Models.ProcessEvent>();
         }
     }
 }

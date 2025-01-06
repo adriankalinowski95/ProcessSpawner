@@ -10,7 +10,8 @@ export enum ActionType {
   Reload,
   Edit,
   Delete,
-  SpecialAction1
+  SpecialAction1,
+  SpecialAction2
 }
 
 export interface Config {
