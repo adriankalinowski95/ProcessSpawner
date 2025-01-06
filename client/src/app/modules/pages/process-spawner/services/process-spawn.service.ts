@@ -6,11 +6,12 @@ import { shared } from "../../../shared/shared";
 import { ProcessSpawnActionsService } from "./process-spawn-actions.service";
 import { BaseCrudServiceImpl } from "../../../shared/request/base-crud-impl-service";
 import { ProcessInstanceCrudService } from "./process-instance-crud.serivce";
+import { ExtendedCrudServiceImpl } from "../../../shared/request/extended-crud-service-impl";
 
 @Injectable({
     providedIn: 'root'
 })
-export class ProcessSpawnService extends BaseCrudServiceImpl<ProcessInstanceDto> {
+export class ProcessSpawnService extends ExtendedCrudServiceImpl<ProcessInstanceDto> {
     constructor(private processInstanceCrudService: ProcessInstanceCrudService,
                 private processSpawnActionsService: ProcessSpawnActionsService) 
     {
@@ -79,5 +80,17 @@ export class ProcessSpawnService extends BaseCrudServiceImpl<ProcessInstanceDto>
             finalize(() => {
                 this.isLoadingSubject.next(false)
             }));
+    }
+
+    getProcessesByUserId(userId: number, pageNumber: number, pageSize: number, responseCallback?: (response: shared.response.Object<any>) => void) {
+        return this.getWithPaginationTemplate(pageNumber, pageSize, (pageNumber: number, pageSize: number) => {
+            return this.processInstanceCrudService.getByUserId(userId, pageNumber, pageSize);
+        }, responseCallback);
+    }
+
+    getProcessByManagerId(managerId: number, pageNumber: number, pageSize: number, responseCallback?: (response: shared.response.Object<any>) => void) {
+        return this.getWithPaginationTemplate(pageNumber, pageSize, (pageNumber: number, pageSize: number) => {
+            return this.processInstanceCrudService.getByManager(managerId, pageNumber, pageSize);
+        }, responseCallback);
     }
 }

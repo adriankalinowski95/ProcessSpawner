@@ -92,6 +92,8 @@ private:
 
                 auto result = sender->ping(*request);
                 if (!result) {
+                    // @Todo Change this - if process manager exist, it will return false,
+                    // but counter shouldn't be increased
                     m_failruesInRow++;
                     
                     m_logger->log(

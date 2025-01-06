@@ -46,6 +46,11 @@ namespace ProcessSpawner.Infrastructure.Services {
 
         // @Todo separate this
         public async Task<ObjectOperationResult<ProcessInstanceDto>> SpawnProcess(ProcessSpawnRequestDto obj) {
+            var user = m_userAuthenticationService.GetCurrentUser();
+            if (user == null) {
+                throw new UnauthorizedAccessException();
+            }
+
             // @Todo Validator
             var spawnProcessResponse = await m_processMangerSpawningCommunication.SpawnProcess(m_processManagerConfigProvider.GetConfig(), obj);
             if (!spawnProcessResponse.success) {
@@ -57,7 +62,6 @@ namespace ProcessSpawner.Infrastructure.Services {
                 throw new Exception("Process manager doesn't exist!");
             }
 
-            // @Todo ADd user id
             var procesInstance = new Domain.Models.ProcessInstance {
                 ProcessId = spawnProcessResponse.process_id,
                 InternalId = spawnProcessResponse.internal_id,
@@ -66,6 +70,7 @@ namespace ProcessSpawner.Infrastructure.Services {
                 Status = Domain.Enums.ProcessStatus.Started,
                 CreatedTimeMs = DateTimeOffset.FromUnixTimeMilliseconds(spawnProcessResponse.created_time_ms).UtcDateTime,
                 LastUpdateTimeMs = DateTimeOffset.FromUnixTimeMilliseconds(spawnProcessResponse.last_update_time_ms).UtcDateTime,
+                UserId = user.Id,
                 ProcessManagerId = processManager.Id
             };
 

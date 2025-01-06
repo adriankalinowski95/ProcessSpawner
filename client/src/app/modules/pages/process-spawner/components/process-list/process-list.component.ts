@@ -11,6 +11,8 @@ import { ProcessSpawnService } from '../../services/process-spawn.service';
 import { ProcessInstanceDto } from '../../models/process-instance-dto';
 import { ProcessInstancesHolderService } from '../../services/process-instances-holder.service';
 import { ProcessStatus } from '../../enums/process-status.enum';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../../../auth/services/auth.service';
 // import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Component({
@@ -19,6 +21,10 @@ import { ProcessStatus } from '../../enums/process-status.enum';
   styleUrl: './process-list.component.scss',
 })
 export class ProcessListComponent implements OnInit {
+    id!: number;
+    isUserPath = false; 
+    isManagerPath = false; 
+    
     tableConfig: MainConfig = {
       useFilters: false,
       filterConfig: {},
@@ -93,11 +99,18 @@ export class ProcessListComponent implements OnInit {
     dataSource: DataSource[] = new Array<DataSource>;
     
     constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private authService: AuthService,
         private processSpawnService: ProcessSpawnService, 
         private processInstancesHolderSerivce: ProcessInstancesHolderService) {
     }
     
     ngOnInit(): void {
+        if (!this.loadPath()) {
+            this.goDashboard();
+        }
+
         this.processInstancesHolderSerivce.items$.subscribe((processInstances: ProcessInstanceDto[]) => {
             this.dataSource = processInstances.map((processInstance: ProcessInstanceDto) => {
                 return {
@@ -109,7 +122,67 @@ export class ProcessListComponent implements OnInit {
             });
         });
 
-        this.getAllProcesses();
+        this.loadData();
+    }
+
+    goDashboard() {
+        this.router.navigate(['/dashboard']);
+    }
+
+    loadPath(): boolean {
+        this.id = Number(this.route.snapshot.paramMap.get('id'));
+        const pathSegments = this.route.snapshot.url.map(segment => segment.path);
+        if (pathSegments.includes('user')) {
+            this.isUserPath = true;
+
+            return true;
+        } else if (pathSegments.includes('manager')) {
+            this.isManagerPath = true;
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    loadData() {
+        if (this.isUserPath) {
+            this.getForUser(0, 20);
+        } else if (this.isManagerPath) {
+            this.getForProcessManager(0, 20);
+        } else {
+            this.goDashboard();
+        }
+    }
+
+    getForUser(pageNumber: number, pageSize: number) {
+        const errorHandler = (response: shared.response.Object<any>) => {
+            // this.notificationService.error(response.errorMessage);
+        };
+
+        this.processSpawnService.getProcessesByUserId(this.id, pageNumber, pageSize, errorHandler).pipe(
+            first(),
+            tap((processInstances: shared.response.BasePagination<ProcessInstanceDto> | undefined) => {
+                if (shared.isNotNullOrUndefined(processInstances)) {
+                    this.processInstancesHolderSerivce.setItems(processInstances.data);
+                }
+            })
+        ).subscribe();
+    }
+
+    getForProcessManager(pageNumber: number, pageSize: number) {
+        const errorHandler = (response: shared.response.Object<any>) => {
+            // this.notificationService.error(response.errorMessage);
+        };
+
+        this.processSpawnService.getProcessByManagerId(this.id, pageNumber, pageSize, errorHandler).pipe(
+            first(),
+            tap((processInstances: shared.response.BasePagination<ProcessInstanceDto> | undefined) => {
+                if (shared.isNotNullOrUndefined(processInstances)) {
+                    this.processInstancesHolderSerivce.setItems(processInstances.data);
+                }
+            })
+        ).subscribe();
     }
 
     eventHandler($event: HandelContentEvent) {
@@ -147,21 +220,6 @@ export class ProcessListComponent implements OnInit {
             tap((spawnProcessResponse: ProcessInstanceDto | undefined) => {
                 if (shared.isNotNullOrUndefined(spawnProcessResponse)) {
                     this.processInstancesHolderSerivce.addItem(spawnProcessResponse);
-                }
-            })
-        ).subscribe();
-    }
-
-    getAllProcesses() {
-        const errorHandler = (response: shared.response.Object<any>) => {
-            // this.notificationService.error(response.errorMessage);
-        };
-
-        this.processSpawnService.getAll().pipe(
-            first(),
-            tap((processInstances: ProcessInstanceDto[] | undefined) => {
-                if (shared.isNotNullOrUndefined(processInstances)) {
-                    this.processInstancesHolderSerivce.setItems(processInstances);
                 }
             })
         ).subscribe();

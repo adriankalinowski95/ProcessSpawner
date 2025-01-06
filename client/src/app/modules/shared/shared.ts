@@ -10,11 +10,11 @@ import * as IsNotNullOrUnd from "./utils/validators"
 import * as CommonMeth from "./utils/common-methods"
 import * as CommonDefinitions from "./definitions"
 import * as _BaseCrudService from "./request/base-crud-service"
-import * as _ExtendCrudService from "./request/extend-crud-service"
+import * as _ExtendCrudService from "./request/extended-crud-service"
 import * as _ObjectsResponse from "./response/objects-response"
 import * as _NotificationService from "./services/notification.service"
 import * as _BaseStateHolder from "./services/base-state-holder"
-import * as _ExtendStateHolder from "./services/extend-state-holder"
+import * as _ExtendedStateHolder from "./services/extend-state-holder"
 
 import * as ElementListModuleImport from "./element-list/element-list.module"
 import * as ElementListConfigModel from "./element-list/models/ElementListConfig";
@@ -45,10 +45,10 @@ export namespace shared {
     export namespace services {
         export import FormErrorHandling = FormErrorHandlingService.FormErrorHandlingService;
         export import BaseCrudService = _BaseCrudService.BaseCrudService;
-        export import ExtendCrudService = _ExtendCrudService.ExtendCrudService;
+        export import ExtendedCrudService = _ExtendCrudService.ExtendedCrudService;
         export import NotificationService = _NotificationService.NotificationService;
         export import BaseStateHolder = _BaseStateHolder.BaseStateHolder;
-        export import ExtendStateHolder = _ExtendStateHolder.ExtendStateHolder;
+        export import ExtendStateHolder = _ExtendedStateHolder.ExtendStateHolder;
     }
 
     export import definitions = CommonDefinitions.definitions
@@ -56,7 +56,6 @@ export namespace shared {
     export import Base64Converter = Base64Conv.Base64Converter;
     export import getRandomString = CommonMeth.getRandomString;
     export import getRandomNumber = CommonMeth.getRandomNumber;
-
 
     export namespace element_list {
         export namespace models {

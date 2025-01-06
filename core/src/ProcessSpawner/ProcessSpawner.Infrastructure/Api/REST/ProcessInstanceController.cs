@@ -21,8 +21,20 @@ namespace ProcessSpawner.Infrastructure.Api.REST {
 
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ObjectsResponse<ProcessInstanceDto>> Get() {
-            return await m_processInstanceService.GetAll();
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> Get([FromQuery] int pageNumber, [FromQuery] int pageSize) {
+            return await m_processInstanceService.GetAll(pageNumber, pageSize);
+        }
+
+        [HttpGet("user/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(int id, [FromQuery] int pageNumber, [FromQuery] int pageSize) {
+            return await m_processInstanceService.GetByUserId(id, pageNumber, pageSize);
+        }
+
+        [HttpGet("manager/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByManagerId(int id, [FromQuery] int pageNumber, [FromQuery] int pageSize) {
+            return await m_processInstanceService.GetByManagerId(id, pageNumber, pageSize);
         }
 
         [HttpGet("{id}")]

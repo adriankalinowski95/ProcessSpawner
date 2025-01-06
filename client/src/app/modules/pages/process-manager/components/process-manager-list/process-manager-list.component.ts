@@ -10,6 +10,7 @@ import { ProcessManagersHolderService } from '../../services/process-managers-ho
 import { ProcessManagerService } from '../../services/process-manager.service';
 import { ProcessManagerDto } from '../../models/process-manager-dto';
 import { first, tap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-process-manager-list',
@@ -23,7 +24,15 @@ export class ProcessManagerListComponent {
           contentConfig: {
             tableConfig: {
               multiselect: true,
-              rowTableIcons: [],
+              rowTableIcons: [
+                {
+                    name: 'Show',
+                    displayName: 'Proceses',
+                    actionType: ActionType.SpecialAction1,
+                    type: Type.Default,
+                    iconName: 'preview'
+                }
+              ],
               multiActionButton: {
                 actions: [{
                     name: 'edit',
@@ -91,6 +100,7 @@ export class ProcessManagerListComponent {
     dataSource: DataSource[] = new Array<DataSource>;
 
     constructor(
+        private router: Router,
         private processManagerService: ProcessManagerService, 
         private processManagersHolderSerivce: ProcessManagersHolderService) {}
         
@@ -118,7 +128,18 @@ export class ProcessManagerListComponent {
             }
 
             this.delete($event.content[0].index);
+        } else if ($event.actionType === ActionType.SpecialAction1) {
+            const content = $event.content;
+            if (content.length != 1) {
+                return;
+            }
+
+            this.goProcesses(content[0].index);
         }
+    }
+
+    goProcesses(managerId: number) {
+        this.router.navigate(['/process-spawner/manager/' + managerId]);
     }
 
     getAllProcessManagers() {

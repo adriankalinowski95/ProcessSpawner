@@ -42,9 +42,6 @@ export class SidenavMenuItemComponent implements OnInit {
     }
 
     getSelectedItemClass() {
-        console.log(this.item);
-        console.log("is sub item");
-
         return !this.isSubItem ? 'selected-menu-item' : 'non-selected-menu-item'
     }
 }

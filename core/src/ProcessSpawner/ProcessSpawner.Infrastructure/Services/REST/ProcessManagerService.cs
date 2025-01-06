@@ -47,6 +47,10 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
             };
         }
 
+        public Task<BasePaginationResponse<ProcessManagerDto>> GetAll(int pageNumber, int pageSize) {
+            throw new NotImplementedException();
+        }
+
         public Task<ObjectOperationResult<ProcessManagerDto>> Put(int id, ProcessManagerDto obj) {
             throw new NotImplementedException();
         }

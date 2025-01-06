@@ -83,5 +83,9 @@ namespace Authorization.Infrastructure.Services {
                 Object = obj
             };
         }
+
+        public Task<BasePaginationResponse<User>> GetAll(int pageNumber, int pageSize) {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Authorization.Application.Services;
+using Authorization.Domain.Models;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -79,6 +80,47 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
                 Objects = processesInstances.Select(processInstance => m_mapper.Map<ProcessInstanceDto>(processInstance)).ToList()
+            };
+        }
+
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetAll(int pageNumber, int pageSize) {
+            // @Todo change this to service
+            var request = new BasePaginationRequest(pageNumber, pageSize);
+            var processes = await m_processInstanceRepository.GetAllAsync(request.PageNumber, request.PageSize);
+            var processesDto = processes.Select(process => m_mapper.Map<ProcessInstanceDto>(process)).ToList();
+
+            return new BasePaginationResponse<ProcessInstanceDto> {
+                Data = processesDto,
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(int userId, int pageNumber, int pageSize) {
+            var processes = await m_processInstanceRepository.GetAllAsync(pageNumber, pageSize, process => process.UserId == userId);
+            var processesDto = processes.Select(process => m_mapper.Map<ProcessInstanceDto>(process)).ToList();
+
+            return new BasePaginationResponse<ProcessInstanceDto> {
+                Data = processesDto,
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByManagerId(int managerId, int pageNumber, int pageSize) {
+            var processes = await m_processInstanceRepository.GetAllAsync(pageNumber, pageSize, process => process.ProcessManagerId == managerId);
+            var processesDto = processes.Select(process => m_mapper.Map<ProcessInstanceDto>(process)).ToList();
+
+            return new BasePaginationResponse<ProcessInstanceDto> {
+                Data = processesDto,
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
         }
 

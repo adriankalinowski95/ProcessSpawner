@@ -4,7 +4,14 @@ import { ProcessListComponent } from './components/process-list/process-list.com
 
 const routes: Routes = [
     {
-        path: '',
+        path: 'user/:id',
+        component: ProcessListComponent,
+        children: [
+          { path: '**', redirectTo: '', pathMatch: 'full' },
+        ],
+    },
+    {
+        path: 'manager/:id',
         component: ProcessListComponent,
         children: [
           { path: '**', redirectTo: '', pathMatch: 'full' },

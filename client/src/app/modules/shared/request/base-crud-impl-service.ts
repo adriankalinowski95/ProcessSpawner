@@ -6,12 +6,12 @@ export class BaseCrudServiceImpl<T extends { id: any }> {
     isLoadingSubject: BehaviorSubject<boolean>;
     isLoading$: Observable<boolean>;
     
-    constructor(private crudService: BaseCrudService<T>) {
+    public constructor(private crudService: BaseCrudService<T>) {
         this.isLoadingSubject = new BehaviorSubject<boolean>(false);
         this.isLoading$ = this.isLoadingSubject.asObservable();
     }
 
-    create(model: T, responseCallback?: (response: shared.response.Object<any>) => void) {
+    public create(model: T, responseCallback?: (response: shared.response.Object<any>) => void) {
         this.isLoadingSubject.next(true);
         
         return this.crudService.create(model).pipe(
@@ -43,7 +43,7 @@ export class BaseCrudServiceImpl<T extends { id: any }> {
             }));
     }
 
-    getAll(responseCallback?: (response: shared.response.Object<any>) => void) {
+    public getAll(responseCallback?: (response: shared.response.Object<any>) => void) {
         this.isLoadingSubject.next(true);
 
         return this.crudService.getAll().pipe(
@@ -71,7 +71,7 @@ export class BaseCrudServiceImpl<T extends { id: any }> {
             }));
     }
 
-    delete(id: number, responseCallback?: (response: shared.response.Object<any>) => void) {
+    public delete(id: number, responseCallback?: (response: shared.response.Object<any>) => void) {
         this.isLoadingSubject.next(true);
 
         return this.crudService.delete(id).pipe(

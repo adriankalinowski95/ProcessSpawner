@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shared.Generic.Repositories.String {
     public class GenericRepository<T> : IGenericRepository<T> where T : class {
@@ -10,12 +12,37 @@ namespace Shared.Generic.Repositories.String {
             m_dbSet = m_context.Set<T>();
         }
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync() {
-            return await m_dbSet.ToListAsync();
+        public virtual async Task<T> Get(Expression<Func<T, bool>> predicate) {
+            return await m_dbSet.Where(predicate).FirstAsync();
         }
 
         public virtual async Task<T> GetByIdAsync(string id) {
             return await m_dbSet.FindAsync(id);
+        }
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync() {
+            return await m_dbSet.ToListAsync();
+        }
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null) {
+            if (predicate == null) {
+                return await m_dbSet.ToListAsync();
+            }
+
+            return await m_dbSet.Where(predicate).ToListAsync();
+        }
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? predicate = null) {
+            if (predicate == null) {
+                return await m_dbSet.Skip((pageNumber - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+            }
+
+            return await m_dbSet.Where(predicate)
+                                .Skip((pageNumber - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
         }
 
         public virtual async Task<T> AddAsync(T entity) {
@@ -27,10 +54,7 @@ namespace Shared.Generic.Repositories.String {
 
         public virtual async void Update(T entity) {
             var result = m_context.Update(entity);
-
             var res = m_context.SaveChanges();
-
-            Console.Write(res);
         }
 
         public virtual void Remove(T entity) {

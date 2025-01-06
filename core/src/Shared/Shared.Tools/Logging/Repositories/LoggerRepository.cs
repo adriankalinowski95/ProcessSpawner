@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Shared.Tools.Logging.Models;
 using Shared.Types.Db;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
@@ -51,6 +52,18 @@ namespace Shared.Tools.Logging.Repositories {
             dbSet.Remove(entity);
 
             m_context.SaveChangesAsync();
+        }
+
+        public Task<Log> Get(Expression<Func<Log, bool>> predicate) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Log>> GetAllAsync(Expression<Func<Log, bool>>? predicate = null) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Log>> GetAllAsync(int pageNumber, int pageSize, Expression<Func<Log, bool>>? predicate = null) {
+            throw new NotImplementedException();
         }
     }
 }

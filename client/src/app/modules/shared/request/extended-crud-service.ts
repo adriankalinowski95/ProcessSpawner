@@ -3,7 +3,7 @@ import { BaseCrudService } from "./base-crud-service";
 import { HttpClient } from "@angular/common/http";
 
 
-export class ExtendCrudService<T extends { id: any }> extends BaseCrudService<T> {
+export class ExtendedCrudService<T extends { id: any }> extends BaseCrudService<T> {
     constructor(http: HttpClient, basePath: string) {
         super(http, basePath);
     }
