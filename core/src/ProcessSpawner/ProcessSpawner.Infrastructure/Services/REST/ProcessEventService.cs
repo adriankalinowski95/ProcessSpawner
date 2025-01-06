@@ -7,6 +7,7 @@ using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services.REST;
 using ProcessSpawner.Infrastructure.Repositories;
 using Shared.Generic.RestApi;
+using Shared.Types.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Services.REST {
     public class ProcessEventService : IProcessEventService {
@@ -23,6 +24,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
 
         public async Task<BasePaginationResponse<ProcessEventDto>> GetByProcessInstanceId(int processInstanceId, int pageNumber, int pageSize) {
             var processes = await m_processEventRepository.GetAllAsync(pageNumber, pageSize, processEvent => processEvent.ProcessInstanceId == processInstanceId);
+            var recordsCount = await m_processEventRepository.CountAsync(processEvent => processEvent.ProcessInstanceId == processInstanceId);
             var processEvents = processes.Select(process => m_mapper.Map<ProcessEventDto>(process)).ToList();
 
             return new BasePaginationResponse<ProcessEventDto> {
@@ -30,7 +32,8 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
                 PageNumber = pageNumber,
-                PageSize = pageSize
+                PageSize = pageSize,
+                Total = recordsCount
             };
         }
 
@@ -56,6 +59,17 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
 
         public Task<ObjectOperationResult<ProcessEventDto>> Delete(int id) {
             throw new NotImplementedException();
+        }
+
+        public async Task<BasePaginationConfigResponse> GetPaginationConfig(int processInstanceId) {
+            var recordsCount = await m_processEventRepository.CountAsync(process => process.ProcessInstanceId == processInstanceId);
+
+            return new BasePaginationConfigResponse {
+                PageSize = 10,
+                Length = recordsCount,
+                PageNumber = 1,
+                Status = BaseResponseStatus.Ok
+            };
         }
     }
 }

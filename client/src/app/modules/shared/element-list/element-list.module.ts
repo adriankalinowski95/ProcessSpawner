@@ -25,6 +25,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
+    MatPaginatorModule,
     IconModule
   ],
   exports: [

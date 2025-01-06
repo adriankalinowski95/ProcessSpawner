@@ -22,5 +22,9 @@ export class ProcessEventCrudService extends ExtendedCrudService<ProcessEventDto
             }
         });
     }
+
+    getPaginationConfigForProcess(processId: number): Observable<any> {
+        return this.http.get(this.basePath + '/process/pagination-config/' + processId);
+    }
 }
   

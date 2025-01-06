@@ -10,6 +10,8 @@
         <app-element-list [config]="config"
                   [dataSource]="dataSource"
                   [displayedColumns]="columns"
-                  (handelContent)="eventHandler($event)"></app-element-list>
+                  (handelContent)="eventHandler($event)"
+                  (pageChanged)="onPageChange($event)">
+        </app-element-list>
     </mat-card-content>
 </mat-card>

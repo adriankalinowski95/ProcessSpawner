@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Services.REST;
 using Shared.Generic.RestApi;
+using Shared.Types.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Api.REST {
     [Route("api/[controller]")]
@@ -29,6 +30,12 @@ namespace ProcessSpawner.Infrastructure.Api.REST {
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<BasePaginationResponse<ProcessEventDto>> GetByProcessId(int id, [FromQuery] int pageNumber, [FromQuery] int pageSize) {
             return await m_processEventService.GetByProcessInstanceId(id, pageNumber, pageSize);
+        }
+
+        [HttpGet("process/pagination-config/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForProcess(int id) {
+            return await m_processEventService.GetPaginationConfig(id);
         }
 
         [HttpGet("{id}")]

@@ -10,5 +10,6 @@ namespace Shared.Generic.Repositories {
         Task<T> AddAsync(T entity);
         void Update(T entity);
         void Remove(T entity);
+        Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null);
     }
 }

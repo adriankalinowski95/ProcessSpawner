@@ -61,5 +61,13 @@ namespace Shared.Generic.Repositories.Int {
             m_dbSet.Remove(entity);
             m_context.SaveChangesAsync();
         }
+
+        public Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null) {
+            if (predicate == null) {
+                return m_dbSet.CountAsync();
+            }
+
+            return m_dbSet.Where(predicate).CountAsync();
+        }
     }
 }

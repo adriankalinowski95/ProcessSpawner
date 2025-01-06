@@ -1,6 +1,7 @@
 import {shared} from "../../shared";
 import ActionType = shared.action_button.models.ActionType;
 import Type = shared.icon.models.Type;
+import { PageConfig } from "./pageConfig";
 
 export interface FilterConfig {
 }
@@ -9,6 +10,8 @@ export interface ContentHandlerConfig {
 }
 
 export interface PaginationConfig {
+    pageConfig: PageConfig;
+    pageSizeOptions: number[];
 }
 
 export interface RowTableIcon {

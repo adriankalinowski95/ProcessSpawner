@@ -13,6 +13,7 @@ import { ProcessInstancesHolderService } from '../../services/process-instances-
 import { ProcessStatus } from '../../enums/process-status.enum';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../auth/services/auth.service';
+import { PageConfig } from '../../../../shared/element-list/models/pageConfig';
 // import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Component({
@@ -68,8 +69,15 @@ export class ProcessListComponent implements OnInit {
           dbClickEdit: true,
           stickyHeader: true,
         },
-        usePagination: false,
-        paginationConfig: {},
+        usePagination: true,
+        paginationConfig: {
+            pageConfig: {
+                length: 200,
+                pageIndex: 0,
+                size: 10
+            },
+            pageSizeOptions: [5, 10, 20, 50]
+        },
         useContentHandler: true,
         contentHandlerConfig: { buttons: [{
             text: 'Create',
@@ -129,7 +137,7 @@ export class ProcessListComponent implements OnInit {
             });
         });
 
-        this.loadData();
+        this.loadData(1, this.config.contentConfig.paginationConfig.pageConfig.size);
     }
 
     goDashboard() {
@@ -152,11 +160,11 @@ export class ProcessListComponent implements OnInit {
         }
     }
 
-    loadData() {
+    loadData(pageNumber: number, pageSize: number) {
         if (this.isUserPath) {
-            this.getForUser(0, 20);
+            this.getForUser(pageNumber, pageSize);
         } else if (this.isManagerPath) {
-            this.getForProcessManager(0, 20);
+            this.getForProcessManager(pageNumber, pageSize);
         } else {
             this.goDashboard();
         }
@@ -172,6 +180,9 @@ export class ProcessListComponent implements OnInit {
             tap((processInstances: shared.response.BasePagination<ProcessInstanceDto> | undefined) => {
                 if (shared.isNotNullOrUndefined(processInstances)) {
                     this.processInstancesHolderSerivce.setItems(processInstances.data);
+                    this.config.contentConfig.paginationConfig.pageConfig.size = processInstances.pageSize;
+                    this.config.contentConfig.paginationConfig.pageConfig.pageIndex = processInstances.pageNumber - 1;
+                    this.config.contentConfig.paginationConfig.pageConfig.length = processInstances.total;
                 }
             })
         ).subscribe();
@@ -187,6 +198,9 @@ export class ProcessListComponent implements OnInit {
             tap((processInstances: shared.response.BasePagination<ProcessInstanceDto> | undefined) => {
                 if (shared.isNotNullOrUndefined(processInstances)) {
                     this.processInstancesHolderSerivce.setItems(processInstances.data);
+                    this.config.contentConfig.paginationConfig.pageConfig.size = processInstances.pageSize;
+                    this.config.contentConfig.paginationConfig.pageConfig.pageIndex = processInstances.pageNumber - 1;
+                    this.config.contentConfig.paginationConfig.pageConfig.length = processInstances.total;
                 }
             })
         ).subscribe();
@@ -271,5 +285,9 @@ export class ProcessListComponent implements OnInit {
                 }
             })
         ).subscribe();
+    }
+    
+    onPageChange($event: PageConfig) {
+        this.loadData($event.pageIndex + 1, $event.size);
     }
 }

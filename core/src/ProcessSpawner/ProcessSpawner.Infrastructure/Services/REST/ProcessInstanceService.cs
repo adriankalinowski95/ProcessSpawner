@@ -2,6 +2,7 @@
 using Authorization.Application.Services;
 using Authorization.Domain.Models;
 using AutoMapper;
+using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.Commands;
@@ -9,7 +10,9 @@ using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services.Common;
 using ProcessSpawner.Application.Services.REST;
+using ProcessSpawner.Infrastructure.Repositories;
 using Shared.Generic.RestApi;
+using Shared.Types.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Services.REST {
     public class ProcessInstanceService : IProcessInstanceService {
@@ -100,6 +103,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
 
         public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(int userId, int pageNumber, int pageSize) {
             var processes = await m_processInstanceRepository.GetAllAsync(pageNumber, pageSize, process => process.UserId == userId);
+            var recordsCount = await m_processInstanceRepository.CountAsync(process => process.UserId == userId);
             var processesDto = processes.Select(process => m_mapper.Map<ProcessInstanceDto>(process)).ToList();
 
             return new BasePaginationResponse<ProcessInstanceDto> {
@@ -107,12 +111,14 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
                 PageNumber = pageNumber,
-                PageSize = pageSize
+                PageSize = pageSize,
+                Total = recordsCount
             };
         }
 
         public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByManagerId(int managerId, int pageNumber, int pageSize) {
             var processes = await m_processInstanceRepository.GetAllAsync(pageNumber, pageSize, process => process.ProcessManagerId == managerId);
+            var recordsCount = await m_processInstanceRepository.CountAsync(process => process.ProcessManagerId == managerId);
             var processesDto = processes.Select(process => m_mapper.Map<ProcessInstanceDto>(process)).ToList();
 
             return new BasePaginationResponse<ProcessInstanceDto> {
@@ -120,13 +126,36 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
                 PageNumber = pageNumber,
-                PageSize = pageSize
+                PageSize = pageSize,
+                Total = recordsCount
             };
         }
 
         public async Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, ProcessInstanceDto obj) {
             // @Todo Validator
             throw new NotImplementedException();
+        }
+
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForUser(int userId) {
+            var recordsCount = await m_processInstanceRepository.CountAsync(process => process.UserId == userId);
+
+            return new BasePaginationConfigResponse {
+                PageSize = 10,
+                Length = recordsCount,
+                PageNumber = 1,
+                Status = BaseResponseStatus.Ok
+            };
+        }
+
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForManager(int managerId) {
+            var recordsCount = await m_processInstanceRepository.CountAsync(process => process.ProcessManagerId == managerId);
+
+            return new BasePaginationConfigResponse {
+                PageSize = 10,
+                Length = recordsCount,
+                PageNumber = 1,
+                Status = BaseResponseStatus.Ok
+            };
         }
     }
 }

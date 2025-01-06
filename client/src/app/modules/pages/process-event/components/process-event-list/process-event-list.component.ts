@@ -10,6 +10,7 @@ import { ProcessEventDto } from '../../models/process-manager-dto';
 import { HandelContentEvent } from '../../../../shared/element-list/models/HandelContentEvent';
 import { shared } from '../../../../shared/shared';
 import { first, tap } from 'rxjs';
+import { PageConfig } from '../../../../shared/element-list/models/pageConfig';
 
 @Component({
   selector: 'app-process-event-list',
@@ -42,8 +43,15 @@ export class ProcessEventListComponent {
           dbClickEdit: true,
           stickyHeader: true,
         },
-        usePagination: false,
-        paginationConfig: {},
+        usePagination: true,
+        paginationConfig: {
+            pageConfig: {
+                length: 200,
+                pageIndex: 0,
+                size: 10
+            },
+            pageSizeOptions: [5, 10, 20, 50]
+        },
         useContentHandler: true,
         contentHandlerConfig: { 
             buttons: [
@@ -91,7 +99,7 @@ export class ProcessEventListComponent {
             });
         });
 
-        this.loadData();
+        this.loadData(1, this.config.contentConfig.paginationConfig.pageConfig.size);
     }
 
     goDashboard() {
@@ -121,9 +129,9 @@ export class ProcessEventListComponent {
        }
     }
 
-    loadData() {
+    loadData(pageIndex: number, pageSize: number) {
         if (this.isPathCorrect) {
-            this.getForProcess(0, 20);
+            this.getForProcess(pageIndex, pageSize);
         } else {
             this.goDashboard();
         }
@@ -139,8 +147,15 @@ export class ProcessEventListComponent {
             tap((processEvents: shared.response.BasePagination<ProcessEventDto> | undefined) => {
                 if (shared.isNotNullOrUndefined(processEvents)) {
                     this.processEventsHolderSerivce.setItems(processEvents.data);
+                    this.config.contentConfig.paginationConfig.pageConfig.size = processEvents.pageSize;
+                    this.config.contentConfig.paginationConfig.pageConfig.pageIndex = processEvents.pageNumber - 1;
+                    this.config.contentConfig.paginationConfig.pageConfig.length = processEvents.total;
                 }
             })
         ).subscribe();
+    }
+
+    onPageChange($event: PageConfig) {
+        this.loadData($event.pageIndex + 1, $event.size);
     }
 }

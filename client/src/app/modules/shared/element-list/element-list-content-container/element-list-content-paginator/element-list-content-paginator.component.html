@@ -1,1 +1,7 @@
-<p>element-list-content-paginator works!</p>
+<mat-paginator [pageSizeOptions]="paginationConfig.pageSizeOptions"
+               [length]="paginationConfig.pageConfig.length"
+               [pageIndex]="paginationConfig.pageConfig.pageIndex"
+               [pageSize]="paginationConfig.pageConfig.size"
+               (page)="onPageChange($event)"
+               showFirstLastButtons>
+</mat-paginator>

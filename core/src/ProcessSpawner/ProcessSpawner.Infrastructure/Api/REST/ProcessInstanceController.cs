@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Services.REST;
+using ProcessSpawner.Infrastructure.Services.REST;
 using Shared.Generic.RestApi;
+using Shared.Types.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Api.REST {
     [Route("api/[controller]")]
@@ -35,6 +37,18 @@ namespace ProcessSpawner.Infrastructure.Api.REST {
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByManagerId(int id, [FromQuery] int pageNumber, [FromQuery] int pageSize) {
             return await m_processInstanceService.GetByManagerId(id, pageNumber, pageSize);
+        }
+
+        [HttpGet("user/pagination-config/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForUser(int id) {
+            return await m_processInstanceService.GetPaginationConfigForUser(id);
+        }
+
+        [HttpGet("manager/pagination-config/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForManager(int id) {
+            return await m_processInstanceService.GetPaginationConfigForManager(id);
         }
 
         [HttpGet("{id}")]

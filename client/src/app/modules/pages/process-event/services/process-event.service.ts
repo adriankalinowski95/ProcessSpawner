@@ -18,4 +18,13 @@ export class ProcessEventService extends ExtendedCrudServiceImpl<ProcessEventDto
             return this.processInstanceCrudService.getByProcessId(processId, pageNumber, pageSize);
         }, responseCallback);
     }
+
+    // Proly won't be used
+    getPaginationConfigForProcess(processId: number, responseCallback?: (response: shared.response.Object<any>) => void) {
+        return this.getPaginationConfig(new Map<string, string>([
+            ['processId', processId.toString() ]
+        ]),(config: Map<string, string>) => {
+            return this.processInstanceCrudService.getPaginationConfigForProcess(parseInt(config.get("processId") as string, 10));
+        }, responseCallback);
+    }
 }

@@ -65,5 +65,9 @@ namespace Shared.Tools.Logging.Repositories {
         public Task<IEnumerable<Log>> GetAllAsync(int pageNumber, int pageSize, Expression<Func<Log, bool>>? predicate = null) {
             throw new NotImplementedException();
         }
+
+        public Task<int> CountAsync(Expression<Func<Log, bool>>? predicate = null) {
+            throw new NotImplementedException();
+        }
     }
 }

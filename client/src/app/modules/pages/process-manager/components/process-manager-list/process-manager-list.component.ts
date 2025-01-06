@@ -11,6 +11,7 @@ import { ProcessManagerService } from '../../services/process-manager.service';
 import { ProcessManagerDto } from '../../models/process-manager-dto';
 import { first, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PageConfig } from '../../../../shared/element-list/models/pageConfig';
 
 @Component({
   selector: 'app-process-manager-list',
@@ -61,8 +62,15 @@ export class ProcessManagerListComponent {
               dbClickEdit: true,
               stickyHeader: true,
             },
-            usePagination: false,
-            paginationConfig: {},
+            usePagination: true,
+            paginationConfig: {
+                pageConfig: {
+                    length: 200,
+                    pageIndex: 0,
+                    size: 10
+                },
+                pageSizeOptions: [5, 10, 20, 50]
+            },
             useContentHandler: true,
             contentHandlerConfig: { buttons: [{
                 text: 'Create',
@@ -152,6 +160,7 @@ export class ProcessManagerListComponent {
             tap((processManagers: ProcessManagerDto[] | undefined) => {
                 if (shared.isNotNullOrUndefined(processManagers)) {
                     this.processManagersHolderSerivce.setItems(processManagers);
+                    this.config.contentConfig.paginationConfig.pageConfig.length = processManagers.length;
                 }
             })
         ).subscribe();
@@ -170,5 +179,9 @@ export class ProcessManagerListComponent {
                 }
             })
         ).subscribe();
+    }
+
+    onPageChange($event: PageConfig) {
+        console.log('pageChange', $event)
     }
 }

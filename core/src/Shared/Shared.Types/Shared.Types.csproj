@@ -14,7 +14,6 @@
 		<None Remove="Tools\" />
 		<None Remove="Generic\" />
 		<None Remove="Generic\Services\" />
-		<None Remove="Generic\RestApi\" />
 		<None Remove="Generic\Repositories\" />
 		<None Remove="BaseClasses\" />
 		<None Remove="Enums\" />
@@ -25,7 +24,6 @@
 		<Folder Include="Tools\" />
 		<Folder Include="Generic\" />
 		<Folder Include="Generic\Services\" />
-		<Folder Include="Generic\RestApi\" />
 		<Folder Include="Generic\Repositories\" />
 		<Folder Include="BaseClasses\" />
 		<Folder Include="Enums\" />

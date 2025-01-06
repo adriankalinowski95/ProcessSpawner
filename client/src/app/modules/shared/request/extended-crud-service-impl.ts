@@ -39,4 +39,39 @@ export class ExtendedCrudServiceImpl<T extends { id: any }> extends BaseCrudServ
                 this.isLoadingSubject.next(false)
             }));
     }
+
+    public getPaginationConfig(
+        params: Map<string, string>, 
+        requestProvider:(params: Map<string, string>) => Observable<any>,
+        responseCallback?: (response: shared.response.Object<any>) => void) {
+        this.isLoadingSubject.next(true);
+        
+        return requestProvider(params).pipe(
+            first(),
+            map((response: shared.response.BasePaginationConfig) => {
+                if (response.status != shared.enums.BaseResponseStatus.Ok) {
+                    if (!responseCallback) {
+                        return undefined;
+                    }
+
+                    throw new Error(response.errorMessage);
+                }
+
+                return response;
+            }),
+            catchError((err) => {
+                if (responseCallback) {
+                    responseCallback({
+                        errorMessage: err.message, 
+                        status: shared.enums.BaseResponseStatus.Error,
+                        object: null
+                    });
+                }
+
+                return of(undefined);
+            }),
+            finalize(() => {
+                this.isLoadingSubject.next(false)
+            }));
+    }
 }

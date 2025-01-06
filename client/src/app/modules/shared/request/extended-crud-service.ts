@@ -16,4 +16,8 @@ export class ExtendedCrudService<T extends { id: any }> extends BaseCrudService<
             }
         });
     }
+
+    getPaginationConfig(): Observable<any> {
+        return this.http.get(this.basePath + '/pagination-config');
+    }
 }

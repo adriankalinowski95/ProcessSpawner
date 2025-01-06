@@ -5,6 +5,7 @@ import {HandelContentEvent} from "./models/HandelContentEvent";
 import {shared} from "../shared";
 import DataSource = shared.element_list.models.DataSource;
 import {DisplayedColumns} from "./models/displayed-columns";
+import { PageConfig } from './models/pageConfig';
 
 @Component({
   selector: 'app-element-list',
@@ -16,8 +17,13 @@ export class ElementListComponent {
   @Input() dataSource: DataSource[];
   @Input() displayedColumns: DisplayedColumns;
   @Output() handelContent: EventEmitter<HandelContentEvent> = new EventEmitter<HandelContentEvent>();
-
+  @Output() pageChanged = new EventEmitter<PageConfig>();
+  
   onHandleContent($event: HandelContentEvent) {
     this.handelContent.emit($event);
+  }
+
+  onPageChange($event: PageConfig) {
+    this.pageChanged.emit($event);
   }
 }

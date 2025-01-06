@@ -8,6 +8,11 @@
                             [selectedElements]="selectedElements"
                             (selectionChange)="onSelectionChange($event)"
                             (handelContent)="onHandleContentByElement($event)"></app-element-list-content>
-  <app-element-list-content-paginator *ngIf="contentConfig.usePagination"
-                                      [paginationConfig]="contentConfig.paginationConfig"></app-element-list-content-paginator>
+  <div style="height: 15px;">
+
+  </div>
+  <app-element-list-content-paginator 
+                                    *ngIf="contentConfig.usePagination"
+                                    (pageChanged)="onPageChange($event)"
+                                    [paginationConfig]="contentConfig.paginationConfig"></app-element-list-content-paginator>
 </ng-container>

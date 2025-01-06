@@ -15,6 +15,7 @@ import * as _ObjectsResponse from "./response/objects-response"
 import * as _NotificationService from "./services/notification.service"
 import * as _BaseStateHolder from "./services/base-state-holder"
 import * as _ExtendedStateHolder from "./services/extend-state-holder"
+import * as _BasePaginationConfig from "./response/base-pagination-config-response"
 
 import * as ElementListModuleImport from "./element-list/element-list.module"
 import * as ElementListConfigModel from "./element-list/models/ElementListConfig";
@@ -32,6 +33,7 @@ export namespace shared {
         export import Object = ObjectResponse.ObjectResponse;
         export import Objects = _ObjectsResponse.ObjectsResponse;
         export import ObjectOperation = ObjectOperationResponse.ObjectOperationResponse;
+        export import BasePaginationConfig = _BasePaginationConfig.BasePaginationConfigResponse;
     }
 
     export namespace request {

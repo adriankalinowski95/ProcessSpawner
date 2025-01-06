@@ -40,8 +40,15 @@ export const defaultConfig: MainConfig = {
       dbClickEdit: true,
       stickyHeader: true,
     },
-    usePagination: false,
-    paginationConfig: {},
+    usePagination: true,
+    paginationConfig: {
+        pageConfig: {
+          length: 200,
+          pageIndex: 0,
+          size: 10
+        },
+        pageSizeOptions: [5, 10, 20, 50]
+      },
     useContentHandler: true,
     contentHandlerConfig: { buttons: [{
         text: 'Create',
