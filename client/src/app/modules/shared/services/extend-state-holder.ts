@@ -50,4 +50,8 @@ export class ExtendStateHolder<T extends { id: any }> extends BaseStateHolder<T>
     
         return true;
     }
+
+    getById(id: number) {
+        return this.itemsSource.value.find(item => item.id == id);
+    }
 }

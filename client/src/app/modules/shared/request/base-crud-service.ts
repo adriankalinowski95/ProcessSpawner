@@ -9,7 +9,7 @@ export class BaseCrudService<T extends { id: any }> {
         return this.http.get(this.basePath);
     }
 
-    getById(id: T["id"]): Observable<any> {
+    getById(id: T): Observable<any> {
         return this.http.get(this.basePath + '/' + id);
     }
 
@@ -18,7 +18,7 @@ export class BaseCrudService<T extends { id: any }> {
     }
 
     update(item: T): Observable<any> {
-        return this.http.delete(this.basePath + '/' + item.id);
+        return this.http.put(this.basePath + '/' + item.id, item);
     }
 
     delete(id: T["id"]): Observable<any> {

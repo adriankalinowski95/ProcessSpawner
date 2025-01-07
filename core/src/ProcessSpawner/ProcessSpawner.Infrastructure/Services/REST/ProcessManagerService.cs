@@ -60,8 +60,23 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
             throw new NotImplementedException();
         }
 
-        public Task<ObjectOperationResult<ProcessManagerDto>> Put(int id, ProcessManagerDto obj) {
-            throw new NotImplementedException();
+        public async Task<ObjectOperationResult<ProcessManagerDto>> Put(int id, ProcessManagerDto obj) {
+            var objToUpdate = await m_processManagerRepository.GetByIdAsync(id);
+            if (objToUpdate == null) {
+                throw new Exception($"Process manager with {id} doesn't exist");
+            }
+
+            objToUpdate.Name = obj.Name;
+            objToUpdate.Port = obj.Port;
+            objToUpdate.Address = obj.Address;
+
+            m_processManagerRepository.Update(objToUpdate);
+
+            return new ObjectOperationResult<ProcessManagerDto> {
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                Object = m_mapper.Map<ProcessManagerDto>(m_mapper.Map<ProcessManagerDto>(objToUpdate))
+            };
         }
     }
 }

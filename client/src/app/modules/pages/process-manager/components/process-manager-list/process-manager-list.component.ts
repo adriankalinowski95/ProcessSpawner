@@ -131,12 +131,19 @@ export class ProcessManagerListComponent {
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
             this.create();
-        } else if ($event.actionType === ActionType.Delete) {
+        } else if ($event.actionType === ActionType.Edit) {
             if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
                 return;
             }
 
-            this.delete($event.content[0].index);
+            this.update($event.content[0].index);
+        }
+        else if ($event.actionType === ActionType.Delete) {
+            if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
+                return;
+            }
+
+            this.update($event.content[0].index);
         } else if ($event.actionType === ActionType.SpecialAction1) {
             const content = $event.content;
             if (content.length != 1) {
@@ -162,6 +169,43 @@ export class ProcessManagerListComponent {
                     })).subscribe();
     }
 
+    update(id: number) {
+        const processManager = this.processManagersHolderSerivce.getById(id);
+        if (!shared.isNotNullOrUndefined(processManager)) {
+            // this.notificationService.error('Process manager not found');
+            return;
+        }
+
+        this.processManagerService.updateProcessManager(processManager).pipe(
+            first(),
+            tap((processManagerDto: ProcessManagerDto | undefined) => {
+                if (!shared.isNotNullOrUndefined(processManagerDto)) {
+                    return;
+                }
+                
+                if (!isProcessManagerDto(processManagerDto)) {
+                    return;
+                }
+
+                this.processManagersHolderSerivce.updateById(processManagerDto);
+            })).subscribe();
+    }
+
+    delete(id: number) {
+        const errorHandler = (response: shared.response.Object<any>) => {
+            // this.notificationService.error(response.errorMessage);
+        };
+
+        this.processManagerService.delete(id, errorHandler).pipe(
+            first(),
+            tap((processInstance: ProcessManagerDto | undefined) => {
+                if (shared.isNotNullOrUndefined(processInstance)) {
+                    this.processManagersHolderSerivce.deleteById(processInstance.id);
+                }
+            })
+        ).subscribe();
+    }
+
     goProcesses(managerId: number) {
         this.router.navigate(['/process-spawner/manager/' + managerId]);
     }
@@ -177,21 +221,6 @@ export class ProcessManagerListComponent {
                 if (shared.isNotNullOrUndefined(processManagers)) {
                     this.processManagersHolderSerivce.setItems(processManagers);
                     this.config.contentConfig.paginationConfig.pageConfig.length = processManagers.length;
-                }
-            })
-        ).subscribe();
-    }
-
-    delete(id: number) {
-        const errorHandler = (response: shared.response.Object<any>) => {
-            // this.notificationService.error(response.errorMessage);
-        };
-
-        this.processManagerService.delete(id, errorHandler).pipe(
-            first(),
-            tap((processInstance: ProcessManagerDto | undefined) => {
-                if (shared.isNotNullOrUndefined(processInstance)) {
-                    this.processManagersHolderSerivce.deleteById(processInstance.id);
                 }
             })
         ).subscribe();

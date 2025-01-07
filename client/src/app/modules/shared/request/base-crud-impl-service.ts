@@ -11,6 +11,34 @@ export class BaseCrudServiceImpl<T extends { id: any }> {
         this.isLoading$ = this.isLoadingSubject.asObservable();
     }
 
+    public getAll(responseCallback?: (response: shared.response.Object<any>) => void) {
+        this.isLoadingSubject.next(true);
+
+        return this.crudService.getAll().pipe(
+            first(),
+            map((response: shared.response.Objects<T>) => {
+                if (response.status != shared.enums.BaseResponseStatus.Ok) {
+                    throw new Error(response.errorMessage);
+                }
+
+                return response.objects;
+            }),
+            catchError((err) => {
+                if (responseCallback) {
+                    responseCallback({
+                        errorMessage: err.message, 
+                        status: shared.enums.BaseResponseStatus.Error,
+                        object: null
+                    });
+                }
+
+                return of(undefined);
+            }),
+            finalize(() => {
+                this.isLoadingSubject.next(false)
+            }));
+    }
+
     public create(model: T, responseCallback?: (response: shared.response.Object<any>) => void) {
         this.isLoadingSubject.next(true);
         
@@ -43,17 +71,21 @@ export class BaseCrudServiceImpl<T extends { id: any }> {
             }));
     }
 
-    public getAll(responseCallback?: (response: shared.response.Object<any>) => void) {
+    public update(model: T, responseCallback?: (response: shared.response.Object<any>) => void) {
         this.isLoadingSubject.next(true);
-
-        return this.crudService.getAll().pipe(
+        
+        return this.crudService.update(model).pipe(
             first(),
-            map((response: shared.response.Objects<T>) => {
+            map((response: shared.response.Object<T>) => {
                 if (response.status != shared.enums.BaseResponseStatus.Ok) {
+                    if (!responseCallback) {
+                        return undefined;
+                    }
+
                     throw new Error(response.errorMessage);
                 }
 
-                return response.objects;
+                return response.object;
             }),
             catchError((err) => {
                 if (responseCallback) {

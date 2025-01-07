@@ -3,7 +3,7 @@ import { CustomInputComponent } from "app/modules/shared/form-components/custom-
 
 export const processManagerCreateConfig: DynamicFormConfig = {
     stepper: false,
-    title: 'test',
+    title: 'Create process manager',
     errorHandlerType: ErrorHandlerType.Outer,
     actionPanelConfig: {
       actionHandlerType: ActionHandlerType.Inner,
@@ -56,4 +56,4 @@ export const processManagerCreateConfig: DynamicFormConfig = {
       ]
     }
     ]
-  }
+};
