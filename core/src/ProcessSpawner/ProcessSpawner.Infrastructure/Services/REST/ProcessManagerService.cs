@@ -6,7 +6,9 @@ using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Repositories;
 using ProcessSpawner.Application.Services.Common;
 using ProcessSpawner.Application.Services.REST;
+using ProcessSpawner.Domain.Models;
 using ProcessSpawner.Infrastructure.Repositories;
+using ProcessSpawner.Protobuf.Communication;
 using Shared.Generic.RestApi;
 
 namespace ProcessSpawner.Infrastructure.Services.REST {
@@ -22,8 +24,15 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
             m_mapper = mapper;
         }
 
-        public Task<ObjectOperationResult<ProcessManagerDto>> Create(ProcessManagerDto obj) {
-            throw new NotImplementedException();
+        public async Task<ObjectOperationResult<ProcessManagerDto>> Create(ProcessManagerDto obj) {
+            var objToCreate = m_mapper.Map<ProcessManager>(obj);
+            var objRef = await m_processManagerRepository.AddAsync(objToCreate);
+
+            return new ObjectOperationResult<ProcessManagerDto> {
+                Status = BaseResponseStatus.Ok,
+                ErrorMessage = string.Empty,
+                Object = m_mapper.Map<ProcessManagerDto>(objRef)
+            };
         }
 
         public Task<ObjectOperationResult<ProcessManagerDto>> Delete(int id) {

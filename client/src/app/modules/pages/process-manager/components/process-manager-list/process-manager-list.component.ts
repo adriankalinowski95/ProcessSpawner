@@ -8,10 +8,11 @@ import { ActionType, Type } from '../../../../shared/action-button/models/action
 import { shared } from '../../../../shared/shared';
 import { ProcessManagersHolderService } from '../../services/process-managers-holder.servcie';
 import { ProcessManagerService } from '../../services/process-manager.service';
-import { ProcessManagerDto } from '../../models/process-manager-dto';
+import { isProcessManagerDto, ProcessManagerDto } from '../../models/process-manager-dto';
 import { first, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageConfig } from '../../../../shared/element-list/models/pageConfig';
+import { ProcessInstanceDto } from 'app/modules/pages/process-spawner/models/process-instance-dto';
 
 @Component({
   selector: 'app-process-manager-list',
@@ -129,7 +130,7 @@ export class ProcessManagerListComponent {
 
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
-            //this.createProcess();
+            this.create();
         } else if ($event.actionType === ActionType.Delete) {
             if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
                 return;
@@ -144,6 +145,21 @@ export class ProcessManagerListComponent {
 
             this.goProcesses(content[0].index);
         }
+    }
+
+    create() {
+        this.processManagerService.createProcessManager().pipe(
+                    first(),
+                    tap((processManagerDto: ProcessManagerDto | undefined) => {
+                        if (!shared.isNotNullOrUndefined(processManagerDto)) {
+                            return;
+                        }
+                        if (!isProcessManagerDto(processManagerDto)) {
+                            return;
+                        }
+
+                        this.processManagersHolderSerivce.addItem(processManagerDto);
+                    })).subscribe();
     }
 
     goProcesses(managerId: number) {

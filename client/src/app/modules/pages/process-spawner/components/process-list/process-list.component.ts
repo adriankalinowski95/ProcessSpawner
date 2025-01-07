@@ -44,13 +44,16 @@ export class ProcessListComponent implements OnInit {
             }
           ],
           multiActionButton: {
-            actions: [{
+            actions: [
+            /*
+            {
                 name: 'edit',
                 displayName: 'Edit',
                 actionType: ActionType.Edit,
                 type: Type.Default,
                 iconName: 'edit-outline'
             },
+            */
             {
               name: 'delete',
               displayName: 'Del',
@@ -88,7 +91,7 @@ export class ProcessListComponent implements OnInit {
             actionType: ActionType.Create
           }, {
             text: 'Edit',
-            disabled: false,
+            disabled: true,
             type: Type.Info,
             actionType: ActionType.Edit
           }, {
@@ -211,41 +214,12 @@ export class ProcessListComponent implements OnInit {
 
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
-            this.dialog.open(DialogComponent<ProcessInstanceCreateComponent>, {
-                width: '650px', 
-                height: '650px',
-                data: {
-                  name: 'create_process',
-                  header: 'Create Process',
-                  contentData: 'abc',
-                  contentRef: ProcessInstanceCreateComponent,
-                  config: {
-                    actionPanelButtons: [
-                      {
-                        disabled: false,
-                        type: Type.Info,
-                        text: 'Accept',
-                        actionType: ActionType.Save
-                      },
-                      {
-                        disabled: false,
-                        type: Type.Error,
-                        text: 'Close',
-                        actionType: ActionType.Close
-                      }
-                    ]
-                  }
-                }
-              }).afterClosed().pipe(
-                tap(result => { 
-                    if (!isProcessSpawnRequestDto(result)) {
-                        return;
-                    }
+            // @Todo make validator
+            if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
+                return;
+            }
 
-                    this.spawnProcess(result);
-                })
-              ).subscribe()
-            // this.spawnProcess();
+            this.create();
         } else if ($event.actionType === ActionType.Delete) {
             if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
                 return;
@@ -285,6 +259,43 @@ export class ProcessListComponent implements OnInit {
                 }
             })
         ).subscribe();
+    }
+
+    create() {
+        this.dialog.open(DialogComponent<ProcessInstanceCreateComponent>, {
+            width: '650px', 
+            height: '650px',
+            data: {
+              name: 'create_process',
+              header: 'Create Process',
+              contentData: '',
+              contentRef: ProcessInstanceCreateComponent,
+              config: {
+                actionPanelButtons: [
+                  {
+                    disabled: false,
+                    type: Type.Info,
+                    text: 'Accept',
+                    actionType: ActionType.Save
+                  },
+                  {
+                    disabled: false,
+                    type: Type.Error,
+                    text: 'Close',
+                    actionType: ActionType.Close
+                  }
+                ]
+              }
+            }
+          }).afterClosed().pipe(
+            tap(result => { 
+                if (!isProcessSpawnRequestDto(result)) {
+                    return;
+                }
+
+                this.spawnProcess(result);
+            })
+          ).subscribe();
     }
 
     delete(id: number) {

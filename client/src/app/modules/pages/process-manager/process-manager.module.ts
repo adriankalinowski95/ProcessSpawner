@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { ElementListModule } from "../../shared/element-list/element-list.module";
 import { ProcessManagerRoutingModule } from './process-manager-routing.module';
 import { ProcessManagerListComponent } from './components/process-manager-list/process-manager-list.component';
+import { DialogModule } from '@angular/cdk/dialog';
+import { DynamicFormModule } from '../../shared/dynamic-form/dynamic-form.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { ProcessManagerListComponent } from './components/process-manager-list/p
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    ElementListModule
+    ElementListModule,
+    DialogModule,
+    DynamicFormModule
   ]
 })
 export class ProcessManagerModule { }

@@ -29,7 +29,9 @@ export class DynamicFormComponent implements AfterViewInit{
   errorHandlerType = ErrorHandlerType;
 
   ngAfterViewInit() {
-    this.outputData = this.formContentComponent.form.value;
+    this.formContentComponent.form.valueChanges.pipe(tap(value => {
+        this.outputData = value;
+    })).subscribe();
   }
 
   onButtonClick($event: ActionType) {
