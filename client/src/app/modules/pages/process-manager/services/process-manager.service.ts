@@ -17,7 +17,8 @@ import { getEditConfig } from "../components/process-manager-form-config/process
     providedIn: 'root'
 })
 export class ProcessManagerService extends BaseCrudServiceImpl<ProcessManagerDto> {
-    constructor(private dialog: MatDialog, private processManagerCrudService: ProcessManagerCrudService) 
+    constructor(private dialog: MatDialog, 
+                private processManagerCrudService: ProcessManagerCrudService) 
     {
         super(processManagerCrudService);
     }

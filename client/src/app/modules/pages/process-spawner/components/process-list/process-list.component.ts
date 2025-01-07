@@ -122,7 +122,6 @@ export class ProcessListComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private dialog: MatDialog,
         private processSpawnService: ProcessSpawnService, 
         private processInstancesHolderSerivce: ProcessInstancesHolderService) {
     }
@@ -212,13 +211,12 @@ export class ProcessListComponent implements OnInit {
         ).subscribe();
     }
 
+    goProcessEvents(processId: number) {
+        this.router.navigate(['/process-event/process/' + processId]);
+    }
+
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
-            // @Todo make validator
-            if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
-                return;
-            }
-
             this.create();
         } else if ($event.actionType === ActionType.Delete) {
             if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
@@ -242,16 +240,12 @@ export class ProcessListComponent implements OnInit {
         }
     }
 
-    goProcessEvents(processId: number) {
-        this.router.navigate(['/process-event/process/' + processId]);
-    }
-
-    spawnProcess(spawnProcessRequest: ProcessSpawnRequestDto) {
+    create() {
         const errorHandler = (response: shared.response.Object<any>) => {
             // this.notificationService.error(response.errorMessage);
         };
 
-        this.processSpawnService.spawnProcess(spawnProcessRequest, errorHandler).pipe(
+        this.processSpawnService.createProcess(errorHandler).pipe(
             first(),
             tap((spawnProcessResponse: ProcessInstanceDto | undefined) => {
                 if (shared.isNotNullOrUndefined(spawnProcessResponse)) {
@@ -259,43 +253,6 @@ export class ProcessListComponent implements OnInit {
                 }
             })
         ).subscribe();
-    }
-
-    create() {
-        this.dialog.open(DialogComponent<ProcessInstanceCreateComponent>, {
-            width: '650px', 
-            height: '650px',
-            data: {
-              name: 'create_process',
-              header: 'Create Process',
-              contentData: '',
-              contentRef: ProcessInstanceCreateComponent,
-              config: {
-                actionPanelButtons: [
-                  {
-                    disabled: false,
-                    type: Type.Info,
-                    text: 'Accept',
-                    actionType: ActionType.Save
-                  },
-                  {
-                    disabled: false,
-                    type: Type.Error,
-                    text: 'Close',
-                    actionType: ActionType.Close
-                  }
-                ]
-              }
-            }
-          }).afterClosed().pipe(
-            tap(result => { 
-                if (!isProcessSpawnRequestDto(result)) {
-                    return;
-                }
-
-                this.spawnProcess(result);
-            })
-          ).subscribe();
     }
 
     delete(id: number) {
