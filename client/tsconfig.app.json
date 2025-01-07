@@ -6,7 +6,13 @@
     "types": [
       "node",
       "@angular/localize"
-    ]
+    ],
+    "baseUrl": "src",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@shared/*": ["app/shared/*"],
+      "@modules/*": ["app/modules/*"]
+    }
   },
   "files": [
     "src/main.ts",

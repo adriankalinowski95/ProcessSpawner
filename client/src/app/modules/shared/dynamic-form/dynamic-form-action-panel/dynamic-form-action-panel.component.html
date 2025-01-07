@@ -1,0 +1,6 @@
+<div class="action-panel">
+  @if(config.actionHandlerType === actionHandlerType.Default) {
+    <app-action-button [config]="buttonConfig"
+                       (actionButtonClicked)="onActionButtonClick($event)"></app-action-button>
+  }
+</div>

@@ -1,0 +1,4 @@
+@if(validationErrors.length > 0) {
+  <app-validation-message [validationMessages]="validationErrors"
+                          (closeValidationMessage)="onCloseValidationMessage()"></app-validation-message>
+}

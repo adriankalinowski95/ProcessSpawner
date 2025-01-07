@@ -10,7 +10,7 @@ namespace ProcessSpawner.Domain.Models {
         public int Id { get; set; }
         public UInt32 ProcessId { get; set; }
         public string InternalId { get; set; }
-        public string ProcessType { get; set; }
+        public ProcessSpawner.Protobuf.Communication.ProcessType ProcessType { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public ProcessStatus Status { get; set; }
         public DateTime CreatedTimeMs { get; set; }

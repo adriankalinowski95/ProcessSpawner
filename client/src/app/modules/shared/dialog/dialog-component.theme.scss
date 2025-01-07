@@ -1,0 +1,7 @@
+@mixin dialog-component-theme {
+  mat-dialog-container {
+    .mat-mdc-dialog-surface {
+      overflow-y: unset;
+    }
+  }
+}

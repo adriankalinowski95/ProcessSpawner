@@ -1,0 +1,10 @@
+:host {
+  &:has(mat-radio-group.ng-invalid) {
+    mat-label {
+      color: var(--mdc-filled-text-field-error-label-text-color, var(--mat-app-error));
+      &:after {
+        content: "*"
+      }
+    }
+  }
+}

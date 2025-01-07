@@ -60,7 +60,14 @@ private:
     std::shared_ptr<process_manager::application::tools::IProcessTerminator> m_processTerminator;
 
     ::grpc::Status parseSpawnProcess(const Communication::SpawnRequest* request, Communication::SpawnResponse* response) {
-        auto childProcessInstance = m_processSpawner->spawnChildProcess(request->internal_id());
+        std::map<std::string, std::string> parameters{};
+        std::transform(request->parameters().begin(), request->parameters().end(),
+           std::inserter(parameters, parameters.end()),
+           [](const auto& kvp) {
+               return std::make_pair(kvp.first, kvp.second);
+        });
+        
+        auto childProcessInstance = m_processSpawner->spawnChildProcess(request->internal_id(), parameters);
         if (!childProcessInstance) {
             return failed("[PROCESS_MANAGER_CONTROLLER] Failed to spawn process!", response);
         }

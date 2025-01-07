@@ -1,0 +1,6 @@
+<mat-label>{{data.label}}</mat-label>
+<mat-radio-group [formControl]="control" name="{{data.key}}">
+  @for (option of data.options; track option) {
+    <mat-radio-button [value]="option.id">{{option.value}}</mat-radio-button>
+  }
+</mat-radio-group>

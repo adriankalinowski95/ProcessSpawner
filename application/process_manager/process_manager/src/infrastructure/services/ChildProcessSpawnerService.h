@@ -37,7 +37,7 @@ public:
 
     virtual ~ChildProcessSpawnerService() = default;
 
-    std::optional<process_manager::domain::models::ProcessInstance> spawnChildProcess(const std::string& internalId) {
+    std::optional<process_manager::domain::models::ProcessInstance> spawnChildProcess(const std::string& internalId, const std::map<std::string, std::string>& parameters) override {
         // spawn process
         const auto childConfig = m_configProvider->GetNextChildConfig(internalId);
         const auto childConfigJson = shared::application::utils::ModelsJsonConverter{}.toJson(childConfig);
@@ -67,7 +67,7 @@ public:
             return std::nullopt;
         }
 
-        return getProcessInstance(internalId, *pid, childConfig);
+        return getProcessInstance(internalId, *pid, childConfig, parameters);
     }
 
 private:
@@ -79,13 +79,14 @@ private:
     process_manager::domain::models::ProcessInstance getProcessInstance(
         const std::string& internalId,
         std::uint32_t pid,
-        const shared::domain::models::ProcessConfig& config) {
+        const shared::domain::models::ProcessConfig& config,
+        const std::map<std::string, std::string>& parameters) const {
         const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
         return process_manager::domain::models::ProcessInstance {
             .internalId = internalId,
             .processType = "child",
-            .parameters = {},
+            .parameters = parameters,
             .pid = pid,
             .address = config.childAddress,
             .port = config.childPort,

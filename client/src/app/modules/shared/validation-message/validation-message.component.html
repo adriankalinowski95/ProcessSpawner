@@ -1,0 +1,11 @@
+<div class="validation-message-container">
+  @for(validationMessage of validationMessages; track validationMessage) {
+    <div class="message-container">
+      <div class="message-key">{{Object.keys(validationMessage)[0]}}</div>
+      <div class="massage-content">{{validationMessage[Object.keys(validationMessage)[0]].join(', ')}}</div>
+    </div>
+  }
+</div>
+<button class="close-button" aria-label="Dismiss alert" type="button" (click)="onCloseValidationMessage()">
+  <span aria-hidden="true">&times;</span>
+</button>

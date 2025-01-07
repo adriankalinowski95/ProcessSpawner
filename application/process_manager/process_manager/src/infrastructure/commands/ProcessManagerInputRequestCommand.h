@@ -61,7 +61,14 @@ public:
         }
 
         for (const auto& process : response->processes()) {
-            auto childProcessInstance = m_processSpawner->spawnChildProcess(process.internal_id());
+            std::map<std::string, std::string> parameters{};
+            std::transform(process.parameters().begin(), process.parameters().end(),
+               std::inserter(parameters, parameters.end()),
+               [](const auto& kvp) {
+                   return std::make_pair(kvp.first, kvp.second);
+            });
+            
+            auto childProcessInstance = m_processSpawner->spawnChildProcess(process.internal_id(), parameters);
             if (!childProcessInstance) {
                 m_logger->log(
                     shared::application::services::ILogger::LogLevel::Error, 

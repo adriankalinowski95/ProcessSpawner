@@ -4,17 +4,19 @@ import { DataSource } from '../../../../shared/element-list/models/data-source';
 import { DisplayedColumns } from '../../../../shared/element-list/models/displayed-columns';
 import { HandelContentEvent } from '../../../../shared/element-list/models/HandelContentEvent';
 import { ActionType, Type } from '../../../../shared/action-button/models/action-button-config';
-import { ProcessSpawnRequestDto } from '../../models/process-spawn-request-dto';
-import { catchError, first, of, tap } from 'rxjs';
+import { isProcessSpawnRequestDto, ProcessSpawnRequestDto, toProcessSpawnRequestDto } from '../../models/process-spawn-request-dto';
+import { catchError, first, mergeMap, of, tap, timer } from 'rxjs';
 import { shared } from '../../../../shared/shared';
 import { ProcessSpawnService } from '../../services/process-spawn.service';
 import { ProcessInstanceDto } from '../../models/process-instance-dto';
 import { ProcessInstancesHolderService } from '../../services/process-instances-holder.service';
 import { ProcessStatus } from '../../enums/process-status.enum';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../../../auth/services/auth.service';
 import { PageConfig } from '../../../../shared/element-list/models/pageConfig';
-// import { NotificationService } from '../../../../shared/services/notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../../../../shared/dialog/dialog.component';
+import { ProcessInstanceCreateComponent } from '../process-instance-create/process-instance-create.component'
+import { ProcessType } from '../../enums/process-type.enum';
 
 @Component({
   selector: 'app-process-list',
@@ -113,10 +115,11 @@ export class ProcessListComponent implements OnInit {
 
     config: MainConfig = this.tableConfig;
     dataSource: DataSource[] = new Array<DataSource>;
-    
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
+        private dialog: MatDialog,
         private processSpawnService: ProcessSpawnService, 
         private processInstancesHolderSerivce: ProcessInstancesHolderService) {
     }
@@ -208,7 +211,41 @@ export class ProcessListComponent implements OnInit {
 
     eventHandler($event: HandelContentEvent) {
         if ($event.actionType === ActionType.Create) {
-            this.spawnProcess();
+            this.dialog.open(DialogComponent<ProcessInstanceCreateComponent>, {
+                width: '650px', 
+                height: '650px',
+                data: {
+                  name: 'create_process',
+                  header: 'Create Process',
+                  contentData: 'abc',
+                  contentRef: ProcessInstanceCreateComponent,
+                  config: {
+                    actionPanelButtons: [
+                      {
+                        disabled: false,
+                        type: Type.Info,
+                        text: 'Accept',
+                        actionType: ActionType.Save
+                      },
+                      {
+                        disabled: false,
+                        type: Type.Error,
+                        text: 'Close',
+                        actionType: ActionType.Close
+                      }
+                    ]
+                  }
+                }
+              }).afterClosed().pipe(
+                tap(result => { 
+                    if (!isProcessSpawnRequestDto(result)) {
+                        return;
+                    }
+
+                    this.spawnProcess(result);
+                })
+              ).subscribe()
+            // this.spawnProcess();
         } else if ($event.actionType === ActionType.Delete) {
             if (!shared.isNotNullOrUndefined($event.content) || $event.content.length === 0) {
                 return;
@@ -235,16 +272,9 @@ export class ProcessListComponent implements OnInit {
         this.router.navigate(['/process-event/process/' + processId]);
     }
 
-    spawnProcess() {
+    spawnProcess(spawnProcessRequest: ProcessSpawnRequestDto) {
         const errorHandler = (response: shared.response.Object<any>) => {
             // this.notificationService.error(response.errorMessage);
-        };
-
-        const spawnProcessRequest : ProcessSpawnRequestDto = {
-            process_type: 'test',
-            parameters: new Map<string, string>([
-                ['param1', 'param1']
-            ])
         };
 
         this.processSpawnService.spawnProcess(spawnProcessRequest, errorHandler).pipe(

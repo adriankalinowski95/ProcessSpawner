@@ -13,7 +13,12 @@ export class ProcessSpawnActionsService {
     constructor(private http: HttpClient) { }
     
     spawnProcess(processSpawnRequest: ProcessSpawnRequestDto) : Observable<any> {
-        return this.http.post(this.PROCESS_SPAWNING_BASE_PATH + "/spawn-process", processSpawnRequest);
+        const requestPayload = {
+            process_type: processSpawnRequest.process_type,
+            parameters: Object.fromEntries(processSpawnRequest.parameters)
+        };
+        
+        return this.http.post(this.PROCESS_SPAWNING_BASE_PATH + "/spawn-process", requestPayload);
     }
 
     finishProcess(id: number) : Observable<any> {

@@ -11,10 +11,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ElementListModule } from "../../shared/element-list/element-list.module";
+import { DynamicFormModule } from '../../shared/dynamic-form/dynamic-form.module';
+import { DialogModule } from '../../shared/dialog/dialog.module';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ProcessInstanceCreateComponent } from './components/process-instance-create/process-instance-create.component';
 
 @NgModule({
   declarations: [
-    ProcessListComponent
+    ProcessListComponent,
+    ProcessInstanceCreateComponent
   ],
   imports: [
     CommonModule,
@@ -27,7 +34,13 @@ import { ElementListModule } from "../../shared/element-list/element-list.module
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    ElementListModule
+    MatOptionModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    ElementListModule,
+    DialogModule,
+    DynamicFormModule
   ]
 })
 export class ProcessSpawnerModule { }
