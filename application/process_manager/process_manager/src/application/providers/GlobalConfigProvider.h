@@ -3,14 +3,15 @@
 #include <string>
 #include <cstdint>
 #include <environments/environments.h>
+#include <process_manager/src/domain/models/InputConfig.h>
 
 namespace process_manager::application::providers {
 
 class GlobalConfigProvider {
 public:
     struct EndpointConfig {
-        const std::string ip;
-        const std::uint32_t port;
+        std::string ip;
+        std::uint32_t port;
 
         [[nodiscard]] std::string GetAddress() const {
             return ip + ":" + std::to_string(port);
@@ -53,6 +54,48 @@ public:
 
     [[nodiscard]] const ChildProcessConfig& GetChildProcessConfig() const {
         return m_childProcessConfig;
+    }
+
+    void setProcessManagerConfig(const domain::models::InputConfig& inputConfig) {
+        if (!inputConfig.core_server_ip.empty()) {
+            m_coreServerConfig.endpoint.ip = inputConfig.core_server_ip;
+        }
+
+        if (!inputConfig.core_server_port.empty()) {
+            m_coreServerConfig.endpoint.port = std::stoi(inputConfig.core_server_port);
+        }
+
+        if (!inputConfig.process_manager_server_ip.empty()) {
+            m_processManagerConfig.endpoint.ip = inputConfig.process_manager_server_ip;
+        }
+
+        if (!inputConfig.process_manager_server_port.empty()) {
+            m_processManagerConfig.endpoint.port = std::stoi(inputConfig.process_manager_server_port);
+        }
+
+        if (!inputConfig.process_manager_name.empty()) {
+            m_processManagerConfig.processName = inputConfig.process_manager_name;
+        }
+
+        if (!inputConfig.process_manager_process_name.empty()) {
+            m_processManagerConfig.coreSideName = inputConfig.process_manager_process_name;
+        }
+
+        if (!inputConfig.child_process_ip.empty()) {
+            m_childProcessConfig.endpoint.ip = inputConfig.child_process_ip;
+        }
+
+        if (!inputConfig.child_process_port.empty()) {
+            m_childProcessConfig.endpoint.port = std::stoi(inputConfig.child_process_port);
+        }
+
+        if (!inputConfig.child_process_path.empty()) {
+            m_childProcessConfig.processApplicationPath = inputConfig.child_process_path;
+        }
+
+        if (!inputConfig.child_process_process_name.empty()) {
+            m_childProcessConfig.processName = inputConfig.child_process_process_name;
+        }
     }
 
 private:

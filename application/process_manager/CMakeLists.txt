@@ -12,3 +12,13 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_CUR
 target_link_libraries(${TARGET_NAME}
    "shared"
 )
+
+# Dodanie flag kompilatora dla GCC i Clang
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${TARGET_NAME} PRIVATE -fexceptions)
+endif()
+
+# Dodanie flag kompilatora dla MSVC
+if(MSVC)
+    target_compile_options(${TARGET_NAME} PRIVATE /EHsc)
+endif()

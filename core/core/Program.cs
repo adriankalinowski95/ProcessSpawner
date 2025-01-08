@@ -43,6 +43,16 @@ setStaticIp(builder.WebHost);
 
 var app = builder.Build();
 
+builder.WebHost.ConfigureAppConfiguration((hostingContext, config) => {
+    var exePath = AppContext.BaseDirectory;
+    config.SetBasePath(exePath)
+          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+          .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+          .AddEnvironmentVariables();
+});
+
+
+
 // @Todo remove this and just repair a dbcontext
 new RuntimeSeed(app).Seed();
 
