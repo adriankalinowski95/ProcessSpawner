@@ -48,7 +48,7 @@ export class ProcessInstanceCreateComponent implements AfterViewInit{
     }
 
     getType(): FormControl {
-        return this.dynamicForm.get('type') as FormControl;
+        return this.dynamicForm.get('process_type') as FormControl;
     }
 
     addParam(): void {
