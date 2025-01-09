@@ -159,11 +159,15 @@ cd ../application
 cd core
 ./start_script.sh
 ```
+
 ##### 2. Start Client Application:
 ``` bash
 cd ../client
 ./start_script.sh
 ```
+
+**Warning**
+You can start only **1** process manager per one system.
 ##### 3. Start Application Manager:
 ``` bash
 cd ../application

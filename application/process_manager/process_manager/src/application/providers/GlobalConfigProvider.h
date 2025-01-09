@@ -74,11 +74,11 @@ public:
         }
 
         if (!inputConfig.process_manager_name.empty()) {
-            m_processManagerConfig.processName = inputConfig.process_manager_name;
+            m_processManagerConfig.coreSideName = inputConfig.process_manager_name;
         }
 
         if (!inputConfig.process_manager_process_name.empty()) {
-            m_processManagerConfig.coreSideName = inputConfig.process_manager_process_name;
+            m_processManagerConfig.processName = inputConfig.process_manager_process_name;
         }
 
         if (!inputConfig.child_process_ip.empty()) {
