@@ -10,12 +10,19 @@ using Microsoft.Extensions.Configuration;
 namespace Authorization.Infrastructure.Services {
     public class UserAuthenticationService : IUserAuthenticationService {
         private readonly IUserRepository m_userRepository;
+        private readonly IHashingService m_hashingService;
         private readonly IHttpContextAccessor m_httpContextAccessor;
         private readonly IJwtTokenService m_jwtTokenService;
         private readonly IConfiguration m_config;
 
-        public UserAuthenticationService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, IJwtTokenService jwtTokenService, IConfiguration config) {
+        public UserAuthenticationService(
+                IUserRepository userRepository,
+                IHashingService hashingService,
+                IHttpContextAccessor httpContextAccessor,
+                IJwtTokenService jwtTokenService,
+                IConfiguration config) {
             m_userRepository = userRepository;
+            m_hashingService = hashingService;
             m_httpContextAccessor = httpContextAccessor;
             m_jwtTokenService = jwtTokenService;
             m_config = config;
@@ -75,7 +82,7 @@ namespace Authorization.Infrastructure.Services {
                 throw new UnauthorizedAccessException("Username or password incorrect");
             }
 
-            var validPassword = user.Password == authentication.Password;
+            var validPassword = m_hashingService.CompareStringWithHash(authentication.Password, user.Password);
             if (!validPassword) {
                 throw new UnauthorizedAccessException("Username or password incorrect");
             }

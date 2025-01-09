@@ -15,6 +15,7 @@ public static class DependencyInjection {
         services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IHashingService, HashingService>();
 
         services.AddAutoMapper(typeof(AutoMapperProfile));
 
