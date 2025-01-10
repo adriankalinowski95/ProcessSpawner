@@ -11,7 +11,7 @@ namespace Shared.Generic.Services {
             m_validator = validator;
         }
 
-        public async Task<ObjectOperationResult<DTO>> SingleObjectValidation<DTO>(T obj) {
+        public async Task<ObjectOperationResult<DTO>?> SingleObjectValidation<DTO>(T obj) {
             ValidationResult validationResult = await m_validator.ValidateAsync(obj);
             if (validationResult.IsValid) {
                 return null;

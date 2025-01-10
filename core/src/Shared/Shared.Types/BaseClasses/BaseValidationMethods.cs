@@ -23,16 +23,16 @@ namespace Shared.Types.BaseClasses {
     }
         */
 
-        public async Task<bool> MaxLength<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
-            return field.Value.Length <= Validator.Value;
+        public Task<bool> MaxLength<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
+            return Task.FromResult(field.Value.Length <= Validator.Value);
         }
 
-        public async Task<bool> MinLength<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
-            return field.Value.Length >= Validator.Value;
+        public Task<bool> MinLength<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
+            return Task.FromResult(field.Value.Length >= Validator.Value);
         }
 
-        public async Task<bool> ExistsInDataSource<T>(BaseFieldUIDto field, BaseValidator Validator, T service) {
-            return false;
+        public Task<bool> ExistsInDataSource<T>(BaseFieldUIDto field, BaseValidator Validator, T service) {
+            return Task.FromResult(false);
         }
 
         /*
@@ -49,12 +49,12 @@ namespace Shared.Types.BaseClasses {
         }
         */
 
-        public async Task<bool> Required<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
-            return !string.IsNullOrEmpty(field.Value);
+        public Task<bool> Required<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
+            return Task.FromResult(!string.IsNullOrEmpty(field.Value));
         }
 
-        public async Task<bool> DefaultFunction<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
-            return false;
+        public Task<bool> DefaultFunction<T>(BaseFieldUIDto field, BaseValidator Validator, T BotProfilSettingsRepository) {
+            return Task.FromResult(false);
         }
     }
 }

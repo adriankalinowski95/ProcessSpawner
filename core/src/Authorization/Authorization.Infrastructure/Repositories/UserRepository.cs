@@ -6,9 +6,7 @@ using Shared.Types.Db;
 
 namespace Authorization.Infrastructure.Repositories {
     public class UserRepository : Shared.Generic.Repositories.Int.GenericRepository<User>, Application.Services.IUserRepository {
-        public UserRepository(DatabaseContext dbContext) : base(dbContext) {
-
-        }
+        public UserRepository(DatabaseContext dbContext) : base(dbContext) { }
 
         public User GetByName(string name) {
             var user = m_dbSet.Where(user => user.Username == name).FirstOrDefault();

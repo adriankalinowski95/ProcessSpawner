@@ -27,6 +27,9 @@ public static class DependencyInjection {
     private static void AuthenticationSettings(IServiceCollection services, IConfiguration configuration) {
         var jwtIssuer = configuration.GetSection("Jwt:Issuer").Get<string>();
         var jwtKey = configuration.GetSection("Jwt:Key").Get<string>();
+        if (jwtIssuer == null || jwtKey == null) {
+            throw new Exception("JwtIssuer or JwtKey doesn't exist!");
+        }
 
         services.AddAuthentication(x => {
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -3,7 +3,7 @@
 namespace Shared.Generic.RestApi {
     public class BasePaginationResponse<T> : BaseResponse {
         [JsonPropertyName("data")]
-        public List<T> Data { get; set; }
+        public List<T>? Data { get; set; }
         [JsonPropertyName("total")]
         public int Total { get; set; }
         [JsonPropertyName("pageNumber")]

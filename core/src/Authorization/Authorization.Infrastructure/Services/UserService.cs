@@ -70,18 +70,18 @@ namespace Authorization.Infrastructure.Services {
             };
         }
 
-        public async Task<ObjectOperationResult<User>> Put(int id, User obj) {
+        public Task<ObjectOperationResult<User>> Put(int id, User obj) {
             if (id != obj.Id) {
                 throw new Exception("AlgorithmDto is different than id in param!");
             }
 
             m_userRepository.Update(obj);
 
-            return new ObjectOperationResult<User> {
+            return Task.FromResult(new ObjectOperationResult<User> {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
                 Object = obj
-            };
+            });
         }
 
         public Task<BasePaginationResponse<User>> GetAll(int pageNumber, int pageSize) {

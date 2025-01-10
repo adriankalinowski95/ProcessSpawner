@@ -13,7 +13,6 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
     public class ProcessEventService : IProcessEventService {
         public readonly ILogger<ProcessEventService> m_logger;
         public readonly IProcessEventRepository m_processEventRepository;
-        public readonly IUserAuthenticationService m_userAuthenticationService;
         private readonly IMapper m_mapper;
 
         public ProcessEventService(ILogger<ProcessEventService> logger, IProcessEventRepository processEventRepository, IMapper mapper) {

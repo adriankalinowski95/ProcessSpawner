@@ -61,12 +61,12 @@ namespace Authorization.Infrastructure.Api {
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("GetByToken", Name = "GetByToken")]
-        public async Task<ObjectResponse<UserDto>> GetByToken() {
-            return new ObjectResponse<UserDto> {
+        public Task<ObjectResponse<UserDto>> GetByToken() {
+            return Task.FromResult(new ObjectResponse<UserDto> {
                 Status = BaseResponseStatus.Ok,
                 ErrorMessage = string.Empty,
                 Object = m_mapper.Map<UserDto>(m_userAuthenticationService.GetCurrentUser())
-            };
+            });
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Shared.Generic.Repositories.Int {
             return await m_dbSet.Where(predicate).FirstAsync();
         }
 
-        public virtual async Task<T> GetByIdAsync(int id) {
+        public virtual async Task<T?> GetByIdAsync(int id) {
             return await m_dbSet.FindAsync(id);
         }
 
@@ -52,7 +52,7 @@ namespace Shared.Generic.Repositories.Int {
             return obj.Entity;
         }
 
-        public virtual async void Update(T entity) {
+        public virtual void Update(T entity) {
             var result = m_context.Update(entity);
             var res = m_context.SaveChanges();
         }

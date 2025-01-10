@@ -33,7 +33,7 @@ namespace core.Settings {
                     Port = config.port
                 };
 
-                processManagerRepository.AddAsync(defaultProcessManager);
+                await processManagerRepository.AddAsync(defaultProcessManager);
             }
         }
     }

@@ -9,7 +9,7 @@ namespace ProcessSpawner.Infrastructure.Repositories {
     public class ProcessInstanceRepository : Shared.Generic.Repositories.Int.GenericRepository<ProcessInstance>, IProcessInstanceRepository {
         public ProcessInstanceRepository(DatabaseContext dbContext) : base(dbContext) { }
 
-        public async Task<Domain.Models.ProcessInstance> GetByInternalIdAsync(string internalId) {
+        public async Task<Domain.Models.ProcessInstance?> GetByInternalIdAsync(string internalId) {
             return await m_dbSet.Where(process => process.InternalId == internalId).FirstOrDefaultAsync();
         }
 

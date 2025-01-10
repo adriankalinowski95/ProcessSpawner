@@ -15,7 +15,6 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
     public class ProcessManagerService : IProcessManagerService {
         public readonly ILogger<ProcessManagerService> m_logger;
         public readonly IProcessManagerRepository m_processManagerRepository;
-        public readonly IUserAuthenticationService m_userAuthenticationService;
         private readonly IMapper m_mapper;
 
         public ProcessManagerService(ILogger<ProcessManagerService> logger, IProcessManagerRepository processManagerRepository, IMapper mapper) {

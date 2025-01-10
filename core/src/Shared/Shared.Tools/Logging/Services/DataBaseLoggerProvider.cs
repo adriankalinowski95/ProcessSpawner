@@ -19,6 +19,10 @@ namespace Shared.Tools.Logging {
             m_serviceCollection = serviceCollection;
             m_savingToDbMutex = new Mutex();
 
+            if (m_serviceCollection == null || m_serviceCollection.BuildServiceProvider() == null) {
+                throw new NullReferenceException("DbContext is empty while loading logger!");
+            }
+
             // @Todo Rapir this shit. Right now, its craeting a databasecontext all the time, when logger is needed.
             m_dbContext = m_serviceCollection.BuildServiceProvider().GetService<DatabaseContext>();
             if (m_dbContext == null) {

@@ -131,7 +131,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
             };
         }
 
-        public async Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, ProcessInstanceDto obj) {
+        public Task<ObjectOperationResult<ProcessInstanceDto>> Put(int id, ProcessInstanceDto obj) {
             // @Todo Validator
             throw new NotImplementedException();
         }

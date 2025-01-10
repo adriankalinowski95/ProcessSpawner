@@ -9,8 +9,8 @@ namespace Shared.Tools.Logging.Models {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public LogLevel Level { get; set; }
-        public string CategoryName { get; set; }
-        public string Message { get; set; }
+        public string? CategoryName { get; set; }
+        public string? Message { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;
     }
 }

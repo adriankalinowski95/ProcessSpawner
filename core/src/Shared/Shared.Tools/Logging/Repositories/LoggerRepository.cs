@@ -20,7 +20,7 @@ namespace Shared.Tools.Logging.Repositories {
             return await dbSet.ToListAsync();
         }
 
-        public virtual async Task<Log> GetByIdAsync(int id) {
+        public virtual async Task<Log?> GetByIdAsync(int id) {
             var dbSet = m_context.Set<Log>();
             return await dbSet.FindAsync(id);
         }
@@ -38,12 +38,9 @@ namespace Shared.Tools.Logging.Repositories {
             return obj.Entity;
         }
 
-        public virtual async void Update(Log entity) {
+        public virtual void Update(Log entity) {
             var result = m_context.Update(entity);
-
             var res = m_context.SaveChanges();
-
-            Console.Write(res);
         }
 
         public virtual void Remove(Log entity) {

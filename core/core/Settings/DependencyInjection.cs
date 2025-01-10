@@ -19,6 +19,10 @@ public static class DependencyInjection {
 
         var specificOrigins = configuration["AllowSpecificOrigins"];
         var clientAddress = configuration["ClientAddress"];
+        if (specificOrigins == null || clientAddress == null) {
+            throw new NullReferenceException("specificOrigins or clientAddress doesn't exist!");
+        }
+
         services.AddCors(options => {
             options.AddPolicy(name: specificOrigins, builder => {
                 builder.WithOrigins(clientAddress)

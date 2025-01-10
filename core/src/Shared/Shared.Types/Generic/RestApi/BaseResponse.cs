@@ -8,10 +8,10 @@ namespace Shared.Generic.RestApi {
 
     public class BaseResponse {
         [JsonPropertyName("status")]
-        public BaseResponseStatus Status { get; set; }
+        public BaseResponseStatus? Status { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("errorMessage")]
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }

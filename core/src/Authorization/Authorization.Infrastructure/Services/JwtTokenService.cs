@@ -70,6 +70,10 @@ namespace Authorization.Infrastructure.Services {
                 jwtBearerOptions.Events = new JwtBearerEvents {
                     OnAuthenticationFailed = context => {
                         if (context.Exception.GetType() == typeof(SecurityTokenExpiredException)) {
+                            if (!context.Response.Headers.ContainsKey("Token-Expired")) {
+                                throw new Exception("Token expired key exist!");
+                            }
+
                             context.Response.Headers.Add("Token-Expired", "true");
                         }
 

@@ -15,7 +15,7 @@ namespace core.Settings {
         }
 
         public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding) {
-            string data = null;
+            string data;
             using (var reader = new StreamReader(context.HttpContext.Request.Body, encoding)) {
                 data = await reader.ReadToEndAsync();
             }

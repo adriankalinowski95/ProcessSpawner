@@ -2,6 +2,7 @@
 using Authorization.Application.DTOs;
 using Authorization.Application.Services;
 using Authorization.Domain.Models;
+using AutoMapper;
 using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.Http;
@@ -14,18 +15,21 @@ namespace Authorization.Infrastructure.Services {
         private readonly IHttpContextAccessor m_httpContextAccessor;
         private readonly IJwtTokenService m_jwtTokenService;
         private readonly IConfiguration m_config;
+        private readonly IMapper m_mapper;
 
         public UserAuthenticationService(
                 IUserRepository userRepository,
                 IHashingService hashingService,
                 IHttpContextAccessor httpContextAccessor,
                 IJwtTokenService jwtTokenService,
-                IConfiguration config) {
+                IConfiguration config,
+                IMapper mapper) {
             m_userRepository = userRepository;
             m_hashingService = hashingService;
             m_httpContextAccessor = httpContextAccessor;
             m_jwtTokenService = jwtTokenService;
             m_config = config;
+            m_mapper = mapper;
         }
 
         public User GetCurrentUser() {
@@ -71,9 +75,7 @@ namespace Authorization.Infrastructure.Services {
                 throw new UnauthorizedAccessException("User doesn't exist!");
             }
 
-            return new UserDto {
-
-            };
+            return m_mapper.Map<UserDto>(user);
         }
 
         public TokenDto Login(AuthenticationDto authentication) {
