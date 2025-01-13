@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Authorization.Application.DTOs {
     public class UserDto {
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [JsonPropertyName("email")]
         public required string Email { get; set; }

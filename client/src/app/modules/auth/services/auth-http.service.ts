@@ -13,10 +13,12 @@ import { AuthenticateDto } from "../models/authenticate-dto";
 export class AuthHTTPService {
     private USER_URL: string = environment.apiUrl + '/api/User';
     private TOKENS_URL: string = environment.apiUrl + '/api/Tokens';
+    private AUTH_MANAGMENT_URL: string = environment.apiUrl + '/api/AuthManagement';
 
-    private USER_GET_BY_TOKEN_URL: string = this.USER_URL + '/GetByToken';
-    //private USER_GET_BY_TOKEN_URL: string = this.USER_URL + '/getUserByToken';
-    private LOGIN_URL: string = this.TOKENS_URL + '/accesstoken';
+
+    private USER_GET_BY_TOKEN_URL: string = this.AUTH_MANAGMENT_URL + '/getUserByToken';
+    private LOGIN_URL: string = this.AUTH_MANAGMENT_URL + '/login';
+    private REFRESH_TOKEN_URL: string = this.AUTH_MANAGMENT_URL + '/refreshToken';
 
     constructor(private http: HttpClient) {}
 
@@ -30,5 +32,9 @@ export class AuthHTTPService {
         });
 
         return this.http.post(this.USER_GET_BY_TOKEN_URL, null, { headers: header });
+    }
+
+    refreshToken(token: TokenDto): Observable<any> {
+        return this.http.post(this.REFRESH_TOKEN_URL,token);
     }
 }

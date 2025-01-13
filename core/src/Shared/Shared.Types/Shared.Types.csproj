@@ -18,6 +18,7 @@
 		<None Remove="BaseClasses\" />
 		<None Remove="Enums\" />
 		<None Remove="Db\" />
+		<None Remove="Models\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Interfaces\" />
@@ -28,6 +29,7 @@
 		<Folder Include="BaseClasses\" />
 		<Folder Include="Enums\" />
 		<Folder Include="Db\" />
+		<Folder Include="Models\" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
@@ -35,5 +37,8 @@
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 	</ItemGroup>
 </Project>

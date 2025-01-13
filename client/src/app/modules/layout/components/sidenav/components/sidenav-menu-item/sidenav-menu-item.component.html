@@ -4,6 +4,7 @@
     routerLinkActive="selected-menu-item"
     #rla="routerLinkActive"
     [activated]="rla.isActive"
+    [routerLinkActiveOptions]="{ exact: false }"
     (click)="toggleNested()"> 
     <mat-icon matListItemIcon> {{ item.icon }} </mat-icon>
     @if (isExpanded) {

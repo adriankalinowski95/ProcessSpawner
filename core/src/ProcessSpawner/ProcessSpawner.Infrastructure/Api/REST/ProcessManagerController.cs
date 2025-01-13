@@ -7,10 +7,13 @@ using ProcessSpawner.Application.DTOs;
 using ProcessSpawner.Application.Services.REST;
 using Shared.Generic.RestApi;
 using System.Xml.Linq;
+using Authorization.Domain.Enums;
 
 namespace ProcessSpawner.Infrastructure.Api.REST {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = nameof(Roles.Admin))]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "WholeAccessPolicy")]
     public class ProcessManagerController : ControllerBase {
         private readonly ILogger<ProcessManagerController> m_logger;
         private readonly IProcessManagerService m_processManagerService;

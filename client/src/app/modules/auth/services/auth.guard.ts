@@ -5,12 +5,11 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from "@angular/ro
 @Injectable({ 
     providedIn: 'root' 
 })
-export class AuthGuard  {
+export class AuthGuard {
   constructor(private authService: AuthService, private router: Router) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const currentUser = this.authService.getAuthFromLocalStorage();
-        if (currentUser) {
+        if (this.authService.getAuthFromLocalStorage()) {
             // logged in so return true
             return true;
         }

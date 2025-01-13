@@ -18,7 +18,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
     public class ProcessInstanceService : IProcessInstanceService {
         public readonly IConfiguration m_configuration;
         public readonly ILogger<ProcessInstanceService> m_logger;
-        public readonly IUserAuthenticationService m_userAuthenticationService;
+        public readonly IAuthManagementService m_authService;
         public readonly IProcessInstanceRepository m_processInstanceRepository;
         public readonly IProcessManagerService m_processManagerService;
         private readonly IMapper m_mapper;
@@ -26,13 +26,13 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
         public ProcessInstanceService(
             IConfiguration configuration,
             ILogger<ProcessInstanceService> logger,
-            IUserAuthenticationService userAuthenticationService,
+            IAuthManagementService authService,
             IProcessInstanceRepository processInstanceRepository,
             IProcessManagerService processManagerService,
             IMapper mapper) {
             m_configuration = configuration;
             m_logger = logger;
-            m_userAuthenticationService = userAuthenticationService;
+            m_authService = authService;
             m_processInstanceRepository = processInstanceRepository;
             m_processManagerService = processManagerService;
             m_mapper = mapper;
@@ -72,8 +72,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
 
         public async Task<ObjectsResponse<ProcessInstanceDto>> GetAll() {
             // @Todo Return per user, not whole
-            var user = m_userAuthenticationService.GetCurrentUser();
-
+            var user = m_authService.GetCurrentUser();
             var processesInstances = await m_processInstanceRepository.GetAllAsync();
             if (processesInstances == null) {
                 throw new Exception("Can't get processes");
@@ -101,7 +100,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
             };
         }
 
-        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(int userId, int pageNumber, int pageSize) {
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(string userId, int pageNumber, int pageSize) {
             var processes = await m_processInstanceRepository.GetAllAsync(pageNumber, pageSize, process => process.UserId == userId);
             var recordsCount = await m_processInstanceRepository.CountAsync(process => process.UserId == userId);
             var processesDto = processes.Select(process => m_mapper.Map<ProcessInstanceDto>(process)).ToList();
@@ -136,7 +135,7 @@ namespace ProcessSpawner.Infrastructure.Services.REST {
             throw new NotImplementedException();
         }
 
-        public async Task<BasePaginationConfigResponse> GetPaginationConfigForUser(int userId) {
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForUser(string userId) {
             var recordsCount = await m_processInstanceRepository.CountAsync(process => process.UserId == userId);
 
             return new BasePaginationConfigResponse {

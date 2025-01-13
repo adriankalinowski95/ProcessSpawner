@@ -19,7 +19,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ]
 })
 export class SidenavMenuItemComponent implements OnInit {
-    @Input({required: true})
+    @Input({ required: true })
     item: MenuItem;
 
     @Input()

@@ -14,7 +14,6 @@ export class ElementListContentPaginatorComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor() {
-    console.log("paginator log!");
   }
 
   onPageChange($event: PageEvent) {

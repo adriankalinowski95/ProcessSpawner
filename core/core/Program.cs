@@ -60,8 +60,6 @@ app.MapGrpcService<ProcessSpawner.Infrastructure.Api.gRPC.ProcessManagerInputCon
 app.MapGrpcService<ProcessSpawner.Infrastructure.Api.Example.CoreCommandCommunicationController>();
 app.MapGrpcService<ProcessSpawner.Infrastructure.Api.Example.CoreQueryCommunicationController>();
 
-// app.MapGrpcService<CoreGrpcService>();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
@@ -73,7 +71,7 @@ app.UseCoreExtension(configuration);
 app.UseExceptionHandling();
 
 // app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

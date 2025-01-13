@@ -1,7 +1,7 @@
 import { BaseStateHolder } from "./base-state-holder";
 
 export class ExtendStateHolder<T extends { id: any }> extends BaseStateHolder<T> {
-    selectById(id: number) : boolean {
+    selectById(id: any) : boolean {
         const items = this.getLastItems();
         if (items.length == 0) {
           return false;
@@ -17,7 +17,7 @@ export class ExtendStateHolder<T extends { id: any }> extends BaseStateHolder<T>
         return true;
     }
     
-    deleteById(id: number) : boolean {
+    deleteById(id: any) : boolean {
         const items = this.getLastItems();
         if (items.length == 0) {
           return false;
@@ -51,7 +51,7 @@ export class ExtendStateHolder<T extends { id: any }> extends BaseStateHolder<T>
         return true;
     }
 
-    getById(id: number) {
+    getById(id: any) {
         return this.itemsSource.value.find(item => item.id == id);
     }
 }

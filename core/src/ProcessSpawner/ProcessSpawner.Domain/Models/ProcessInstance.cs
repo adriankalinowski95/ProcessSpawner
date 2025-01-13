@@ -16,7 +16,7 @@ namespace ProcessSpawner.Domain.Models {
         public DateTime CreatedTimeMs { get; set; }
         public DateTime LastUpdateTimeMs { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public ProcessManager ProcessManager { get; set; }
         public int ProcessManagerId { get; set; }

@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { RoleGuard } from '../auth/services/role.guard';
+import { Roles } from '../auth/enums/roles';
 
 const PagesRouting: Routes = [
     {
@@ -12,6 +14,8 @@ const PagesRouting: Routes = [
     {
         path: 'process-manager',
         loadChildren: () => import('./process-manager/process-manager.module').then((m) => m.ProcessManagerModule),
+        canActivate: [ RoleGuard ],
+        data: { roles: [ Roles.Admin ] }
     },
     {
         path: 'process-event',

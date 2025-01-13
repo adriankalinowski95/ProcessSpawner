@@ -29,7 +29,7 @@ namespace ProcessSpawner.Infrastructure.Api.REST {
 
         [HttpGet("user/{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(int id, [FromQuery] int pageNumber, [FromQuery] int pageSize) {
+        public async Task<BasePaginationResponse<ProcessInstanceDto>> GetByUserId(string id, [FromQuery] int pageNumber, [FromQuery] int pageSize) {
             return await m_processInstanceService.GetByUserId(id, pageNumber, pageSize);
         }
 
@@ -41,7 +41,7 @@ namespace ProcessSpawner.Infrastructure.Api.REST {
 
         [HttpGet("user/pagination-config/{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<BasePaginationConfigResponse> GetPaginationConfigForUser(int id) {
+        public async Task<BasePaginationConfigResponse> GetPaginationConfigForUser(string id) {
             return await m_processInstanceService.GetPaginationConfigForUser(id);
         }
 

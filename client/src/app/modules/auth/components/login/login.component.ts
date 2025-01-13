@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     defaultAuth: any = {
         email: 'admin@gmail.com',
-        password: 'admin123456',
+        password: 'Admin123456!',
     };
     
     public loginForm: FormGroup;
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.initForm();
         this.formErrorHandlerService = new shared.services.FormErrorHandling(this.loginForm, this.validationMessages);
 
-        if (this.authService.currentUserValue) {
+        if (this.authService.getCurrentUserValue()) {
             this.router.navigateByUrl('/');
         }
     }

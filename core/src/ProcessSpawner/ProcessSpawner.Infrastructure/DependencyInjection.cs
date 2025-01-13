@@ -21,6 +21,13 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection {
     public static IServiceCollection AddInfrastructureForProcessSpawner(this IServiceCollection services, IConfiguration configuration) {
+        AddServices(services);
+        AddScheduler(services);
+
+        return services;
+    }
+
+    private static void AddServices(IServiceCollection services) {
         services.AddScoped<IProcessManagerRepository, ProcessManagerRepository>();
         services.AddScoped<IProcessManagerUtilsService, ProcessManagerUtilsService>();
         services.AddScoped<IProcessManagerConfigProvider, ProcessManagerConfigProvider>();
@@ -43,7 +50,9 @@ public static class DependencyInjection {
         services.AddGrpc();
 
         services.AddAutoMapper(typeof(AutoMapperProfile));
+    }
 
+    private static void AddScheduler(IServiceCollection services) {
         services.AddQuartz(configure => {
             configure.UseMicrosoftDependencyInjectionJobFactory();
 
@@ -60,6 +69,5 @@ public static class DependencyInjection {
             options.WaitForJobsToComplete = true;
         });
 
-        return services;
     }
 }

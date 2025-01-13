@@ -15,6 +15,7 @@
     <None Remove="Logging\Repositories\" />
     <None Remove="Logging\Enums\" />
     <None Remove="Logging\Mapping\" />
+    <None Remove="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ErrorHandling\" />
@@ -24,6 +25,7 @@
     <Folder Include="Logging\Repositories\" />
     <Folder Include="Logging\Enums\" />
     <Folder Include="Logging\Mapping\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared.Types\Shared.Types.csproj" />

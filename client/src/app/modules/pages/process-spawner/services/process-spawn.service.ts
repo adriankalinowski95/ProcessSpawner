@@ -86,7 +86,7 @@ export class ProcessSpawnService extends ExtendedCrudServiceImpl<ProcessInstance
             }));
     }
 
-    getProcessesByUserId(userId: number, pageNumber: number, pageSize: number, responseCallback?: (response: shared.response.Object<any>) => void) {
+    getProcessesByUserId(userId: string, pageNumber: number, pageSize: number, responseCallback?: (response: shared.response.Object<any>) => void) {
         return this.getWithPaginationTemplate(pageNumber, pageSize, (pageNumber: number, pageSize: number) => {
             return this.processInstanceCrudService.getByUserId(userId, pageNumber, pageSize);
         }, responseCallback);

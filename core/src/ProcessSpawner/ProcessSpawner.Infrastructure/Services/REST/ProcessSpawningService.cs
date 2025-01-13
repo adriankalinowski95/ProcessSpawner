@@ -19,9 +19,9 @@ namespace ProcessSpawner.Infrastructure.Services {
         public readonly IProcessManagerConfigProvider m_processManagerConfigProvider;
         public readonly IProcessManagerSpawnProcessCommand m_processMangerSpawningCommunication;
         public readonly IProcessManagerFinishProcessCommand m_processManagerFinishProcessCommand;
-        public readonly IUserAuthenticationService m_userAuthenticationService;
         public readonly IProcessInstanceRepository m_processInstanceRepository;
         public readonly IProcessManagerUtilsService m_processManagerUtilsService;
+        public readonly IAuthManagementService m_authService;
         private readonly IMapper m_mapper;
 
         public ProcessSpawningService(IConfiguration configuration,
@@ -29,24 +29,24 @@ namespace ProcessSpawner.Infrastructure.Services {
             IProcessManagerConfigProvider processManagerConfigProvider,
             IProcessManagerSpawnProcessCommand processMangerSpawningCommunication,
             IProcessManagerFinishProcessCommand processManagerFinishProcessCommand,
-            IUserAuthenticationService userAuthenticationService,
             IProcessInstanceRepository processInstanceRepository,
             IProcessManagerUtilsService processManagerUtilsService,
+            IAuthManagementService authService,
             IMapper mapper) {
             m_configuration = configuration;
             m_logger = logger;
             m_processManagerConfigProvider = processManagerConfigProvider;
             m_processMangerSpawningCommunication = processMangerSpawningCommunication;
             m_processManagerFinishProcessCommand = processManagerFinishProcessCommand;
-            m_userAuthenticationService = userAuthenticationService;
             m_processInstanceRepository = processInstanceRepository;
             m_processManagerUtilsService = processManagerUtilsService;
+            m_authService = authService;
             m_mapper = mapper;
         }
 
         // @Todo separate this
         public async Task<ObjectOperationResult<ProcessInstanceDto>> SpawnProcess(ProcessSpawnRequestDto obj) {
-            var user = m_userAuthenticationService.GetCurrentUser();
+            var user = await m_authService.GetCurrentUser();
             if (user == null) {
                 throw new UnauthorizedAccessException();
             }

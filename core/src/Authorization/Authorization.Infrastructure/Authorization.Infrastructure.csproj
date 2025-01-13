@@ -15,6 +15,7 @@
 		<None Remove="Mapping\" />
 		<None Remove="Api\" />
 		<None Remove="Tools\" />
+		<None Remove="Configuration\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Services\" />
@@ -22,6 +23,7 @@
 		<Folder Include="Mapping\" />
 		<Folder Include="Api\" />
 		<Folder Include="Tools\" />
+		<Folder Include="Configuration\" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
@@ -29,8 +31,12 @@
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Authorization.Application\Authorization.Application.csproj" />
+		<ProjectReference Include="..\..\Shared\Shared.Tools\Shared.Tools.csproj" />
 	</ItemGroup>
 </Project>

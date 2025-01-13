@@ -24,7 +24,8 @@ import { ProcessType } from '../../enums/process-type.enum';
   styleUrl: './process-list.component.scss',
 })
 export class ProcessListComponent implements OnInit {
-    id!: number;
+    userId!: string;
+    managerId!: number;
     isUserPath = false; 
     isManagerPath = false; 
     
@@ -111,6 +112,7 @@ export class ProcessListComponent implements OnInit {
 
     columns: DisplayedColumns = [
         { name: 'index', displayName: 'No.' },
+        { name: 'uniqueId', displayName: 'Unique Id' },
         { name: 'processType', displayName: 'Type' },
         { name: 'processId', displayName: 'Process Id' },
         { name: 'status', displayName: 'Process Status' }
@@ -132,9 +134,11 @@ export class ProcessListComponent implements OnInit {
         }
 
         this.processInstancesHolderSerivce.items$.subscribe((processInstances: ProcessInstanceDto[]) => {
+            let count = 1;
             this.dataSource = processInstances.map((processInstance: ProcessInstanceDto) => {
                 return {
-                    index: processInstance.id,
+                    index: count++,
+                    uniqueId: processInstance.id,
                     processType: processInstance.processType,
                     processId: processInstance.processId,
                     status: ProcessStatus[processInstance.status]
@@ -150,15 +154,16 @@ export class ProcessListComponent implements OnInit {
     }
 
     loadPath(): boolean {
-        this.id = Number(this.route.snapshot.paramMap.get('id'));
         const pathSegments = this.route.snapshot.url.map(segment => segment.path);
         if (pathSegments.includes('user')) {
             this.isUserPath = true;
+            this.userId = this.route.snapshot.paramMap.get('id') as string;
 
             return true;
         } else if (pathSegments.includes('manager')) {
             this.isManagerPath = true;
-            
+            this.managerId = Number(this.route.snapshot.paramMap.get('id'));
+
             return true;
         } else {
             return false;
@@ -180,7 +185,7 @@ export class ProcessListComponent implements OnInit {
             // this.notificationService.error(response.errorMessage);
         };
 
-        this.processSpawnService.getProcessesByUserId(this.id, pageNumber, pageSize, errorHandler).pipe(
+        this.processSpawnService.getProcessesByUserId(this.userId, pageNumber, pageSize, errorHandler).pipe(
             first(),
             tap((processInstances: shared.response.BasePagination<ProcessInstanceDto> | undefined) => {
                 if (shared.isNotNullOrUndefined(processInstances)) {
@@ -198,7 +203,7 @@ export class ProcessListComponent implements OnInit {
             // this.notificationService.error(response.errorMessage);
         };
 
-        this.processSpawnService.getProcessByManagerId(this.id, pageNumber, pageSize, errorHandler).pipe(
+        this.processSpawnService.getProcessByManagerId(this.managerId, pageNumber, pageSize, errorHandler).pipe(
             first(),
             tap((processInstances: shared.response.BasePagination<ProcessInstanceDto> | undefined) => {
                 if (shared.isNotNullOrUndefined(processInstances)) {

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Shared.Tools.Logging.Models;
 using Shared.Types.Db;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace Shared.Tools.Logging.Repositories {
     public class LoggerRepository : ILoggerRepository {

@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using core.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProcessSpawner.Infrastructure.Services;
 using Quartz;
 using Shared.Tools;
+using Shared.Types.Db;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -34,9 +36,6 @@ public static class DependencyInjection {
 
         services.AddHttpContextAccessor();
 
-        var jwtIssuer = configuration.GetSection("Jwt:Issuer").Get<string>();
-        var jwtKey = configuration.GetSection("Jwt:Key").Get<string>();
-
         services.Configure<MvcOptions>(options => {
             options.InputFormatters.Insert(0, new core.Settings.TextPlainInputFormatter());
         });
@@ -45,12 +44,10 @@ public static class DependencyInjection {
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
         );
 
-        services.AddInfrastructureForAuthorization(configuration);
-
         services.AddScoped<Shared.Types.Db.ICustomService, CustomService>();
         services.AddDbContext<Shared.Types.Db.DatabaseContext>();
 
-        //services.AddTransient<DbContext, DatabaseContext>();
+        services.AddInfrastructureForAuthorization(configuration);
 
         services.AddSingleton<IServiceCollection>(provider => {
             return services;

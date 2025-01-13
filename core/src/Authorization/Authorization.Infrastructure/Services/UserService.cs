@@ -1,26 +1,24 @@
 ﻿using System;
 using Authorization.Application.Services;
 using Authorization.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Shared.Generic.RestApi;
 
 namespace Authorization.Infrastructure.Services {
-    // @Todo I guess i should make a some wrapper for this
-    // Like, all of my functions have a try/catch, so i should a make w rapper to minimalize code.
-    // Or just a middleware??
     public class UserService : IUserService {
         private readonly ILogger<IUserService> m_logger;
-        private IUserRepository m_userRepository;
-        private IUserAuthenticationService m_userAuthenticationService;
+        private readonly IUserRepository m_userRepository;
+        private readonly UserManager<User> m_userManager;
 
-        public UserService(IUserRepository userRepository, IUserAuthenticationService userAuthenticationService, ILogger<IUserService> logger) {
-            m_userRepository = userRepository;
-            m_userAuthenticationService = userAuthenticationService;
+        public UserService(ILogger<IUserService> logger, IUserRepository userRepository, UserManager<User> userManager) {
             m_logger = logger;
+            m_userRepository = userRepository;
+            m_userManager = userManager;
         }
 
-        public async Task<ObjectOperationResult<User>> Get(int id) {
-            var user = await m_userRepository.GetByIdAsync(id);
+        public async Task<ObjectOperationResult<User>> Get(string id) {
+            var user = m_userManager.Users.Where(user => user.Id.CompareTo(id) == 0).First();
             if (user == null) {
                 throw new KeyNotFoundException("Can't find user for id: " + id);
             }
@@ -55,7 +53,7 @@ namespace Authorization.Infrastructure.Services {
             };
         }
 
-        public async Task<ObjectOperationResult<User>> Delete(int id) {
+        public async Task<ObjectOperationResult<User>> Delete(string id) {
             var target = await m_userRepository.GetByIdAsync(id);
             if (target == null) {
                 throw new Exception("Cant remove user!");
@@ -70,9 +68,9 @@ namespace Authorization.Infrastructure.Services {
             };
         }
 
-        public Task<ObjectOperationResult<User>> Put(int id, User obj) {
+        public Task<ObjectOperationResult<User>> Put(string id, User obj) {
             if (id != obj.Id) {
-                throw new Exception("AlgorithmDto is different than id in param!");
+                throw new KeyNotFoundException("AlgorithmDto is different than id in param!");
             }
 
             m_userRepository.Update(obj);

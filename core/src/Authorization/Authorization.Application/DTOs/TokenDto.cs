@@ -7,6 +7,6 @@ namespace Authorization.Application.DTOs {
         public required string AccessToken { get; set; }
 
         [JsonPropertyName("refreshToken")]
-        public string? RefreshToken { get; set; }
+        public required string RefreshToken { get; set; }
     }
 }

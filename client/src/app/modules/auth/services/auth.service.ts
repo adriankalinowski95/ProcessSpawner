@@ -7,12 +7,21 @@ import { Router } from '@angular/router';
 import { shared } from '../../shared/shared';
 import { TokenDto } from '../models/token-dto';
 import { IsUserAuthValid, UserAuth } from '../models/user-auth';
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedToken {
+    sub: string;
+    exp: number;
+    iat: number;
+    role?: string[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
     private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
+    private userRoles: string[] = [];
 
     currentUserSubject: BehaviorSubject<UserAuth | undefined>;
     isLoadingSubject: BehaviorSubject<boolean>;
@@ -25,16 +34,18 @@ export class AuthService {
         this.currentUserSubject = new BehaviorSubject<UserAuth | undefined>(undefined);
         this.currentUser$ = this.currentUserSubject.asObservable();
         this.isLoading$ = this.isLoadingSubject.asObservable();
+
+        this.loadAuth();
     }
 
-    get currentUserValue(): UserAuth | undefined {
+    getCurrentUserValue(): UserAuth | undefined {
         return this.currentUserSubject.value;
     }
     
-    set currentUserValue(user: UserAuth) {
+    setCurrentUserValue(user: UserAuth) {
         this.currentUserSubject.next(user);
     }
-  
+
     login(
         email: string, 
         password: string, 
@@ -109,6 +120,17 @@ export class AuthService {
         });
     }   
 
+    refreshToken() {
+        const auth = this.getAuthFromLocalStorage();
+        if (!shared.isNotNullOrUndefined(auth)) {
+            this.logout();
+
+            return of(undefined);
+        }
+
+        return this.authHttpService.refreshToken(auth.token);
+    }
+
     getUserByToken(): Observable<UserAuth | undefined> { 
         const userAuth = this.getAuthFromLocalStorage();
         if (!shared.isNotNullOrUndefined(userAuth)) {
@@ -172,18 +194,45 @@ export class AuthService {
         }
     }
 
-    private setAuthFromLocalStorage(userAuth: UserAuth): boolean {
-        if (shared.isNotNullOrUndefined(userAuth)) {
-            localStorage.setItem(this.authLocalStorageToken, JSON.stringify(userAuth));
+    getUserRoles(): string[] {
+        return this.userRoles;
+    }
 
-            return true;
+    setToken(token: TokenDto): boolean {
+        var auth = this.getAuthFromLocalStorage();
+        if (!shared.isNotNullOrUndefined(auth)) {
+            return false;
         }
 
-        return false;
+        auth.token = token;
+
+        this.loadAuth();
+
+        return true;
+    }
+
+    private loadAuth() {
+        var auth = this.getAuthFromLocalStorage();
+        if (!shared.isNotNullOrUndefined(auth)) {
+            return;
+        }
+
+        this.setAuthForService(auth);
+    }
+
+    private setAuthFromLocalStorage(userAuth: UserAuth): boolean {
+        if (!shared.isNotNullOrUndefined(userAuth)) {
+            return false;
+        }
+        
+        localStorage.setItem(this.authLocalStorageToken, JSON.stringify(userAuth));
+
+        return true;
     }
 
     private setAuthForService(userAuth: UserAuth): boolean {
         this.currentUserSubject.next(userAuth);
+        this.parseTokenAndSetRoles(userAuth.token.accessToken);
 
         return this.setAuthFromLocalStorage(userAuth);
     }
@@ -191,5 +240,37 @@ export class AuthService {
     private removeAuthForService(): void {
         this.currentUserSubject.next(undefined);
         localStorage.removeItem(this.authLocalStorageToken);
+        this.userRoles = [];
+    }
+
+    private parseTokenAndSetRoles(token: string): void {
+        try {
+            const decoded: DecodedToken = jwtDecode(token);
+            if (decoded && decoded.role) {
+                if (typeof(decoded.role) === 'string') {
+                    this.userRoles = [decoded.role];
+                    return;
+                } else if (typeof(decoded.role) === 'object') {
+                    this.userRoles = [];
+
+                    Object.keys(decoded.role).forEach((key) => {
+                        if (!decoded.role?.hasOwnProperty(key)) {
+                            return;
+                        }
+
+                        const role = decoded.role[key as keyof typeof decoded.role] as string;
+                        this.userRoles.push(role);
+                      });
+
+                    return;
+                } else {
+                    this.userRoles = [];
+                }
+            } else {
+                this.userRoles = [];
+            }
+        } catch (error) {
+            this.userRoles = [];
+        }
     }
 }

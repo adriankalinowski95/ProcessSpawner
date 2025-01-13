@@ -15,7 +15,7 @@ export class ProcessInstanceCrudService extends ExtendedCrudService<ProcessInsta
         super(http, environment.apiUrl + '/api/ProcessInstance');
     }
 
-    getByUserId(userId: number, pageNumber: number = 1, pageSize: number = 20): Observable<any> {
+    getByUserId(userId: string, pageNumber: number = 1, pageSize: number = 20): Observable<any> {
         const path = this.basePath + '/user/' + userId;
         return this.http.get(path, {
             params: {
